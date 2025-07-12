@@ -6,7 +6,7 @@ import { router } from 'expo-router';
 
 export default function MoreScreen() {
   const handleDemurrageCharge = () => {
-    router.push('/(tabs)/user');
+    router.push('/charges');
   };
 
   const handleHelpSupport = () => {
