@@ -1,75 +1,98 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Star } from 'lucide-react-native';
+import { CircularProgress } from '@/components/CircularProgress';
+import { InvoiceItem } from '@/components/InvoiceItem';
+import { BookingCard } from '@/components/BookingCard';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function DashboardScreen() {
+  const invoices = [
+    { id: '#ITEM 2', route: 'PNG - KLG', status: 'Paid', statusColor: 'text-green-500' },
+    { id: '#ITEM 2', route: 'PNG - KLG', status: 'Paid', statusColor: 'text-green-500' },
+    { id: '#ITEM 2', route: 'PNG - KLG', status: 'Overdue', statusColor: 'text-red-500' },
+  ];
 
-export default function HomeScreen() {
+  const bookingStats = [
+    { label: 'In Transit', value: 64, color: '#3b82f6' },
+    { label: 'New', value: 10, color: '#f59e0b' },
+    { label: 'Delivered', value: 85, color: '#f59e0b' },
+  ];
+
+  const recentBookings = [
+    { id: '#ITEM 2', status: 'Picked Up' },
+    { id: '#ITEM 2', status: 'Picked Up' },
+    { id: '#ITEM 2', status: 'Picked Up' },
+  ];
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View className="flex-row items-center px-6 py-4 bg-white">
+          <Star size={24} color="#000" />
+          <Text className="text-xl font-bold text-gray-900 ml-3">Dashboard</Text>
+        </View>
+
+        {/* Invoices Section */}
+        <View className="bg-white mx-4 mt-4 rounded-2xl p-6 shadow-sm">
+          <Text className="text-lg font-semibold text-blue-600 mb-4">Invoices</Text>
+          <View className="space-y-3">
+            {invoices.map((invoice, index) => (
+              <InvoiceItem
+                key={index}
+                id={invoice.id}
+                route={invoice.route}
+                status={invoice.status}
+                statusColor={invoice.statusColor}
+              />
+            ))}
+          </View>
+        </View>
+
+        {/* Booking Summary Section */}
+        <View className="bg-white mx-4 mt-4 rounded-2xl p-6 shadow-sm">
+          <Text className="text-lg font-semibold text-gray-900 text-center mb-6">Booking Summary</Text>
+          
+          {/* Circular Progress */}
+          <View className="items-center mb-8">
+            <CircularProgress 
+              size={160}
+              strokeWidth={12}
+              progress={75}
+              centerText="159"
+              centerSubtext="Bookings this year"
+            />
+          </View>
+
+          {/* Stats */}
+          <View className="flex-row justify-between">
+            {bookingStats.map((stat, index) => (
+              <View key={index} className="flex-row items-center">
+                <View 
+                  className="w-3 h-3 rounded-full mr-2"
+                  style={{ backgroundColor: stat.color }}
+                />
+                <Text className="text-gray-700 text-sm mr-1">{stat.label}</Text>
+                <Text className="font-semibold text-gray-900">{stat.value}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Recent Bookings */}
+        <View className="mx-4 mt-4 mb-6">
+          <View className="flex-row justify-between space-x-3">
+            {recentBookings.map((booking, index) => (
+              <BookingCard
+                key={index}
+                id={booking.id}
+                status={booking.status}
+              />
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
