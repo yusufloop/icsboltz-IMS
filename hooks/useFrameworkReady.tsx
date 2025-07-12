@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 
 declare global {
@@ -8,6 +9,6 @@ declare global {
 
 export function useFrameworkReady() {
   useEffect(() => {
-    window.frameworkReady?.()
-  })
+    window.frameworkReady?.();
+  }, []); // Add empty dependency array
 }

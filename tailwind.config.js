@@ -1,6 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-const { DesignSystem } = require('./constants/DesignSystem');
-
 module.exports = {
   content: [
     "./App.{js,jsx,ts,tsx}",
@@ -14,68 +12,107 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Premium Design System Colors
-        primary: DesignSystem.colors.primary,
-        destructive: DesignSystem.colors.destructive,
-        'bg-primary': DesignSystem.colors.background.primary,
-        'bg-secondary': DesignSystem.colors.background.secondary,
-        'bg-tertiary': DesignSystem.colors.background.tertiary,
-        'text-primary': DesignSystem.colors.text.primary,
-        'text-secondary': DesignSystem.colors.text.secondary,
-        'text-tertiary': DesignSystem.colors.text.tertiary,
-        'text-inverse': DesignSystem.colors.text.inverse,
-        success: DesignSystem.colors.status.success,
-        warning: DesignSystem.colors.status.warning,
-        info: DesignSystem.colors.status.info,
-        error: DesignSystem.colors.status.error,
-        'border-light': DesignSystem.colors.border.light,
-        'border-medium': DesignSystem.colors.border.medium,
-        'border-dark': DesignSystem.colors.border.dark,
+        // Primary Actions
+        primary: {
+          50: '#E6F3FF',
+          100: '#CCE7FF',
+          200: '#99CFFF',
+          300: '#66B7FF',
+          400: '#409CFF',
+          500: '#0A84FF',
+          600: '#0066CC',
+          700: '#004C99',
+          800: '#003366',
+          900: '#001A33',
+        },
+        
+        // Destructive/Urgent
+        destructive: {
+          50: '#FFE6E6',
+          100: '#FFCCCC',
+          200: '#FF9999',
+          300: '#FF6666',
+          400: '#FF4D4D',
+          500: '#FF453A',
+          600: '#CC3629',
+          700: '#99281F',
+          800: '#661A14',
+          900: '#330D0A',
+        },
+        
+        // Background colors
+        'bg-primary': '#F2F2F7',
+        'bg-secondary': '#FFFFFF',
+        'bg-tertiary': '#F8F9FA',
+        
+        // Text colors
+        'text-primary': '#1C1C1E',
+        'text-secondary': '#8A8A8E',
+        'text-tertiary': '#AEAEB2',
+        'text-inverse': '#FFFFFF',
+        
+        // Status colors
+        success: '#30D158',
+        warning: '#FF9F0A',
+        info: '#FFD60A',
+        error: '#FF453A',
+        
+        // Border colors
+        'border-light': '#E5E5EA',
+        'border-medium': '#D1D1D6',
+        'border-dark': '#8E8E93',
       },
+      
       fontFamily: {
         'system': ['-apple-system', 'BlinkMacSystemFont', 'San Francisco', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
         'inter-regular': ['Inter-Regular', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
         'inter-semibold': ['Inter-SemiBold', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
         'inter-bold': ['Inter-Bold', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
+      
       fontSize: {
-        'xs': [`${DesignSystem.typography.sizes.xs}px`, { lineHeight: `${DesignSystem.typography.sizes.xs * DesignSystem.typography.lineHeights.normal}px` }],
-        'sm': [`${DesignSystem.typography.sizes.sm}px`, { lineHeight: `${DesignSystem.typography.sizes.sm * DesignSystem.typography.lineHeights.normal}px` }],
-        'base': [`${DesignSystem.typography.sizes.base}px`, { lineHeight: `${DesignSystem.typography.sizes.base * DesignSystem.typography.lineHeights.relaxed}px` }],
-        'lg': [`${DesignSystem.typography.sizes.lg}px`, { lineHeight: `${DesignSystem.typography.sizes.lg * DesignSystem.typography.lineHeights.normal}px` }],
-        'xl': [`${DesignSystem.typography.sizes.xl}px`, { lineHeight: `${DesignSystem.typography.sizes.xl * DesignSystem.typography.lineHeights.normal}px` }],
-        '2xl': [`${DesignSystem.typography.sizes['2xl']}px`, { lineHeight: `${DesignSystem.typography.sizes['2xl'] * DesignSystem.typography.lineHeights.tight}px` }],
-        '3xl': [`${DesignSystem.typography.sizes['3xl']}px`, { lineHeight: `${DesignSystem.typography.sizes['3xl'] * DesignSystem.typography.lineHeights.tight}px` }],
-        '4xl': [`${DesignSystem.typography.sizes['4xl']}px`, { lineHeight: `${DesignSystem.typography.sizes['4xl'] * DesignSystem.typography.lineHeights.tight}px` }],
+        'xs': ['12px', { lineHeight: '16.8px' }],
+        'sm': ['14px', { lineHeight: '19.6px' }],
+        'base': ['16px', { lineHeight: '25.6px' }],
+        'lg': ['18px', { lineHeight: '25.2px' }],
+        'xl': ['20px', { lineHeight: '28px' }],
+        '2xl': ['24px', { lineHeight: '28.8px' }],
+        '3xl': ['30px', { lineHeight: '36px' }],
+        '4xl': ['36px', { lineHeight: '43.2px' }],
       },
+      
       spacing: {
-        'xs': `${DesignSystem.spacing.xs}px`,
-        'sm': `${DesignSystem.spacing.sm}px`,
-        'md': `${DesignSystem.spacing.md}px`,
-        'lg': `${DesignSystem.spacing.lg}px`,
-        'xl': `${DesignSystem.spacing.xl}px`,
-        '2xl': `${DesignSystem.spacing['2xl']}px`,
-        '3xl': `${DesignSystem.spacing['3xl']}px`,
-        '4xl': `${DesignSystem.spacing['4xl']}px`,
-        '5xl': `${DesignSystem.spacing['5xl']}px`,
-        '6xl': `${DesignSystem.spacing['6xl']}px`,
+        'xs': '4px',
+        'sm': '8px',
+        'md': '12px',
+        'lg': '16px',
+        'xl': '20px',
+        '2xl': '24px',
+        '3xl': '32px',
+        '4xl': '40px',
+        '5xl': '48px',
+        '6xl': '64px',
       },
+      
       borderRadius: {
-        'sm': `${DesignSystem.components.borderRadius.sm}px`,
-        'md': `${DesignSystem.components.borderRadius.md}px`,
-        'lg': `${DesignSystem.components.borderRadius.lg}px`,
-        'xl': `${DesignSystem.components.borderRadius.xl}px`,
-        '2xl': `${DesignSystem.components.borderRadius['2xl']}px`,
+        'sm': '6px',
+        'md': '8px',
+        'lg': '12px',
+        'xl': '16px',
+        '2xl': '20px',
       },
+      
       boxShadow: {
         'premium-sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
         'premium-md': '0 2px 8px 0 rgba(0, 0, 0, 0.1)',
         'premium-lg': '0 4px 12px 0 rgba(0, 0, 0, 0.15)',
         'premium-xl': '0 8px 16px 0 rgba(0, 0, 0, 0.2)',
       },
+      
       backdropBlur: {
         'glass': '20px',
       },
+      
       screens: {
         'xs': '475px',
         'sm': '640px',
@@ -84,11 +121,13 @@ module.exports = {
         'xl': '1280px',
         '2xl': '1536px',
       },
+      
       animation: {
         'fade-in': 'fadeIn 0.25s ease-out',
         'slide-up': 'slideUp 0.25s ease-out',
         'scale-in': 'scaleIn 0.15s ease-out',
       },
+      
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },
