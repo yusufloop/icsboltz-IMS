@@ -64,7 +64,6 @@ export default function RequestsScreen() {
   };
 
   const handleCreateRequest = () => {
-    console.log('Create request button pressed'); // Debug log
     setShowNewRequestModal(true);
   };
 
@@ -74,10 +73,6 @@ export default function RequestsScreen() {
     // Here you would typically send the data to your backend
   };
 
-  const handleCloseModal = () => {
-    console.log('Modal close requested'); // Debug log
-    setShowNewRequestModal(false);
-  };
   return (
     <SafeAreaView className="flex-1 bg-bg-primary">
       <ScrollView 
@@ -155,36 +150,24 @@ export default function RequestsScreen() {
             </TouchableOpacity>
           </View>
 
-          <View style={{ position: 'relative', zIndex: 9999 }}>
-            <TouchableOpacity 
-              className="bg-primary rounded-full w-10 h-10 items-center justify-center shadow-md"
-              onPress={handleCreateRequest}
-              activeOpacity={0.8}
-              style={{ 
-                elevation: 10, // Android elevation
-                shadowColor: '#000', // iOS shadow
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-              }}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <MaterialIcons 
-                name="add" 
-                size={24} 
-                color="#FFFFFF"
-              />
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity 
+            className="bg-primary rounded-full w-10 h-10 items-center justify-center shadow-md active:opacity-80 active:scale-95"
+            onPress={handleCreateRequest}
+          >
+            <MaterialIcons 
+              name="add" 
+              size={24} 
+              color="#FFFFFF"
+            />
+          </TouchableOpacity>
         </View>
 
         {/* Requests List */}
-        <View className="px-4" style={{ zIndex: 1 }}>
+        <View className="px-4">
           {requests.map((request, index) => (
             <Animated.View
               key={request.id}
               entering={FadeInDown.delay(index * 100).duration(300)}
-              style={{ zIndex: 1 }}
             >
               <RequestCard
                 id={request.id}
@@ -202,44 +185,10 @@ export default function RequestsScreen() {
         </View>
       </ScrollView>
 
-      {/* Floating Action Button - Alternative Position */}
-      <View 
-        style={{
-          position: 'absolute',
-          bottom: 100,
-          right: 20,
-          zIndex: 10000,
-          elevation: 15,
-        }}
-        pointerEvents="box-none"
-      >
-        <TouchableOpacity 
-          className="bg-primary rounded-full w-14 h-14 items-center justify-center shadow-lg"
-          onPress={() => {
-            console.log('🔥 FLOATING BUTTON PRESSED');
-            setShowNewRequestModal(true);
-          }}
-          activeOpacity={0.8}
-          style={{ 
-            elevation: 15,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.3,
-            shadowRadius: 5,
-          }}
-        >
-          <MaterialIcons 
-            name="add" 
-            size={28} 
-            color="#FFFFFF"
-          />
-        </TouchableOpacity>
-      </View>
-
       {/* New Request Modal */}
       <NewRequestModal
         visible={showNewRequestModal}
-        onClose={handleCloseModal}
+        onClose={() => setShowNewRequestModal(false)}
         onSubmit={handleNewRequestSubmit}
       />
     </SafeAreaView>
