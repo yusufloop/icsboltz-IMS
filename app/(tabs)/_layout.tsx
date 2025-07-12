@@ -30,28 +30,52 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Dashboard',
-          tabBarIcon: ({ color }) => <Home size={24} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Home 
+              size={24} 
+              color={color}
+              fill={focused ? color : 'none'}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="bookings"
         options={{
           title: 'Bookings',
-          tabBarIcon: ({ color }) => <Calendar size={24} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <Calendar 
+              size={24} 
+              color={color}
+              fill={focused ? color : 'none'}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="user"
         options={{
           title: 'User',
-          tabBarIcon: ({ color }) => <User size={24} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <User 
+              size={24} 
+              color={color}
+              fill={focused ? color : 'none'}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="more"
         options={{
           title: 'More',
-          tabBarIcon: ({ color }) => <MoreHorizontal size={24} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <MoreHorizontal 
+              size={24} 
+              color={color}
+              fill={focused ? color : 'none'}
+            />
+          ),
         }}
       />
     </Tabs>
