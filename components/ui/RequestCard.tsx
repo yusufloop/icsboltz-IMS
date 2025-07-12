@@ -10,7 +10,6 @@ import Animated, {
 } from 'react-native-reanimated';
 import { PremiumCard } from './PremiumCard';
 import { PremiumButton } from './PremiumButton';
-import { ResubmitRequestModal } from '@/components/modals/ResubmitRequestModal';
 
 interface RequestCardProps {
   id: string;
@@ -36,7 +35,6 @@ export function RequestCard({
   onToggle,
 }: RequestCardProps) {
   const expandedHeight = useSharedValue(0);
-  const [showResubmitModal, setShowResubmitModal] = useState(false);
 
   React.useEffect(() => {
     expandedHeight.value = withTiming(isExpanded ? 1 : 0, {
@@ -80,155 +78,130 @@ export function RequestCard({
   };
 
   const handleResubmit = () => {
-    setShowResubmitModal(true);
-  };
-
-  const handleResubmitSubmit = (requestData: any) => {
-    console.log('Resubmit request data:', requestData);
-    setShowResubmitModal(false);
+    console.log('Resubmit action for', id);
   };
 
   return (
-    <>
-      <TouchableOpacity
-        onPress={onToggle}
-        activeOpacity={0.8}
-        className="mb-3"
-      >
-        <PremiumCard>
-          {/* Top Row */}
-          <View className="flex-row items-center justify-between mb-3">
-            <Text className="text-lg font-bold text-text-primary">
-              {id}
-            </Text>
-            <Text className="text-sm text-text-secondary">
-              {date}
+    <TouchableOpacity
+      onPress={onToggle}
+      activeOpacity={0.8}
+      className="mb-3"
+    >
+      <PremiumCard>
+        {/* Top Row */}
+        <View className="flex-row items-center justify-between mb-3">
+          <Text className="text-lg font-bold text-text-primary">
+            {id}
+          </Text>
+          <Text className="text-sm text-text-secondary">
+            {date}
+          </Text>
+        </View>
+
+        {/* Standard Details */}
+        <View className="space-y-2">
+          <View className="flex-row items-center">
+            <Text className="text-sm text-text-secondary mr-2">Status</Text>
+            <Text className={`text-sm font-medium ${getStatusColor(status)}`}>
+              {status}
             </Text>
           </View>
-
-          {/* Standard Details */}
-          <View className="space-y-2">
-            <View className="flex-row items-center">
-              <Text className="text-sm text-text-secondary mr-2">Status</Text>
-              <Text className={`text-sm font-medium ${getStatusColor(status)}`}>
-                {status}
-              </Text>
-            </View>
-            
-            <View className="flex-row items-center">
-              <Text className="text-sm text-text-secondary mr-2">Item Requested</Text>
-              <Text className="text-sm font-medium text-primary">
-                {itemRequested}
-              </Text>
-            </View>
+          
+          <View className="flex-row items-center">
+            <Text className="text-sm text-text-secondary mr-2">Item Requested</Text>
+            <Text className="text-sm font-medium text-primary">
+              {itemRequested}
+            </Text>
           </View>
+        </View>
 
-          {/* Expanded Content */}
-          <Animated.View style={expandedStyle} className="overflow-hidden">
-            <View className="mt-3">
-              {/* Additional Details */}
-              <View className="space-y-2 mb-3">
+        {/* Expanded Content */}
+        <Animated.View style={expandedStyle} className="overflow-hidden">
+          <View className="mt-3">
+            {/* Additional Details */}
+            <View className="space-y-2 mb-3">
+              <View className="flex-row items-center">
+                <Text className="text-sm text-text-secondary mr-2">Priority</Text>
+                <Text className="text-sm font-medium text-text-primary">
+                  {priority}
+                </Text>
+              </View>
+              
+              {amount && (
                 <View className="flex-row items-center">
-                  <Text className="text-sm text-text-secondary mr-2">Priority</Text>
+                  <Text className="text-sm text-text-secondary mr-2">Amount</Text>
                   <Text className="text-sm font-medium text-text-primary">
-                    {priority}
+                    {amount}
                   </Text>
                 </View>
-                
-                {amount && (
-                  <View className="flex-row items-center">
-                    <Text className="text-sm text-text-secondary mr-2">Amount</Text>
-                    <Text className="text-sm font-medium text-text-primary">
-                      {amount}
-                    </Text>
-                  </View>
-                )}
-                
-                {company && (
-                  <View className="flex-row items-center">
-                    <Text className="text-sm text-text-secondary mr-2">Company</Text>
-                    <Text className="text-sm font-medium text-primary">
-                      {company}
-                    </Text>
-                  </View>
-                )}
+              )}
+              
+              {company && (
+                <View className="flex-row items-center">
+                  <Text className="text-sm text-text-secondary mr-2">Company</Text>
+                  <Text className="text-sm font-medium text-primary">
+                    {company}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {/* Divider */}
+            <View className="border-t border-gray-200 mb-3" />
+
+            {/* Actions Row */}
+            <View className="flex-row space-x-2">
+              {/* Scan Button */}
+              <View className="flex-1">
+                <PremiumButton
+                  title="Scan"
+                  onPress={handleScan}
+                  variant="secondary"
+                  size="sm"
+                  icon={
+                    <MaterialIcons 
+                      name="qr-code-scanner" 
+                      size={16} 
+                      color="#6B7280" 
+                      style={{ marginRight: 4 }}
+                    />
+                  }
+                />
               </View>
 
-              {/* Divider */}
-              <View className="border-t border-gray-200 mb-3" />
+              {/* Info Button */}
+              <View className="flex-1">
+                <PremiumButton
+                  title="Info"
+                  onPress={handleInfo}
+                  variant="secondary"
+                  size="sm"
+                  icon={
+                    <MaterialIcons 
+                      name="info" 
+                      size={16} 
+                      color="#6B7280" 
+                      style={{ marginRight: 4 }}
+                    />
+                  }
+                />
+              </View>
 
-              {/* Actions Row */}
-              <View className="flex-row space-x-2">
-                {/* Scan Button */}
-                <View className="flex-1">
-                  <PremiumButton
-                    title="Scan"
-                    onPress={handleScan}
-                    variant="secondary"
-                    size="sm"
-                    icon={
-                      <MaterialIcons 
-                        name="qr-code-scanner" 
-                        size={16} 
-                        color="#6B7280" 
-                        style={{ marginRight: 4 }}
-                      />
-                    }
-                  />
-                </View>
-
-                {/* Info Button */}
-                <View className="flex-1">
-                  <PremiumButton
-                    title="Info"
-                    onPress={handleInfo}
-                    variant="secondary"
-                    size="sm"
-                    icon={
-                      <MaterialIcons 
-                        name="info" 
-                        size={16} 
-                        color="#6B7280" 
-                        style={{ marginRight: 4 }}
-                      />
-                    }
-                  />
-                </View>
-
-                {/* Resubmit Button */}
-                <View className="flex-1">
-                  <TouchableOpacity
-                    onPress={handleResubmit}
-                    className="bg-warning rounded-lg px-3 py-2 min-h-[36px] items-center justify-center flex-row active:opacity-80 active:scale-95"
-                  >
-                    <Text className="text-white text-sm font-semibold">
-                      Resubmit
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+              {/* Resubmit Button */}
+              <View className="flex-1">
+                <TouchableOpacity
+                  onPress={handleResubmit}
+                  className="bg-warning rounded-lg px-3 py-2 min-h-[36px] items-center justify-center flex-row active:opacity-80 active:scale-95"
+                >
+                  <Text className="text-white text-sm font-semibold">
+                    Resubmit
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
-          </Animated.View>
-        </PremiumCard>
-      </TouchableOpacity>
-
-      {/* Resubmit Request Modal */}
-      <ResubmitRequestModal
-        visible={showResubmitModal}
-        onClose={() => setShowResubmitModal(false)}
-        onSubmit={handleResubmitSubmit}
-        requestData={{
-          id,
-          itemRequested,
-          quantity: '20', // Mock data
-          reasonForRequest: 'For the two new designers starting Monday. They need it to unlock their creativity!',
-          phoneNo: '0123456789',
-          dateNeededBy: new Date('2024-10-28'),
-          priority: priority as 'Low' | 'Medium' | 'High',
-          chargeToDepartment: 'Design Department',
-          attachments: [],
-        }}
-      />
-    </>
+          </View>
+        </Animated.View>
+      </PremiumCard>
+    </TouchableOpacity>
   );
 }
