@@ -5,6 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { RequestCard } from '@/components/ui/RequestCard';
 import { PremiumCard } from '@/components/ui/PremiumCard';
 import { NewRequestModal } from '@/components/modals/NewRequestModal';
+import { ResubmitRequestModal } from '@/components/modals/ResubmitRequestModal';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 export default function RequestsScreen() {
@@ -73,6 +74,11 @@ export default function RequestsScreen() {
     // Here you would typically send the data to your backend
   };
 
+  const handleResubmitRequest = (requestId: string, requestData: any) => {
+    console.log('Resubmit request for:', requestId, requestData);
+    // Here you would typically send the resubmit data to your backend
+    // You might want to update the request status or create a new request
+  };
   return (
     <SafeAreaView className="flex-1 bg-bg-primary">
       <ScrollView 
@@ -179,6 +185,7 @@ export default function RequestsScreen() {
                 company={request.company}
                 isExpanded={expandedCard === request.id}
                 onToggle={() => handleCardToggle(request.id)}
+                onResubmit={(requestData) => handleResubmitRequest(request.id, requestData)}
               />
             </Animated.View>
           ))}

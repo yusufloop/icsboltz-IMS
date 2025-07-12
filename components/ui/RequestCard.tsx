@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Animated, { 
@@ -10,6 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { PremiumCard } from './PremiumCard';
 import { PremiumButton } from './PremiumButton';
+import { ResubmitRequestModal } from '../modals/ResubmitRequestModal';
 
 interface RequestCardProps {
   id: string;
@@ -21,6 +23,7 @@ interface RequestCardProps {
   company?: string;
   isExpanded: boolean;
   onToggle: () => void;
+  onResubmit?: (requestData: any) => void;
 }
 
 export function RequestCard({
@@ -33,8 +36,10 @@ export function RequestCard({
   company,
   isExpanded,
   onToggle,
+  onResubmit,
 }: RequestCardProps) {
   const expandedHeight = useSharedValue(0);
+  const [showResubmitModal, setShowResubmitModal] = useState(false);
 
   React.useEffect(() => {
     expandedHeight.value = withTiming(isExpanded ? 1 : 0, {
@@ -78,7 +83,30 @@ export function RequestCard({
   };
 
   const handleResubmit = () => {
-    console.log('Resubmit action for', id);
+    setShowResubmitModal(true);
+  };
+
+  const handleResubmitSubmit = (requestData: any) => {
+    console.log('Resubmit request data:', requestData);
+    setShowResubmitModal(false);
+    if (onResubmit) {
+      onResubmit(requestData);
+    }
+  };
+
+  // Create initial data for resubmit form based on current request
+  const getInitialResubmitData = () => {
+    return {
+      itemRequested: itemRequested || '',
+      quantity: '1', // Default quantity
+      reasonForRequest: '', // User should provide new reason
+      phoneNo: '', // User should provide phone
+      dateNeededBy: null, // User should select new date
+      priority: priority as 'Low' | 'Medium' | 'High' | null,
+      chargeToDepartment: company || '',
+      attachments: [],
+      comments: '', // New field for resubmission comments
+    };
   };
 
   return (
@@ -201,6 +229,14 @@ export function RequestCard({
             </View>
           </View>
         </Animated.View>
+
+        {/* Resubmit Modal */}
+        <ResubmitRequestModal
+          visible={showResubmitModal}
+          onClose={() => setShowResubmitModal(false)}
+          onSubmit={handleResubmitSubmit}
+          initialData={getInitialResubmitData()}
+        />
       </PremiumCard>
     </TouchableOpacity>
   );
