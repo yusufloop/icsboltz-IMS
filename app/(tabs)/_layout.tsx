@@ -42,12 +42,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="new-request"
-        options={{
-          href: null, // This hides it from the tab bar
-        }}
-      />
-      <Tabs.Screen
         name="scan"
         options={{
           title: 'Scan',

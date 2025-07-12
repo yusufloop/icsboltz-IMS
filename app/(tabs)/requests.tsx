@@ -61,7 +61,9 @@ export default function RequestsScreen() {
     setExpandedCard(expandedCard === cardId ? null : cardId);
   };
 
-  const { router } = require('expo-router');
+  const handleCreateRequest = () => {
+    console.log('Create new request - functionality to be implemented');
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-bg-primary">
@@ -142,7 +144,7 @@ export default function RequestsScreen() {
 
           <TouchableOpacity 
             className="bg-primary rounded-full w-10 h-10 items-center justify-center shadow-md active:opacity-80 active:scale-95"
-            onPress={() => router.push('/(tabs)/new-request')}
+            onPress={handleCreateRequest}
           >
             <MaterialIcons 
               name="add" 
