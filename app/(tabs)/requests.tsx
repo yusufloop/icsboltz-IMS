@@ -4,10 +4,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { RequestCard } from '@/components/ui/RequestCard';
 import { PremiumCard } from '@/components/ui/PremiumCard';
+import { NewRequestModal } from '@/components/modals/NewRequestModal';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 export default function RequestsScreen() {
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
+  const [showNewRequestModal, setShowNewRequestModal] = useState(false);
 
   const requests = [
     { 
@@ -62,7 +64,13 @@ export default function RequestsScreen() {
   };
 
   const handleCreateRequest = () => {
-    console.log('Create new request - functionality to be implemented');
+    setShowNewRequestModal(true);
+  };
+
+  const handleNewRequestSubmit = (requestData: any) => {
+    console.log('New request submitted:', requestData);
+    setShowNewRequestModal(false);
+    // Here you would typically send the data to your backend
   };
 
   return (
@@ -176,6 +184,13 @@ export default function RequestsScreen() {
           ))}
         </View>
       </ScrollView>
+
+      {/* New Request Modal */}
+      <NewRequestModal
+        visible={showNewRequestModal}
+        onClose={() => setShowNewRequestModal(false)}
+        onSubmit={handleNewRequestSubmit}
+      />
     </SafeAreaView>
   );
 }
