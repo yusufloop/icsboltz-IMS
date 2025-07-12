@@ -1,12 +1,12 @@
+import { useAuth } from '@/hooks/useAuth';
+import { ArrowLeft } from 'lucide-react';
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ArrowLeft } from 'lucide-react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AuthButton } from './AuthButton';
 import { AuthCard } from './AuthCard';
 import { AuthInput } from './AuthInput';
-import { AuthButton } from './AuthButton';
 import { ErrorMessage } from './ErrorMessage';
 import { SuccessMessage } from './SuccessMessage';
-import { useAuth } from '@/hooks/useAuth';
 
 interface ForgotPasswordFormProps {
   onNavigateToLogin: () => void;

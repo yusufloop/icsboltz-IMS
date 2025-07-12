@@ -1,10 +1,10 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Star } from 'lucide-react-native';
+import { BookingCard } from '@/components/BookingCard';
 import { CircularProgress } from '@/components/CircularProgress';
 import { InvoiceItem } from '@/components/InvoiceItem';
-import { BookingCard } from '@/components/BookingCard';
+import { Star } from 'lucide-react';
+import React from 'react';
+import { ScrollView, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function DashboardScreen() {
   const invoices = [

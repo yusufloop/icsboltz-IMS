@@ -1,6 +1,6 @@
+import { AlertCircle } from 'lucide-react';
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { AlertCircle } from 'lucide-react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 interface ErrorMessageProps {
   message: string;

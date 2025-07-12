@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
+import { Calendar, Home, MoreHorizontal, User } from 'lucide-react';
 import React from 'react';
 import { Platform } from 'react-native';
-import { Home, Calendar, User, MoreHorizontal } from 'lucide-react-native';
 
 import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/ui/TabBarBackground';

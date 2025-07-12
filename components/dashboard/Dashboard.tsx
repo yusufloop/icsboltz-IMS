@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { LogOut, User, Settings, Bell, Activity, Calendar } from 'lucide-react-native';
 import { useAuth } from '@/hooks/useAuth';
+import { Activity, Bell, Calendar, LogOut, Settings, User } from 'lucide-react';
+import React from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export function Dashboard() {
   const { user, logout, isLoading } = useAuth();

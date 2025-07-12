@@ -1,6 +1,6 @@
+import { CheckCircle } from 'lucide-react';
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { CheckCircle } from 'lucide-react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 interface SuccessMessageProps {
   message: string;
