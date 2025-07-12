@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Plus, Search, Filter } from 'lucide-react-native';
+import { Plus, Search, ListFilter as Filter } from 'lucide-react-native';
 import { router } from 'expo-router';
 
 interface ChargeItem {
