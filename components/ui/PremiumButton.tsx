@@ -50,7 +50,7 @@ export function PremiumButton({
         baseClasses += ' bg-primary';
         break;
       case 'secondary':
-        baseClasses += ' bg-bg-secondary border border-gray-300';
+        baseClasses += ' bg-gray-100 border border-gray-300';
         break;
       case 'destructive':
         baseClasses += ' bg-destructive';
@@ -89,7 +89,7 @@ export function PremiumButton({
         textClasses += ' text-white';
         break;
       case 'secondary':
-        textClasses += ' text-text-primary';
+        textClasses += ' text-gray-600';
         break;
       case 'ghost':
         textClasses += ' text-primary';
@@ -104,7 +104,7 @@ export function PremiumButton({
       {loading && (
         <ActivityIndicator 
           size="small" 
-          color={variant === 'secondary' || variant === 'ghost' ? '#0A84FF' : '#FFFFFF'}
+          color={variant === 'secondary' || variant === 'ghost' ? '#6B7280' : '#FFFFFF'}
           className="mr-2"
         />
       )}
