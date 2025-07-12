@@ -2,6 +2,34 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+## 🎨 Premium Design System
+
+This app features a comprehensive design system called "Effortless Premium" inspired by Apple's Human Interface Guidelines. The design philosophy focuses on:
+
+- **Clean & Intuitive**: Meticulous use of space, typography, and subtle interactions
+- **High Quality**: Premium feel through attention to detail
+- **Consistent**: Unified color palette, spacing, and component styling
+- **Accessible**: Strong contrast ratios and readable typography
+
+### Design System Features
+
+- **Color Palette**: Primary action blue (#0A84FF), semantic status colors, and carefully chosen backgrounds
+- **Typography**: System font stack with proper hierarchy and line heights
+- **Spacing**: 4px grid system for consistent layouts
+- **Components**: Premium buttons, cards, inputs, and status badges
+- **Animations**: Subtle micro-interactions and purposeful motion
+- **Gradients**: Tasteful gradients for CTAs and decorative elements
+- **Glassmorphism**: Frosted glass effects for overlays and modals
+
+### Component Library
+
+- `PremiumButton` - Animated buttons with multiple variants
+- `PremiumCard` - Elevated cards with shadow and glass variants
+- `PremiumInput` - Animated form inputs with focus states
+- `PremiumStatusBadge` - Status indicators with semantic colors
+- `PremiumGradientBackground` - Gradient containers
+- `PremiumGlassCard` - Glassmorphism effect cards
+
 ## Get started
 
 1. Install dependencies
