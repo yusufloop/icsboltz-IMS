@@ -20,8 +20,8 @@ export default function DemurrageChargeScreen() {
     // Handle the add functionality here
     Alert.alert('Success', `Demurrage charge of ${demurrageCharge} has been added`);
     
-    // Navigate back after successful addition
-    router.back();
+    // Navigate to charges page after successful addition
+    router.push('/(tabs)/user');
   };
 
   return (
