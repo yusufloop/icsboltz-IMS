@@ -2,13 +2,18 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '@/hooks/useAuth';
 
 export function Dashboard() {
-  const { user, logout, isLoading } = useAuth();
+  // Mock user data for UI development
+  const mockUser = {
+    first_name: 'John',
+    last_name: 'Doe',
+    email: 'john.doe@example.com',
+    email_verified: true
+  };
 
-  const handleLogout = async () => {
-    await logout();
+  const handleLogout = () => {
+    console.log('Logout clicked (disabled)');
   };
 
   const stats = [
@@ -39,14 +44,13 @@ export function Dashboard() {
               Welcome back,
             </Text>
             <Text className="text-gray-900 text-xl font-inter-bold mt-1">
-              {user?.first_name} {user?.last_name}
+              {mockUser.first_name} {mockUser.last_name}
             </Text>
           </View>
           
           <TouchableOpacity 
             className="p-2 rounded-lg bg-gray-100 active:bg-gray-200"
             onPress={handleLogout}
-            disabled={isLoading}
           >
             <Ionicons name="log-out" size={20} color="#6b7280" />
           </TouchableOpacity>
@@ -58,22 +62,23 @@ export function Dashboard() {
             {/* Avatar */}
             <View className="w-16 h-16 bg-blue-500 rounded-full items-center justify-center">
               <Text className="text-white text-xl font-inter-bold">
-                {user?.first_name?.[0]}{user?.last_name?.[0]}
+                {mockUser.first_name[0]}{mockUser.last_name[0]}
               </Text>
             </View>
             
             {/* User Details */}
             <View className="flex-1 ml-4">
               <Text className="text-gray-900 text-lg font-inter-semibold">
-                {user?.first_name} {user?.last_name}
+                {mockUser.first_name} {mockUser.last_name}
               </Text>
               <Text className="text-gray-500 text-sm font-inter-regular mt-1">
-                {user?.email}
+                {mockUser.email}
               </Text>
+              
               <View className="flex-row items-center mt-2">
-                <View className="w-2 h-2 bg-green-500 rounded-full mr-2" />
-                <Text className="text-green-600 text-xs font-inter-regular">
-                  {user?.email_verified ? 'Verified' : 'Unverified'}
+                <Text className="text-sm text-text-secondary mr-2">Status</Text>
+                <Text className={`text-sm font-medium ${mockUser.email_verified ? 'text-green-600' : 'text-red-600'}`}>
+                  {mockUser.email_verified ? 'Verified' : 'Unverified'}
                 </Text>
               </View>
             </View>
