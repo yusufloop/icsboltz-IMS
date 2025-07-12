@@ -1,34 +1,52 @@
 import React from 'react';
-import { View, ViewStyle } from 'react-native';
+import { View, ViewProps } from 'react-native';
 
-interface PremiumCardProps {
+interface PremiumCardProps extends ViewProps {
   children: React.ReactNode;
   variant?: 'default' | 'glass';
-  style?: ViewStyle;
+  /**
+   * Tailwind CSS padding classes. Defaults to 'p-4'.
+   * Provide an empty string ('') for no padding.
+   */
+  padding?: string;
+  /**
+   * Additional Tailwind CSS classes to apply to the card.
+   */
+  className?: string;
 }
 
+/**
+ * A foundational card component based on the "Effortless Premium" design system.
+ * It provides the core visual style (background, shadow, border radius)
+ * and allows for flexible internal padding.
+ */
 export function PremiumCard({
   children,
   variant = 'default',
+  padding = 'p-4', // -> Defaults to 'p-4' as per the design system
+  className = '',   // -> Allows passing additional classes
   style,
+  ...props
 }: PremiumCardProps) {
-  const getCardClasses = () => {
-    let baseClasses = 'rounded-lg p-4'; // As specified: rounded-lg, p-4 internal padding
-    
-    switch (variant) {
-      case 'default':
-        baseClasses += ' bg-bg-secondary shadow-md'; // bg-secondary with shadow-md
-        break;
-      case 'glass':
-        baseClasses += ' bg-white/80 backdrop-blur-lg border border-white/20'; // Glassmorphism
-        break;
-    }
-    
-    return baseClasses;
-  };
+
+  // Combines all classes in a predictable order
+  const finalClasses = [
+    // Core styles
+    'rounded-lg',
+
+    // Variant styles
+    variant === 'default' && 'bg-bg-secondary shadow-md',
+    variant === 'glass' && 'bg-white/80 backdrop-blur-lg border border-white/20',
+
+    // Layout styles
+    padding,    // The padding prop, which can be overridden
+    className,  // Any custom classes from the parent
+  ]
+  .filter(Boolean) // Removes any false/null/undefined values
+  .join(' ');
 
   return (
-    <View className={getCardClasses()} style={style}>
+    <View className={finalClasses} style={style} {...props}>
       {children}
     </View>
   );
