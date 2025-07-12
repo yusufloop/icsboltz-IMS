@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Star, ChevronRight, MessageCircle } from 'lucide-react-native';
+import { router } from 'expo-router';
 
 export default function MoreScreen() {
   const handleDemurrageCharge = () => {
@@ -9,95 +10,41 @@ export default function MoreScreen() {
   };
 
   const handleHelpSupport = () => {
-    // Handle help & support navigation
+    // Navigate to help & support
     console.log('Navigate to Help & Support');
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={styles.header}>
-          <Ionicons name="star" size={24} color="#000" />
-          <Text style={styles.headerTitle}>More</Text>
+        <View className="flex-row items-center px-6 py-4 bg-gray-50">
+          <Star size={24} color="#000" />
+          <Text className="text-xl font-bold text-gray-900 ml-3">More</Text>
         </View>
 
-        {/* Menu Items */}
-        <View style={styles.menuContainer}>
-          {/* Demurrage Charge */}
-          <TouchableOpacity style={styles.menuItem} onPress={handleDemurrageCharge}>
-            <Text style={styles.menuItemText}>Demurrage Charge</Text>
-            <Ionicons name="chevron-forward" size={20} color="#666" />
-          </TouchableOpacity>
+        {/* Content */}
+        <View className="flex-1 pt-5">
+          {/* Demurrage Charge Section */}
+          <View className="bg-white mx-5 mb-5 rounded-3xl overflow-hidden">
+            <TouchableOpacity className="flex-row items-center justify-between px-5 py-4 bg-white min-h-14" onPress={handleDemurrageCharge}>
+              <Text className="text-base text-black font-normal">Demurrage Charge</Text>
+              <ChevronRight size={20} color="#C7C7CC" />
+            </TouchableOpacity>
+          </View>
 
-          <View style={styles.separator} />
-
-          {/* Help & Support */}
-          <TouchableOpacity style={styles.menuItem} onPress={handleHelpSupport}>
-            <View style={styles.menuItemLeft}>
-              <Ionicons name="chatbubble-outline" size={20} color="#666" style={styles.menuIcon} />
-              <Text style={styles.menuItemText}>Help & Support</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#666" />
-          </TouchableOpacity>
+          {/* Help & Support Section */}
+          <View className="bg-white mx-5 mb-5 rounded-3xl overflow-hidden">
+            <TouchableOpacity className="flex-row items-center justify-between px-5 py-4 bg-white min-h-14" onPress={handleHelpSupport}>
+              <View className="flex-row items-center flex-1">
+                <MessageCircle size={20} color="#8E8E93" className="mr-3" />
+                <Text className="text-base text-black font-normal">Help & Support</Text>
+              </View>
+              <ChevronRight size={20} color="#C7C7CC" />
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: '#f5f5f5',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    marginLeft: 12,
-    color: '#000',
-  },
-  menuContainer: {
-    backgroundColor: '#fff',
-    marginTop: 20,
-    marginHorizontal: 20,
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: '#fff',
-  },
-  menuItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  menuIcon: {
-    marginRight: 12,
-  },
-  menuItemText: {
-    fontSize: 16,
-    color: '#000',
-    fontWeight: '400',
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#e5e5e5',
-    marginLeft: 20,
-  },
-});

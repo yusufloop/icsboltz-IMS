@@ -52,15 +52,13 @@ export default function ChargesScreen() {
   };
 
   const handleEditCharge = (id: string) => {
-    // Navigate to demurrage charge form for editing
-    router.push({
-      pathname: '/(tabs)/demurrage/charge',
-      params: { editId: id }
-    });
+    // Navigate to a charge edit form (placeholder for now)
+    console.log('Edit charge:', id);
   };
 
   const filteredCharges = charges.filter(charge =>
-    charge.location.toLowerCase().includes(searchText.toLowerCase())
+    // Navigate to add charge form (placeholder for now)
+    console.log('Add new charge');
   );
 
   return (

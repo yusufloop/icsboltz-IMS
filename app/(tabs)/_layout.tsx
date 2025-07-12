@@ -41,13 +41,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="demurrage"
-        options={{
-          title: 'Demurrage',
-          tabBarIcon: ({ color }) => <Truck size={24} color={color} />,
-        }}
-      />
-      <Tabs.Screen
         name="user"
         options={{
           title: 'Charges',
