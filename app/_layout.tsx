@@ -1,4 +1,5 @@
-import { useFrameworkReady } from '@/hooks/useFrameworkReady'import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useFrameworkReady } from '@/hooks/useFrameworkReady';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import {
   Inter_400Regular,
@@ -13,7 +14,6 @@ import 'react-native-reanimated';
 import '../global.css';
 
 import { useColorScheme } from '@/hooks/useColorScheme'
-import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
