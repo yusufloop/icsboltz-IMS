@@ -23,7 +23,7 @@ interface RequestCardProps {
   company?: string;
   isExpanded: boolean;
   onToggle: () => void;
-  onResubmit?: (requestId: string, initialData: any) => void;
+  onResubmit?: (requestData: any) => void;
 }
 
 export function RequestCard({
@@ -39,6 +39,7 @@ export function RequestCard({
   onResubmit,
 }: RequestCardProps) {
   const expandedHeight = useSharedValue(0);
+  const [showResubmitModal, setShowResubmitModal] = useState(false);
 
   React.useEffect(() => {
     expandedHeight.value = withTiming(isExpanded ? 1 : 0, {
@@ -82,12 +83,16 @@ export function RequestCard({
   };
 
   const handleResubmit = () => {
-    if (onResubmit) {
-      const initialData = getInitialResubmitData();
-      onResubmit(id, initialData);
-    }
+    setShowResubmitModal(true);
   };
 
+  const handleResubmitSubmit = (requestData: any) => {
+    console.log('Resubmit request data:', requestData);
+    setShowResubmitModal(false);
+    if (onResubmit) {
+      onResubmit(requestData);
+    }
+  };
 
   // Create initial data for resubmit form based on current request
   const getInitialResubmitData = () => {
@@ -225,6 +230,13 @@ export function RequestCard({
           </View>
         </Animated.View>
 
+        {/* Resubmit Modal */}
+        <ResubmitRequestModal
+          visible={showResubmitModal}
+          onClose={() => setShowResubmitModal(false)}
+          onSubmit={handleResubmitSubmit}
+          initialData={getInitialResubmitData()}
+        />
       </PremiumCard>
     </TouchableOpacity>
   );

@@ -71,10 +71,6 @@ export function ResubmitRequestModal({ visible, onClose, onSubmit, initialData }
   useEffect(() => {
     if (visible) {
       setFormData(initialData);
-      // Reset picker states when modal opens
-      setShowDatePicker(false);
-      setShowPriorityPicker(false);
-      setShowDepartmentPicker(false);
     }
   }, [initialData, visible]);
 
