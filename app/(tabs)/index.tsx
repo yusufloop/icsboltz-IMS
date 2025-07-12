@@ -1,10 +1,10 @@
-import { BookingCard } from '@/components/BookingCard';
-import { CircularProgress } from '@/components/CircularProgress';
-import { InvoiceItem } from '@/components/InvoiceItem';
-import { Star } from 'lucide-react';
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { BookingCard } from '@/components/BookingCard';
+import { CircularProgress } from '@/components/CircularProgress';
+import { InvoiceItem } from '@/components/InvoiceItem';
 
 export default function DashboardScreen() {
   const invoices = [
@@ -30,7 +30,7 @@ export default function DashboardScreen() {
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View className="flex-row items-center px-6 py-4 bg-white">
-          <Star size={24} color="#000" />
+          <Ionicons name="star" size={24} color="#000" />
           <Text className="text-xl font-bold text-gray-900 ml-3">Dashboard</Text>
         </View>
 
