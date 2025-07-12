@@ -62,7 +62,7 @@ export default function RequestsScreen() {
   };
 
   const handleCreateRequest = () => {
-    console.log('Create new request');
+    router.push('/(tabs)/new-request');
   };
 
   return (
