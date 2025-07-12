@@ -33,11 +33,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="bookings"
+        name="requests"
         options={{
-          title: 'Bookings',
+          title: 'My Requests',
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="event" size={24} color={color} />
+            <MaterialIcons name="assignment" size={24} color={color} />
           ),
         }}
       />
@@ -56,15 +56,6 @@ export default function TabLayout() {
           title: 'More',
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="more-horiz" size={24} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="new-request"
-        options={{
-          title: 'New Request',
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="add" size={24} color={color} />
           ),
         }}
       />
