@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Calendar, Home, MoreHorizontal, User } from 'lucide-react';
+import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Platform } from 'react-native';
 
@@ -30,12 +30,8 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Dashboard',
-          tabBarIcon: ({ color, focused }) => (
-            <Home 
-              size={24} 
-              color={color}
-              fill={focused ? color : 'none'}
-            />
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="home" size={24} color={color} />
           ),
         }}
       />
@@ -43,12 +39,8 @@ export default function TabLayout() {
         name="bookings"
         options={{
           title: 'Bookings',
-          tabBarIcon: ({ color, focused }) => (
-            <Calendar 
-              size={24} 
-              color={color}
-              fill={focused ? color : 'none'}
-            />
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="event" size={24} color={color} />
           ),
         }}
       />
@@ -56,12 +48,8 @@ export default function TabLayout() {
         name="user"
         options={{
           title: 'User',
-          tabBarIcon: ({ color, focused }) => (
-            <User 
-              size={24} 
-              color={color}
-              fill={focused ? color : 'none'}
-            />
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="person" size={24} color={color} />
           ),
         }}
       />
@@ -69,12 +57,8 @@ export default function TabLayout() {
         name="more"
         options={{
           title: 'More',
-          tabBarIcon: ({ color, focused }) => (
-            <MoreHorizontal 
-              size={24} 
-              color={color}
-              fill={focused ? color : 'none'}
-            />
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="more-horiz" size={24} color={color} />
           ),
         }}
       />
