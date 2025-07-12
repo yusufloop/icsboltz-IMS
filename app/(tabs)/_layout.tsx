@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
-import { Home, Calendar, User, MoreHorizontal } from 'lucide-react-native';
+import { Home, Calendar, User, MoreHorizontal, Truck } from 'lucide-react-native';
 
 import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/ui/TabBarBackground';
@@ -38,6 +38,13 @@ export default function TabLayout() {
         options={{
           title: 'Bookings',
           tabBarIcon: ({ color }) => <Calendar size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="demurrage"
+        options={{
+          title: 'Demurrage',
+          tabBarIcon: ({ color }) => <Truck size={24} color={color} />,
         }}
       />
       <Tabs.Screen
