@@ -79,7 +79,6 @@ export function RequestCard({
 
   const handleResubmit = () => {
     console.log('Resubmit action for', id);
-    // Handle resubmit logic here
   };
 
   return (

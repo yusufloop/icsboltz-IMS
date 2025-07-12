@@ -1,17 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function MoreScreen() {
   const handleDemurrageCharge = () => {
-    // Handle demurrage charge navigation
     console.log('Navigate to Demurrage Charge');
   };
 
   const handleHelpSupport = () => {
-    // Handle help & support navigation
     console.log('Navigate to Help & Support');
   };
 

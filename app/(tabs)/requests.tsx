@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialIcons } from '@expo/vector-icons';
 import { RequestCard } from '@/components/ui/RequestCard';
 import { PremiumCard } from '@/components/ui/PremiumCard';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -59,6 +58,10 @@ export default function RequestsScreen() {
 
   const handleCardToggle = (cardId: string) => {
     setExpandedCard(expandedCard === cardId ? null : cardId);
+  };
+
+  const handleCreateRequest = () => {
+    console.log('Create new request - functionality to be implemented');
   };
 
   return (
@@ -140,6 +143,7 @@ export default function RequestsScreen() {
 
           <TouchableOpacity 
             className="bg-primary rounded-full w-10 h-10 items-center justify-center shadow-md active:opacity-80 active:scale-95"
+            onPress={handleCreateRequest}
           >
             <MaterialIcons 
               name="add" 
