@@ -1,6 +1,6 @@
 When generating code use this Global design philosophy/prompt ."Generate a comprehensive global design system and theme for a professional Expo/Tailwind CSS application. The core design philosophy is "Effortless Premium" — inspired by Apple's Human Interface Guidelines. The UI must feel clean, intuitive, and high-quality through the meticulous use of space, typography, and subtle interactions.
 
-#Tech Stack: Must use Expo and Tailwind CSS.make changes  without making a new folder or file that has the same name as the one originally in the app
+#Tech Stack: Must use Expo and Tailwind CSS.make changes  without making a new folder or file that has the same name as the one originally in the app. 
 
 1. Color Palette (The Foundation):
 Primary Action: A strong, accessible Blue for all interactive elements (buttons, active tabs, links). Example: [#0A84FF]
