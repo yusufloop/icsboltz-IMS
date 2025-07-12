@@ -84,25 +84,23 @@ export function RequestCard({
   return (
     <View className="mb-3">
       <PremiumCard>
-        {/* Top Row */}
-        <TouchableOpacity 
-          onPress={onToggle}
-          activeOpacity={0.8}
-          className="flex-row items-center justify-between mb-3"
-        >
+        {/* Top Row - Make only text areas tappable */}
+        <View className="flex-row items-center justify-between mb-3">
+          <TouchableOpacity onPress={onToggle} activeOpacity={0.8} className="flex-1">
+            <Text className="text-lg font-bold text-text-primary">
+              {id}
+            </Text>
+          </TouchableOpacity>
           <Text className="text-lg font-bold text-text-primary">
-            {id}
-          </Text>
-          <Text className="text-sm text-text-secondary">
             {date}
           </Text>
-        </TouchableOpacity>
+        </View>
 
         {/* Standard Details */}
         <TouchableOpacity 
           onPress={onToggle}
           activeOpacity={0.8}
-          className="space-y-2"
+          className="space-y-2 mb-3"
         >
           <View className="flex-row items-center">
             <Text className="text-sm text-text-secondary mr-2">Status</Text>

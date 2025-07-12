@@ -124,6 +124,7 @@ export function NewRequestModal({ visible, onClose, onSubmit }: NewRequestModalP
       animationType="slide"
       presentationStyle="pageSheet"
       onRequestClose={onClose}
+      transparent={false}
     >
       <SafeAreaView className="flex-1 bg-bg-primary">
         <KeyboardAvoidingView 
@@ -133,11 +134,12 @@ export function NewRequestModal({ visible, onClose, onSubmit }: NewRequestModalP
           {/* Header */}
           <Animated.View 
             entering={FadeInDown.delay(100).duration(300)}
-            className="flex-row items-center px-4 py-3"
+            className="flex-row items-center px-4 py-3 bg-bg-secondary border-b border-gray-200"
           >
             <TouchableOpacity 
               onPress={onClose}
               className="p-2 -ml-2 mr-2 active:opacity-70"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <MaterialIcons name="arrow-back" size={28} color="#1C1C1E" />
             </TouchableOpacity>

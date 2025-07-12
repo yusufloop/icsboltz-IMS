@@ -64,6 +64,7 @@ export default function RequestsScreen() {
   };
 
   const handleCreateRequest = () => {
+    console.log('Create request button pressed'); // Debug log
     setShowNewRequestModal(true);
   };
 
@@ -73,6 +74,10 @@ export default function RequestsScreen() {
     // Here you would typically send the data to your backend
   };
 
+  const handleCloseModal = () => {
+    console.log('Modal close requested'); // Debug log
+    setShowNewRequestModal(false);
+  };
   return (
     <SafeAreaView className="flex-1 bg-bg-primary">
       <ScrollView 
@@ -153,6 +158,7 @@ export default function RequestsScreen() {
           <TouchableOpacity 
             className="bg-primary rounded-full w-10 h-10 items-center justify-center shadow-md active:opacity-80 active:scale-95"
             onPress={handleCreateRequest}
+            style={{ zIndex: 1000 }} // Ensure button is above other elements
           >
             <MaterialIcons 
               name="add" 
@@ -188,7 +194,7 @@ export default function RequestsScreen() {
       {/* New Request Modal */}
       <NewRequestModal
         visible={showNewRequestModal}
-        onClose={() => setShowNewRequestModal(false)}
+        onClose={handleCloseModal}
         onSubmit={handleNewRequestSubmit}
       />
     </SafeAreaView>
