@@ -1,16 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, Text, ActivityIndicator, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withSpring,
-  withTiming,
-  runOnJS
-} from 'react-native-reanimated';
-import { DesignSystem } from '@/constants/DesignSystem';
-
-const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 interface PremiumButtonProps {
   title: string;
@@ -20,9 +10,7 @@ interface PremiumButtonProps {
   loading?: boolean;
   disabled?: boolean;
   style?: ViewStyle;
-  textStyle?: TextStyle;
   icon?: React.ReactNode;
-  iconPosition?: 'left' | 'right';
 }
 
 export function PremiumButton({
@@ -33,93 +21,82 @@ export function PremiumButton({
   loading = false,
   disabled = false,
   style,
-  textStyle,
   icon,
-  iconPosition = 'left',
 }: PremiumButtonProps) {
-  const scale = useSharedValue(1);
-  const opacity = useSharedValue(1);
-
-  const handlePressIn = () => {
-    scale.value = withSpring(DesignSystem.animation.pressScale, {
-      duration: DesignSystem.animation.duration.fast,
-    });
-    opacity.value = withTiming(DesignSystem.animation.opacity.pressed, {
-      duration: DesignSystem.animation.duration.fast,
-    });
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1, {
-      duration: DesignSystem.animation.duration.fast,
-    });
-    opacity.value = withTiming(1, {
-      duration: DesignSystem.animation.duration.fast,
-    });
-  };
-
-  const handlePress = () => {
-    if (!disabled && !loading) {
-      runOnJS(onPress)();
-    }
-  };
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-    opacity: opacity.value,
-  }));
-
-  const getButtonStyles = () => {
-    const baseStyles = [styles.button, styles[size]];
+  const getButtonClasses = () => {
+    let baseClasses = 'rounded-lg items-center justify-center flex-row';
     
-    if (disabled || loading) {
-      baseStyles.push(styles.disabled);
+    // Size classes
+    switch (size) {
+      case 'sm':
+        baseClasses += ' px-3 py-2 min-h-[36px]';
+        break;
+      case 'lg':
+        baseClasses += ' px-6 py-4 min-h-[52px]';
+        break;
+      default: // md
+        baseClasses += ' px-4 py-3 min-h-[44px]';
     }
-
+    
+    // Variant classes
+    if (disabled || loading) {
+      baseClasses += ' opacity-50';
+    } else {
+      baseClasses += ' active:opacity-80 active:scale-95';
+    }
+    
     switch (variant) {
       case 'primary':
-        baseStyles.push(styles.primary);
+        baseClasses += ' bg-primary';
         break;
       case 'secondary':
-        baseStyles.push(styles.secondary);
+        baseClasses += ' bg-bg-secondary border border-gray-300';
         break;
       case 'destructive':
-        baseStyles.push(styles.destructive);
+        baseClasses += ' bg-destructive';
         break;
       case 'ghost':
-        baseStyles.push(styles.ghost);
+        baseClasses += ' bg-transparent';
         break;
       case 'gradient':
         // Gradient styling handled by LinearGradient component
-        baseStyles.push(styles.gradient);
         break;
     }
-
-    return baseStyles;
+    
+    return baseClasses;
   };
 
-  const getTextStyles = () => {
-    const baseTextStyles = [styles.text, styles[`${size}Text`]];
+  const getTextClasses = () => {
+    let textClasses = 'font-semibold';
     
+    // Size-based text classes
+    switch (size) {
+      case 'sm':
+        textClasses += ' text-sm';
+        break;
+      case 'lg':
+        textClasses += ' text-lg';
+        break;
+      default: // md
+        textClasses += ' text-base';
+    }
+    
+    // Color classes based on variant
     switch (variant) {
       case 'primary':
-        baseTextStyles.push(styles.primaryText);
+      case 'destructive':
+      case 'gradient':
+        textClasses += ' text-white';
         break;
       case 'secondary':
-        baseTextStyles.push(styles.secondaryText);
-        break;
-      case 'destructive':
-        baseTextStyles.push(styles.destructiveText);
+        textClasses += ' text-text-primary';
         break;
       case 'ghost':
-        baseTextStyles.push(styles.ghostText);
-        break;
-      case 'gradient':
-        baseTextStyles.push(styles.gradientText);
+        textClasses += ' text-primary';
         break;
     }
-
-    return baseTextStyles;
+    
+    return textClasses;
   };
 
   const renderContent = () => (
@@ -127,143 +104,46 @@ export function PremiumButton({
       {loading && (
         <ActivityIndicator 
           size="small" 
-          color={variant === 'secondary' || variant === 'ghost' ? DesignSystem.colors.primary[500] : DesignSystem.colors.text.inverse}
-          style={styles.loader}
+          color={variant === 'secondary' || variant === 'ghost' ? '#0A84FF' : '#FFFFFF'}
+          className="mr-2"
         />
       )}
-      {!loading && icon && iconPosition === 'left' && (
-        <>{icon}</>
-      )}
-      <Text style={[getTextStyles(), textStyle]}>
+      {!loading && icon && <>{icon}</>}
+      <Text className={getTextClasses()}>
         {title}
       </Text>
-      {!loading && icon && iconPosition === 'right' && (
-        <>{icon}</>
-      )}
     </>
   );
 
   if (variant === 'gradient') {
     return (
-      <AnimatedTouchableOpacity
-        style={[animatedStyle, style]}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        onPress={handlePress}
+      <TouchableOpacity
+        onPress={onPress}
         disabled={disabled || loading}
-        activeOpacity={1}
+        activeOpacity={0.8}
+        style={style}
       >
         <LinearGradient
-          colors={DesignSystem.gradients.primaryAction.colors}
-          start={DesignSystem.gradients.primaryAction.start}
-          end={DesignSystem.gradients.primaryAction.end}
-          style={getButtonStyles()}
+          colors={['#409CFF', '#0A84FF']} // primary-gradient
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          className={getButtonClasses()}
         >
           {renderContent()}
         </LinearGradient>
-      </AnimatedTouchableOpacity>
+      </TouchableOpacity>
     );
   }
 
   return (
-    <AnimatedTouchableOpacity
-      style={[animatedStyle, getButtonStyles(), style]}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      onPress={handlePress}
+    <TouchableOpacity
+      className={getButtonClasses()}
+      onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={1}
+      style={style}
     >
       {renderContent()}
-    </AnimatedTouchableOpacity>
+    </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: DesignSystem.components.borderRadius.lg,
-    ...DesignSystem.components.shadows.sm,
-  },
-  
-  // Size variants
-  sm: {
-    paddingHorizontal: DesignSystem.spacing.md,
-    paddingVertical: DesignSystem.spacing.sm,
-    minHeight: 36,
-    gap: DesignSystem.spacing.xs,
-  },
-  md: {
-    paddingHorizontal: DesignSystem.spacing.lg,
-    paddingVertical: DesignSystem.spacing.md,
-    minHeight: 44,
-    gap: DesignSystem.spacing.sm,
-  },
-  lg: {
-    paddingHorizontal: DesignSystem.spacing.xl,
-    paddingVertical: DesignSystem.spacing.lg,
-    minHeight: 52,
-    gap: DesignSystem.spacing.sm,
-  },
-  
-  // Style variants
-  primary: {
-    backgroundColor: DesignSystem.colors.primary[500],
-  },
-  secondary: {
-    backgroundColor: DesignSystem.colors.background.secondary,
-    borderWidth: 1,
-    borderColor: DesignSystem.colors.border.medium,
-  },
-  destructive: {
-    backgroundColor: DesignSystem.colors.destructive[500],
-  },
-  ghost: {
-    backgroundColor: 'transparent',
-  },
-  gradient: {
-    backgroundColor: 'transparent',
-  },
-  
-  disabled: {
-    opacity: DesignSystem.animation.opacity.disabled,
-  },
-  
-  // Text styles
-  text: {
-    fontFamily: 'Inter-SemiBold',
-    textAlign: 'center',
-  },
-  
-  smText: {
-    fontSize: DesignSystem.typography.sizes.sm,
-  },
-  mdText: {
-    fontSize: DesignSystem.typography.sizes.base,
-  },
-  lgText: {
-    fontSize: DesignSystem.typography.sizes.lg,
-  },
-  
-  primaryText: {
-    color: DesignSystem.colors.text.inverse,
-  },
-  secondaryText: {
-    color: DesignSystem.colors.text.primary,
-  },
-  destructiveText: {
-    color: DesignSystem.colors.text.inverse,
-  },
-  ghostText: {
-    color: DesignSystem.colors.primary[500],
-  },
-  gradientText: {
-    color: DesignSystem.colors.text.inverse,
-  },
-  
-  loader: {
-    marginRight: DesignSystem.spacing.xs,
-  },
-});

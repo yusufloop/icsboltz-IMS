@@ -5,7 +5,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { PremiumCard } from '@/components/ui/PremiumCard';
 import { PremiumStatusBadge } from '@/components/ui/PremiumStatusBadge';
 import { PremiumButton } from '@/components/ui/PremiumButton';
-import { DesignSystem } from '@/constants/DesignSystem';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 export default function BookingsScreen() {
@@ -18,180 +17,101 @@ export default function BookingsScreen() {
   ];
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: DesignSystem.colors.background.primary }}>
+    <SafeAreaView className="flex-1 bg-bg-primary">
       <ScrollView 
-        style={{ flex: 1 }}
+        className="flex-1"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
       >
         {/* Header */}
-        <View style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: DesignSystem.layout.screenPadding,
-          paddingVertical: DesignSystem.spacing.lg,
-          backgroundColor: DesignSystem.colors.background.secondary,
-          ...DesignSystem.components.shadows.sm,
-        }}>
+        <View className="flex-row items-center px-4 py-4 bg-bg-secondary shadow-md">
           <MaterialIcons 
             name="star" 
-            size={DesignSystem.components.iconSizes.md} 
-            color={DesignSystem.colors.primary[500]} 
+            size={24} 
+            color="#0A84FF" 
           />
-          <Text style={{
-            fontSize: DesignSystem.typography.sizes['2xl'],
-            fontFamily: 'Inter-Bold',
-            color: DesignSystem.colors.text.primary,
-            marginLeft: DesignSystem.spacing.md,
-          }}>
+          <Text className="text-2xl font-bold text-text-primary ml-3">
             Bookings
           </Text>
         </View>
 
         {/* Search Bar */}
-        <View style={{
-          paddingHorizontal: DesignSystem.layout.screenPadding,
-          paddingTop: DesignSystem.spacing.lg,
-        }}>
-          <PremiumCard variant="default" padding="none">
-            <View style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingHorizontal: DesignSystem.spacing.lg,
-              paddingVertical: DesignSystem.spacing.md,
-            }}>
+        <View className="px-4 pt-6">
+          <PremiumCard>
+            <View className="flex-row items-center">
               <MaterialIcons 
                 name="search" 
-                size={DesignSystem.components.iconSizes.sm} 
-                color={DesignSystem.colors.text.tertiary}
-                style={{ marginRight: DesignSystem.spacing.sm }}
+                size={20} 
+                color="#8A8A8E"
+                style={{ marginRight: 12 }}
               />
               <TextInput
                 placeholder="Search"
-                placeholderTextColor={DesignSystem.colors.text.tertiary}
-                style={{
-                  flex: 1,
-                  fontSize: DesignSystem.typography.sizes.base,
-                  fontFamily: 'Inter-Regular',
-                  color: DesignSystem.colors.text.primary,
-                }}
+                placeholderTextColor="#8A8A8E"
+                className="flex-1 text-base text-text-primary font-system"
               />
             </View>
           </PremiumCard>
         </View>
 
         {/* Filter Controls */}
-        <View style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingHorizontal: DesignSystem.layout.screenPadding,
-          paddingTop: DesignSystem.spacing.lg,
-          marginBottom: DesignSystem.spacing.lg,
-        }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: DesignSystem.spacing.lg }}>
-            <TouchableOpacity style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingVertical: DesignSystem.spacing.sm,
-            }}>
+        <View className="flex-row items-center justify-between px-4 pt-6 mb-6">
+          <View className="flex-row items-center space-x-6">
+            <TouchableOpacity className="flex-row items-center py-2 active:opacity-80">
               <MaterialIcons 
                 name="sort" 
-                size={DesignSystem.components.iconSizes.sm} 
-                color={DesignSystem.colors.text.secondary}
-                style={{ marginRight: DesignSystem.spacing.xs }}
+                size={20} 
+                color="#8A8A8E"
+                style={{ marginRight: 4 }}
               />
-              <Text style={{
-                fontSize: DesignSystem.typography.sizes.sm,
-                fontFamily: 'Inter-Regular',
-                color: DesignSystem.colors.text.secondary,
-              }}>
+              <Text className="text-sm text-text-secondary font-system">
                 Sort
               </Text>
               <MaterialIcons 
                 name="keyboard-arrow-down" 
-                size={DesignSystem.components.iconSizes.sm} 
-                color={DesignSystem.colors.text.secondary}
-                style={{ marginLeft: DesignSystem.spacing.xs }}
+                size={20} 
+                color="#8A8A8E"
+                style={{ marginLeft: 4 }}
               />
             </TouchableOpacity>
 
-            <TouchableOpacity style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingVertical: DesignSystem.spacing.sm,
-            }}>
+            <TouchableOpacity className="flex-row items-center py-2 active:opacity-80">
               <MaterialIcons 
                 name="filter-list" 
-                size={DesignSystem.components.iconSizes.sm} 
-                color={DesignSystem.colors.text.secondary}
-                style={{ marginRight: DesignSystem.spacing.xs }}
+                size={20} 
+                color="#8A8A8E"
+                style={{ marginRight: 4 }}
               />
-              <Text style={{
-                fontSize: DesignSystem.typography.sizes.sm,
-                fontFamily: 'Inter-Regular',
-                color: DesignSystem.colors.text.secondary,
-              }}>
+              <Text className="text-sm text-text-secondary font-system">
                 Filter
               </Text>
-              <View style={{
-                backgroundColor: DesignSystem.colors.primary[500],
-                borderRadius: DesignSystem.components.borderRadius.full,
-                width: 20,
-                height: 20,
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginLeft: DesignSystem.spacing.xs,
-              }}>
-                <Text style={{
-                  fontSize: DesignSystem.typography.sizes.xs,
-                  fontFamily: 'Inter-SemiBold',
-                  color: DesignSystem.colors.text.inverse,
-                }}>
+              <View className="bg-primary rounded-full w-5 h-5 items-center justify-center ml-2">
+                <Text className="text-white text-xs font-semibold">
                   2
                 </Text>
               </View>
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={{
-            backgroundColor: DesignSystem.colors.primary[500],
-            borderRadius: DesignSystem.components.borderRadius.full,
-            width: 40,
-            height: 40,
-            alignItems: 'center',
-            justifyContent: 'center',
-            ...DesignSystem.components.shadows.md,
-          }}>
+          <TouchableOpacity className="bg-primary rounded-full w-10 h-10 items-center justify-center shadow-md active:opacity-80 active:scale-95">
             <MaterialIcons 
               name="add" 
-              size={DesignSystem.components.iconSizes.md} 
-              color={DesignSystem.colors.text.inverse}
+              size={24} 
+              color="#FFFFFF"
             />
           </TouchableOpacity>
         </View>
 
         {/* Bookings List */}
-        <View style={{
-          paddingHorizontal: DesignSystem.layout.screenPadding,
-          gap: DesignSystem.spacing.md,
-        }}>
+        <View className="px-4 space-y-3">
           {bookings.map((booking, index) => (
             <Animated.View
               key={`${booking.id}-${index}`}
               entering={FadeInDown.delay(index * 100).duration(300)}
             >
-              <PremiumCard variant="elevated" padding="md">
-                <View style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}>
-                  <Text style={{
-                    fontSize: DesignSystem.typography.sizes.lg,
-                    fontFamily: 'Inter-SemiBold',
-                    color: DesignSystem.colors.text.primary,
-                  }}>
+              <PremiumCard>
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-lg font-semibold text-text-primary">
                     {booking.id}
                   </Text>
                   
@@ -199,7 +119,6 @@ export default function BookingsScreen() {
                     status={booking.statusType}
                     text={booking.status}
                     size="sm"
-                    variant="soft"
                   />
                 </View>
               </PremiumCard>

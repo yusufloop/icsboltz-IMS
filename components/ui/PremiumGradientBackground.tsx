@@ -1,31 +1,40 @@
 import React from 'react';
 import { StyleSheet, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { DesignSystem } from '@/constants/DesignSystem';
 
 interface PremiumGradientBackgroundProps {
   children: React.ReactNode;
-  variant?: 'decorative' | 'highlight' | 'success' | 'primary';
+  variant?: 'primary' | 'background';
   style?: ViewStyle;
 }
 
 export function PremiumGradientBackground({
   children,
-  variant = 'decorative',
+  variant = 'background',
   style,
 }: PremiumGradientBackgroundProps) {
   const getGradientConfig = () => {
     switch (variant) {
-      case 'decorative':
-        return DesignSystem.gradients.decorativeBackground;
-      case 'highlight':
-        return DesignSystem.gradients.highlight;
-      case 'success':
-        return DesignSystem.gradients.success;
       case 'primary':
-        return DesignSystem.gradients.primaryAction;
+        // primary-gradient: Diagonal (bg-gradient-to-br), from lighter-blue (#409CFF) to primary-blue (#0A84FF)
+        return {
+          colors: ['#409CFF', '#0A84FF'],
+          start: { x: 0, y: 0 },
+          end: { x: 1, y: 1 },
+        };
+      case 'background':
+        // background-gradient: Vertical (bg-gradient-to-b), from white to bg-primary (#F2F2F7)
+        return {
+          colors: ['#FFFFFF', '#F2F2F7'],
+          start: { x: 0, y: 0 },
+          end: { x: 0, y: 1 },
+        };
       default:
-        return DesignSystem.gradients.decorativeBackground;
+        return {
+          colors: ['#FFFFFF', '#F2F2F7'],
+          start: { x: 0, y: 0 },
+          end: { x: 0, y: 1 },
+        };
     }
   };
 

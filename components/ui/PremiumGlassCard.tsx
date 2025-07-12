@@ -1,55 +1,43 @@
 import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { BlurView } from 'expo-blur';
-import Animated, { FadeInUp } from 'react-native-reanimated';
-import { DesignSystem } from '@/constants/DesignSystem';
 
 interface PremiumGlassCardProps {
   children: React.ReactNode;
   intensity?: number;
-  tint?: 'light' | 'dark' | 'default';
   style?: ViewStyle;
-  animationDelay?: number;
 }
 
 export function PremiumGlassCard({
   children,
   intensity = 80,
-  tint = 'light',
   style,
-  animationDelay = 0,
 }: PremiumGlassCardProps) {
   return (
-    <Animated.View
-      entering={FadeInUp.delay(animationDelay).duration(DesignSystem.animation.duration.normal)}
-      style={[styles.container, style]}
-    >
+    <View style={[styles.container, style]}>
       <BlurView
         intensity={intensity}
-        tint={tint}
+        tint="light"
         style={styles.blurContainer}
       >
-        <View style={styles.content}>
+        <View className="p-4 rounded-lg">
           {children}
         </View>
       </BlurView>
-    </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: DesignSystem.components.borderRadius.xl,
+    borderRadius: 12, // rounded-lg
     overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent background
     borderWidth: 1,
-    borderColor: DesignSystem.glassmorphism.borderColor,
+    borderColor: 'rgba(255, 255, 255, 0.2)', // Semi-transparent border
   },
   
   blurContainer: {
     flex: 1,
-  },
-  
-  content: {
-    padding: DesignSystem.spacing.lg,
   },
 });

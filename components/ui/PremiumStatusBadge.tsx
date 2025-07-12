@@ -1,12 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
-import { DesignSystem } from '@/constants/DesignSystem';
+import { View, Text, ViewStyle } from 'react-native';
 
 interface PremiumStatusBadgeProps {
-  status: 'success' | 'warning' | 'error' | 'info' | 'neutral';
+  status: 'success' | 'warning' | 'info' | 'error' | 'neutral';
   text: string;
-  size?: 'sm' | 'md' | 'lg';
-  variant?: 'filled' | 'outlined' | 'soft';
+  size?: 'sm' | 'md';
   style?: ViewStyle;
 }
 
@@ -14,193 +12,79 @@ export function PremiumStatusBadge({
   status,
   text,
   size = 'md',
-  variant = 'soft',
   style,
 }: PremiumStatusBadgeProps) {
-  const getStatusColors = () => {
+  const getBadgeClasses = () => {
+    let baseClasses = 'rounded-lg items-center justify-center';
+    
+    // Size classes
+    if (size === 'sm') {
+      baseClasses += ' px-2 py-1';
+    } else {
+      baseClasses += ' px-3 py-2';
+    }
+    
+    // Status color classes
     switch (status) {
       case 'success':
-        return {
-          filled: {
-            background: DesignSystem.colors.status.success,
-            text: DesignSystem.colors.text.inverse,
-            border: DesignSystem.colors.status.success,
-          },
-          outlined: {
-            background: 'transparent',
-            text: DesignSystem.colors.status.success,
-            border: DesignSystem.colors.status.success,
-          },
-          soft: {
-            background: `${DesignSystem.colors.status.success}20`,
-            text: DesignSystem.colors.status.success,
-            border: 'transparent',
-          },
-        };
+        baseClasses += ' bg-success/20'; // 20% opacity background
+        break;
       case 'warning':
-        return {
-          filled: {
-            background: DesignSystem.colors.status.warning,
-            text: DesignSystem.colors.text.inverse,
-            border: DesignSystem.colors.status.warning,
-          },
-          outlined: {
-            background: 'transparent',
-            text: DesignSystem.colors.status.warning,
-            border: DesignSystem.colors.status.warning,
-          },
-          soft: {
-            background: `${DesignSystem.colors.status.warning}20`,
-            text: DesignSystem.colors.status.warning,
-            border: 'transparent',
-          },
-        };
-      case 'error':
-        return {
-          filled: {
-            background: DesignSystem.colors.status.error,
-            text: DesignSystem.colors.text.inverse,
-            border: DesignSystem.colors.status.error,
-          },
-          outlined: {
-            background: 'transparent',
-            text: DesignSystem.colors.status.error,
-            border: DesignSystem.colors.status.error,
-          },
-          soft: {
-            background: `${DesignSystem.colors.status.error}20`,
-            text: DesignSystem.colors.status.error,
-            border: 'transparent',
-          },
-        };
+        baseClasses += ' bg-warning/20';
+        break;
       case 'info':
-        return {
-          filled: {
-            background: DesignSystem.colors.primary[500],
-            text: DesignSystem.colors.text.inverse,
-            border: DesignSystem.colors.primary[500],
-          },
-          outlined: {
-            background: 'transparent',
-            text: DesignSystem.colors.primary[500],
-            border: DesignSystem.colors.primary[500],
-          },
-          soft: {
-            background: `${DesignSystem.colors.primary[500]}20`,
-            text: DesignSystem.colors.primary[500],
-            border: 'transparent',
-          },
-        };
+        baseClasses += ' bg-info/20';
+        break;
+      case 'error':
+        baseClasses += ' bg-destructive/20';
+        break;
       case 'neutral':
       default:
-        return {
-          filled: {
-            background: DesignSystem.colors.text.secondary,
-            text: DesignSystem.colors.text.inverse,
-            border: DesignSystem.colors.text.secondary,
-          },
-          outlined: {
-            background: 'transparent',
-            text: DesignSystem.colors.text.secondary,
-            border: DesignSystem.colors.text.secondary,
-          },
-          soft: {
-            background: `${DesignSystem.colors.text.secondary}20`,
-            text: DesignSystem.colors.text.secondary,
-            border: 'transparent',
-          },
-        };
+        baseClasses += ' bg-gray-200';
+        break;
     }
+    
+    return baseClasses;
   };
 
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'sm':
-        return {
-          container: styles.smContainer,
-          text: styles.smText,
-        };
-      case 'lg':
-        return {
-          container: styles.lgContainer,
-          text: styles.lgText,
-        };
-      case 'md':
+  const getTextClasses = () => {
+    let textClasses = 'font-medium';
+    
+    // Size classes
+    if (size === 'sm') {
+      textClasses += ' text-xs';
+    } else {
+      textClasses += ' text-sm';
+    }
+    
+    // Status text color classes
+    switch (status) {
+      case 'success':
+        textClasses += ' text-success';
+        break;
+      case 'warning':
+        textClasses += ' text-warning';
+        break;
+      case 'info':
+        textClasses += ' text-info';
+        break;
+      case 'error':
+        textClasses += ' text-destructive';
+        break;
+      case 'neutral':
       default:
-        return {
-          container: styles.mdContainer,
-          text: styles.mdText,
-        };
+        textClasses += ' text-text-secondary';
+        break;
     }
+    
+    return textClasses;
   };
-
-  const colors = getStatusColors()[variant];
-  const sizeStyles = getSizeStyles();
 
   return (
-    <View
-      style={[
-        styles.container,
-        sizeStyles.container,
-        {
-          backgroundColor: colors.background,
-          borderColor: colors.border,
-          borderWidth: variant === 'outlined' ? 1 : 0,
-        },
-        style,
-      ]}
-    >
-      <Text
-        style={[
-          styles.text,
-          sizeStyles.text,
-          { color: colors.text },
-        ]}
-      >
+    <View className={getBadgeClasses()} style={style}>
+      <Text className={getTextClasses()}>
         {text}
       </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignSelf: 'flex-start',
-    borderRadius: DesignSystem.components.borderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  
-  // Size variants
-  smContainer: {
-    paddingHorizontal: DesignSystem.spacing.sm,
-    paddingVertical: DesignSystem.spacing.xs,
-    minHeight: 20,
-  },
-  mdContainer: {
-    paddingHorizontal: DesignSystem.spacing.md,
-    paddingVertical: DesignSystem.spacing.xs,
-    minHeight: 24,
-  },
-  lgContainer: {
-    paddingHorizontal: DesignSystem.spacing.lg,
-    paddingVertical: DesignSystem.spacing.sm,
-    minHeight: 32,
-  },
-  
-  // Text styles
-  text: {
-    fontFamily: 'Inter-SemiBold',
-    textAlign: 'center',
-  },
-  
-  smText: {
-    fontSize: DesignSystem.typography.sizes.xs,
-  },
-  mdText: {
-    fontSize: DesignSystem.typography.sizes.sm,
-  },
-  lgText: {
-    fontSize: DesignSystem.typography.sizes.base,
-  },
-});
