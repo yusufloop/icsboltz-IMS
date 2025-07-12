@@ -82,24 +82,28 @@ export function RequestCard({
   };
 
   return (
-    <TouchableOpacity
-      onPress={onToggle}
-      activeOpacity={0.8}
-      className="mb-3"
-    >
+    <View className="mb-3">
       <PremiumCard>
         {/* Top Row */}
-        <View className="flex-row items-center justify-between mb-3">
+        <TouchableOpacity 
+          onPress={onToggle}
+          activeOpacity={0.8}
+          className="flex-row items-center justify-between mb-3"
+        >
           <Text className="text-lg font-bold text-text-primary">
             {id}
           </Text>
           <Text className="text-sm text-text-secondary">
             {date}
           </Text>
-        </View>
+        </TouchableOpacity>
 
         {/* Standard Details */}
-        <View className="space-y-2">
+        <TouchableOpacity 
+          onPress={onToggle}
+          activeOpacity={0.8}
+          className="space-y-2"
+        >
           <View className="flex-row items-center">
             <Text className="text-sm text-text-secondary mr-2">Status</Text>
             <Text className={`text-sm font-medium ${getStatusColor(status)}`}>
@@ -113,7 +117,7 @@ export function RequestCard({
               {itemRequested}
             </Text>
           </View>
-        </View>
+        </TouchableOpacity>
 
         {/* Expanded Content */}
         <Animated.View style={expandedStyle} className="overflow-hidden">
@@ -202,6 +206,6 @@ export function RequestCard({
           </View>
         </Animated.View>
       </PremiumCard>
-    </TouchableOpacity>
+    </View>
   );
 }
