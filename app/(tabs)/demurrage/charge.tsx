@@ -6,6 +6,8 @@ import { router } from 'expo-router';
 
 export default function DemurrageChargeScreen() {
   const [demurrageCharge, setDemurrageCharge] = useState('');
+  const { editId } = useLocalSearchParams();
+  const isEditing = !!editId;
 
   const handleGoBack = () => {
     router.back();
@@ -17,10 +19,10 @@ export default function DemurrageChargeScreen() {
       return;
     }
     
-    // Handle the add functionality here
-    Alert.alert('Success', `Demurrage charge of ${demurrageCharge} has been added`);
+    const action = isEditing ? 'updated' : 'added';
+    Alert.alert('Success', `Demurrage charge of ${demurrageCharge} has been ${action}`);
     
-    // Navigate to charges page after successful addition
+    // Navigate back to charges page
     router.push('/(tabs)/user');
   };
 
@@ -40,7 +42,9 @@ export default function DemurrageChargeScreen() {
 
       {/* Content */}
       <View style={styles.content}>
-        <Text style={styles.subtitle}>Fill in the information below</Text>
+        <Text style={styles.subtitle}>
+          {isEditing ? 'Edit the information below' : 'Fill in the information below'}
+        </Text>
 
         <View style={styles.formSection}>
           <Text style={styles.label}>Demurrage Charge</Text>
@@ -61,7 +65,7 @@ export default function DemurrageChargeScreen() {
           style={styles.addButton}
           onPress={handleAdd}
         >
-          <Text style={styles.addButtonText}>Add</Text>
+          <Text style={styles.addButtonText}>{isEditing ? 'Update' : 'Add'}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

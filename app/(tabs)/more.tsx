@@ -5,8 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function MoreScreen() {
   const handleDemurrageCharge = () => {
-    // Handle demurrage charge navigation
-    console.log('Navigate to Demurrage Charge');
+    router.push('/(tabs)/user');
   };
 
   const handleHelpSupport = () => {

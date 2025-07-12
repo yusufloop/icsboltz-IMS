@@ -1,137 +1,148 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Plus, LocationEdit as Edit, Trash2 } from 'lucide-react-native';
+import { Plus, Search, Filter } from 'lucide-react-native';
 import { router } from 'expo-router';
 
-interface Charge {
+interface ChargeItem {
   id: string;
-  amount: string;
+  location: string;
+  charges: string;
   date: string;
-  status: 'Pending' | 'Paid' | 'Overdue';
-  description: string;
 }
 
 export default function ChargesScreen() {
-  const [charges, setCharges] = useState<Charge[]>([
+  const [charges, setCharges] = useState<ChargeItem[]>([
     {
       id: '1',
-      amount: '$250.00',
-      date: '2024-01-15',
-      status: 'Paid',
-      description: 'Container delay - Port of Lagos'
+      location: 'Port of Lagos',
+      charges: '$250.00',
+      date: '30/10/2019'
     },
     {
       id: '2',
-      amount: '$180.00',
-      date: '2024-01-20',
-      status: 'Pending',
-      description: 'Equipment detention - Terminal A'
+      location: 'Terminal A',
+      charges: '$180.00',
+      date: '30/10/2019'
     },
     {
       id: '3',
-      amount: '$320.00',
-      date: '2024-01-22',
-      status: 'Overdue',
-      description: 'Storage fees - Warehouse B'
+      location: 'Warehouse B',
+      charges: '$320.00',
+      date: '30/10/2019'
+    },
+    {
+      id: '4',
+      location: 'Port of Abuja',
+      charges: '$150.00',
+      date: '30/10/2019'
+    },
+    {
+      id: '5',
+      location: 'Terminal C',
+      charges: '$275.00',
+      date: '30/10/2019'
     },
   ]);
+
+  const [searchText, setSearchText] = useState('');
 
   const handleAddCharge = () => {
     router.push('/(tabs)/demurrage/charge');
   };
 
   const handleEditCharge = (id: string) => {
-    // Navigate to edit charge page
-    console.log('Edit charge:', id);
+    // Navigate to demurrage charge form for editing
+    router.push({
+      pathname: '/(tabs)/demurrage/charge',
+      params: { editId: id }
+    });
   };
 
-  const handleDeleteCharge = (id: string) => {
-    setCharges(charges.filter(charge => charge.id !== id));
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Paid':
-        return '#10b981';
-      case 'Pending':
-        return '#f59e0b';
-      case 'Overdue':
-        return '#ef4444';
-      default:
-        return '#6b7280';
-    }
-  };
+  const filteredCharges = charges.filter(charge =>
+    charge.location.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Charges</Text>
+        <View style={styles.headerLeft}>
+          <View style={styles.starIcon}>
+            <Text style={styles.starText}>★</Text>
+          </View>
+          <Text style={styles.headerTitle}>Charges</Text>
+        </View>
         <TouchableOpacity style={styles.addButton} onPress={handleAddCharge}>
-          <Plus size={20} color="#ffffff" />
-          <Text style={styles.addButtonText}>Add</Text>
+          <Plus size={20} color="#007AFF" />
         </TouchableOpacity>
       </View>
 
-      {/* Table */}
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.tableContainer}>
-          {/* Table Header */}
-          <View style={styles.tableHeader}>
-            <Text style={[styles.tableHeaderText, styles.amountColumn]}>Amount</Text>
-            <Text style={[styles.tableHeaderText, styles.dateColumn]}>Date</Text>
-            <Text style={[styles.tableHeaderText, styles.statusColumn]}>Status</Text>
-            <Text style={[styles.tableHeaderText, styles.actionsColumn]}>Actions</Text>
-          </View>
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
+        <View style={styles.searchBar}>
+          <Search size={16} color="#8E8E93" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search"
+            placeholderTextColor="#8E8E93"
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+        </View>
+      </View>
 
-          {/* Table Rows */}
-          {charges.map((charge) => (
-            <View key={charge.id} style={styles.tableRow}>
-              <View style={styles.amountColumn}>
-                <Text style={styles.amountText}>{charge.amount}</Text>
-                <Text style={styles.descriptionText}>{charge.description}</Text>
-              </View>
-              
-              <View style={styles.dateColumn}>
-                <Text style={styles.cellText}>{charge.date}</Text>
-              </View>
-              
-              <View style={styles.statusColumn}>
-                <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(charge.status)}15` }]}>
-                  <Text style={[styles.statusText, { color: getStatusColor(charge.status) }]}>
-                    {charge.status}
-                  </Text>
+      {/* Filter and Sort */}
+      <View style={styles.filterContainer}>
+        <TouchableOpacity style={styles.sortButton}>
+          <Text style={styles.sortText}>Sort</Text>
+          <View style={styles.sortIcon}>
+            <Text style={styles.sortArrow}>↕</Text>
+          </View>
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.filterButton}>
+          <Filter size={16} color="#FFFFFF" />
+          <Text style={styles.filterText}>Filter</Text>
+          <View style={styles.filterBadge}>
+            <Text style={styles.filterBadgeText}>2</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      {/* Charges List */}
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <View style={styles.listContainer}>
+          {filteredCharges.map((charge) => (
+            <TouchableOpacity 
+              key={charge.id} 
+              style={styles.listItem}
+              onPress={() => handleEditCharge(charge.id)}
+            >
+              <View style={styles.itemContent}>
+                <View style={styles.itemLeft}>
+                  <Text style={styles.locationText}>{charge.location}</Text>
+                  <Text style={styles.chargesText}>{charge.charges}</Text>
                 </View>
+                <Text style={styles.dateText}>{charge.date}</Text>
               </View>
-              
-              <View style={styles.actionsColumn}>
-                <TouchableOpacity 
-                  style={styles.actionButton}
-                  onPress={() => handleEditCharge(charge.id)}
-                >
-                  <Edit size={16} color="#6b7280" />
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={styles.actionButton}
-                  onPress={() => handleDeleteCharge(charge.id)}
-                >
-                  <Trash2 size={16} color="#ef4444" />
-                </TouchableOpacity>
-              </View>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
 
         {/* Empty State */}
-        {charges.length === 0 && (
+        {filteredCharges.length === 0 && (
           <View style={styles.emptyState}>
             <Text style={styles.emptyStateText}>No charges found</Text>
-            <Text style={styles.emptyStateSubtext}>Add your first demurrage charge to get started</Text>
-            <TouchableOpacity style={styles.emptyStateButton} onPress={handleAddCharge}>
-              <Plus size={20} color="#3b82f6" />
-              <Text style={styles.emptyStateButtonText}>Add Charge</Text>
-            </TouchableOpacity>
+            <Text style={styles.emptyStateSubtext}>
+              {searchText ? 'Try adjusting your search' : 'Add your first charge to get started'}
+            </Text>
+            {!searchText && (
+              <TouchableOpacity style={styles.emptyStateButton} onPress={handleAddCharge}>
+                <Plus size={20} color="#007AFF" />
+                <Text style={styles.emptyStateButtonText}>Add Charge</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
       </ScrollView>
@@ -142,7 +153,7 @@ export default function ChargesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#F2F2F7',
   },
   header: {
     flexDirection: 'row',
@@ -150,114 +161,151 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    backgroundColor: '#F2F2F7',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  starIcon: {
+    marginRight: 12,
+  },
+  starText: {
+    fontSize: 20,
+    color: '#000',
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#111827',
+    color: '#000',
     fontFamily: 'Inter-SemiBold',
   },
   addButton: {
+    padding: 4,
+  },
+  searchContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+  },
+  searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#3b82f6',
-    paddingHorizontal: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#000',
+    fontFamily: 'Inter-Regular',
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+    gap: 12,
+  },
+  sortButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E5E5EA',
   },
-  addButtonText: {
-    color: '#ffffff',
+  sortText: {
     fontSize: 14,
-    fontWeight: '600',
+    color: '#000',
+    marginRight: 4,
+    fontFamily: 'Inter-Regular',
+  },
+  sortIcon: {
     marginLeft: 4,
+  },
+  sortArrow: {
+    fontSize: 12,
+    color: '#8E8E93',
+  },
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    position: 'relative',
+  },
+  filterText: {
+    fontSize: 14,
+    color: '#FFFFFF',
+    marginLeft: 6,
+    fontFamily: 'Inter-Regular',
+  },
+  filterBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: '#FF3B30',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterBadgeText: {
+    fontSize: 12,
+    color: '#FFFFFF',
+    fontWeight: '600',
     fontFamily: 'Inter-SemiBold',
   },
   scrollView: {
     flex: 1,
   },
-  tableContainer: {
-    backgroundColor: '#ffffff',
-    margin: 20,
+  listContainer: {
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: 20,
     borderRadius: 12,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
   },
-  tableHeader: {
-    flexDirection: 'row',
-    backgroundColor: '#f9fafb',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+  listItem: {
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: '#F2F2F7',
   },
-  tableHeaderText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#6b7280',
-    textTransform: 'uppercase',
-    fontFamily: 'Inter-SemiBold',
-  },
-  tableRow: {
+  itemContent: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
     paddingVertical: 16,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
-    alignItems: 'center',
   },
-  amountColumn: {
-    flex: 2,
-  },
-  dateColumn: {
+  itemLeft: {
     flex: 1,
-    alignItems: 'center',
   },
-  statusColumn: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  actionsColumn: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  amountText: {
+  locationText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#111827',
+    fontWeight: '400',
+    color: '#000',
     marginBottom: 2,
-    fontFamily: 'Inter-SemiBold',
-  },
-  descriptionText: {
-    fontSize: 12,
-    color: '#6b7280',
     fontFamily: 'Inter-Regular',
   },
-  cellText: {
+  chargesText: {
     fontSize: 14,
-    color: '#374151',
+    color: '#8E8E93',
     fontFamily: 'Inter-Regular',
   },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '600',
-    fontFamily: 'Inter-SemiBold',
-  },
-  actionButton: {
-    padding: 4,
+  dateText: {
+    fontSize: 14,
+    color: '#8E8E93',
+    fontFamily: 'Inter-Regular',
   },
   emptyState: {
     alignItems: 'center',
@@ -290,7 +338,7 @@ const styles = StyleSheet.create({
     borderColor: '#dbeafe',
   },
   emptyStateButtonText: {
-    color: '#3b82f6',
+    color: '#007AFF',
     fontSize: 14,
     fontWeight: '600',
     marginLeft: 8,
