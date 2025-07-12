@@ -6,8 +6,7 @@ import { router } from 'expo-router';
 
 export default function DemurrageScreen() {
   const handleDemurrageCharge = () => {
-    // Navigate to demurrage charge details
-    console.log('Navigate to Demurrage Charge Details');
+    router.push('/(tabs)/demurrage/charge');
   };
 
   const handleHelpSupport = () => {
