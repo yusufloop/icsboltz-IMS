@@ -4,7 +4,6 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { Redirect } from 'expo-router';
 
-import { HapticTab } from '@/components/HapticTab';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -29,7 +28,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
+        // Remove tabBarButton: HapticTab to avoid React Navigation conflicts
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
@@ -72,6 +71,15 @@ export default function TabLayout() {
           title: 'More',
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="more-horiz" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="new-request"
+        options={{
+          title: 'New Request',
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="add" size={24} color={color} />
           ),
         }}
       />
