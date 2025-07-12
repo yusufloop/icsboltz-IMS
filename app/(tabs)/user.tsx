@@ -48,7 +48,8 @@ export default function ChargesScreen() {
   const [searchText, setSearchText] = useState('');
 
   const handleAddCharge = () => {
-    router.push('/(tabs)/demurrage/charge');
+    // Navigate to add charge form (placeholder for now)
+    console.log('Add new charge');
   };
 
   const handleEditCharge = (id: string) => {
@@ -57,8 +58,9 @@ export default function ChargesScreen() {
   };
 
   const filteredCharges = charges.filter(charge =>
-    // Navigate to add charge form (placeholder for now)
-    console.log('Add new charge');
+    charge.location.toLowerCase().includes(searchText.toLowerCase()) ||
+    charge.charges.toLowerCase().includes(searchText.toLowerCase()) ||
+    charge.date.toLowerCase().includes(searchText.toLowerCase())
   );
 
   return (
