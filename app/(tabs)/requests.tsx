@@ -11,6 +11,8 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 export default function RequestsScreen() {
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
   const [showNewRequestModal, setShowNewRequestModal] = useState(false);
+  const [showResubmitModal, setShowResubmitModal] = useState(false);
+  const [resubmitData, setResubmitData] = useState(null);
 
   const requests = [
     { 
@@ -76,6 +78,7 @@ export default function RequestsScreen() {
 
   const handleResubmitRequest = (requestId: string, requestData: any) => {
     console.log('Resubmit request for:', requestId, requestData);
+    setShowResubmitModal(false);
     // Here you would typically send the resubmit data to your backend
     // You might want to update the request status or create a new request
   };
@@ -185,7 +188,10 @@ export default function RequestsScreen() {
                 company={request.company}
                 isExpanded={expandedCard === request.id}
                 onToggle={() => handleCardToggle(request.id)}
-                onResubmit={(requestData) => handleResubmitRequest(request.id, requestData)}
+                onResubmit={(requestId, initialData) => {
+                  setResubmitData({ requestId, initialData });
+                  setShowResubmitModal(true);
+                }}
               />
             </Animated.View>
           ))}
@@ -198,6 +204,19 @@ export default function RequestsScreen() {
         onClose={() => setShowNewRequestModal(false)}
         onSubmit={handleNewRequestSubmit}
       />
+
+      {/* Global Resubmit Modal */}
+      {resubmitData && (
+        <ResubmitRequestModal
+          visible={showResubmitModal}
+          onClose={() => {
+            setShowResubmitModal(false);
+            setResubmitData(null);
+          }}
+          onSubmit={(data) => handleResubmitRequest(resubmitData.requestId, data)}
+          initialData={resubmitData.initialData}
+        />
+      )}
     </SafeAreaView>
   );
 }

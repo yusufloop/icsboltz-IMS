@@ -69,6 +69,22 @@ export function NewRequestModal({ visible, onClose, onSubmit }: NewRequestModalP
   const [showPriorityPicker, setShowPriorityPicker] = useState(false);
   const [showDepartmentPicker, setShowDepartmentPicker] = useState(false);
 
+  // Reset form when modal opens
+  React.useEffect(() => {
+    if (visible) {
+      setFormData({
+        itemRequested: '',
+        quantity: '',
+        reasonForRequest: '',
+        phoneNo: '',
+        dateNeededBy: null,
+        priority: 'High',
+        chargeToDepartment: '',
+        attachments: [],
+      });
+    }
+  }, [visible]);
+
   // --- HANDLER FUNCTIONS (No changes needed) ---
   const updateField = (field: keyof RequestFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
