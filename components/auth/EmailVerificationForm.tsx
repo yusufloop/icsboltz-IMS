@@ -1,11 +1,12 @@
-import { useAuth } from '@/hooks/useAuth';
-import { ArrowLeft, Mail } from 'lucide-react';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { AuthButton } from './AuthButton';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { AuthCard } from './AuthCard';
 import { AuthInput } from './AuthInput';
+import { AuthButton } from './AuthButton';
 import { ErrorMessage } from './ErrorMessage';
+import { SuccessMessage } from './SuccessMessage';
+import { useAuth } from '@/hooks/useAuth';
 
 interface EmailVerificationFormProps {
   email: string;
@@ -15,8 +16,10 @@ interface EmailVerificationFormProps {
 export function EmailVerificationForm({ email, onNavigateToLogin }: EmailVerificationFormProps) {
   const [code, setCode] = useState('');
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+  const [successMessage, setSuccessMessage] = useState('');
+  const [resendLoading, setResendLoading] = useState(false);
   
-  const { verifyEmail, isLoading, error } = useAuth();
+  const { verifyEmail, resendVerificationCode, isLoading, error } = useAuth();
 
   const validateForm = () => {
     const errors: { [key: string]: string } = {};
@@ -34,122 +37,85 @@ export function EmailVerificationForm({ email, onNavigateToLogin }: EmailVerific
   const handleVerifyEmail = async () => {
     if (!validateForm()) return;
     
-    await verifyEmail({ email, code: code.trim().toUpperCase() });
+    const result = await verifyEmail({ 
+      email, 
+      verification_code: code.trim().toUpperCase() 
+    });
+
+    if (result.success) {
+      setSuccessMessage(result.message || '');
+      setTimeout(() => {
+        onNavigateToLogin();
+      }, 2000);
+    }
+  };
+
+  const handleResendCode = async () => {
+    setResendLoading(true);
+    const result = await resendVerificationCode(email);
+    setResendLoading(false);
+    
+    if (result.success) {
+      setSuccessMessage('New verification code sent!');
+      // In development, show the code in console
+      if (result.data?.verificationCode) {
+        console.log('🔑 New verification code:', result.data.verificationCode);
+      }
+    }
   };
 
   return (
     <AuthCard>
       <TouchableOpacity 
-        style={styles.backButton}
+        className="flex-row items-center mb-6"
         onPress={onNavigateToLogin}
       >
-        <ArrowLeft size={20} color="#6b7280" />
-        <Text style={styles.backText}>Back to login</Text>
+        <Ionicons name="arrow-back" size={20} color="#6b7280" />
+        <Text className="text-gray-500 ml-2 font-inter-regular">Back to login</Text>
       </TouchableOpacity>
 
-      <View style={styles.header}>
-        <View style={styles.iconContainer}>
-          <Mail size={48} color="#3b82f6" />
+      <View className="items-center mb-8">
+        <View className="w-20 h-20 bg-blue-100 rounded-full items-center justify-center mb-4">
+          <Ionicons name="mail" size={40} color="#3b82f6" />
         </View>
-        <Text style={styles.title}>Verify Your Email</Text>
-        <Text style={styles.subtitle}>
+        <Text className="text-3xl font-bold text-gray-900 mb-2 font-inter-bold">
+          Verify Your Email
+        </Text>
+        <Text className="text-gray-600 text-center font-inter-regular">
           We've sent a verification code to{'\n'}
-          <Text style={styles.email}>{email}</Text>
+          <Text className="font-semibold text-blue-500 font-inter-semibold">{email}</Text>
         </Text>
       </View>
 
       {error && <ErrorMessage message={error} />}
+      {successMessage && <SuccessMessage message={successMessage} />}
 
-      <View style={styles.form}>
-        <AuthInput
-          label="Verification Code"
-          value={code}
-          onChangeText={setCode}
-          placeholder="Enter 6-digit code"
-          autoCapitalize="characters"
-          maxLength={6}
-          error={fieldErrors.code}
-        />
+      <AuthInput
+        label="Verification Code"
+        value={code}
+        onChangeText={setCode}
+        placeholder="Enter 6-digit code"
+        autoCapitalize="characters"
+        maxLength={6}
+        leftIcon="key"
+        error={fieldErrors.code}
+      />
 
-        <AuthButton
-          title="Verify Email"
-          onPress={handleVerifyEmail}
-          loading={isLoading}
-        />
+      <AuthButton
+        title="Verify Email"
+        onPress={handleVerifyEmail}
+        loading={isLoading}
+        style={{ marginBottom: 24 }}
+      />
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Didn't receive the code? </Text>
-          <TouchableOpacity>
-            <Text style={styles.linkText}>Resend</Text>
-          </TouchableOpacity>
-        </View>
+      <View className="flex-row justify-center items-center">
+        <Text className="text-gray-600 font-inter-regular">Didn't receive the code? </Text>
+        <TouchableOpacity onPress={handleResendCode} disabled={resendLoading}>
+          <Text className="text-blue-500 font-semibold font-inter-semibold">
+            {resendLoading ? 'Sending...' : 'Resend'}
+          </Text>
+        </TouchableOpacity>
       </View>
     </AuthCard>
   );
 }
-
-const styles = StyleSheet.create({
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  backText: {
-    color: '#6b7280',
-    fontSize: 14,
-    marginLeft: 8,
-    fontFamily: 'Inter-Regular',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#eff6ff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 8,
-    fontFamily: 'Inter-Bold',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6b7280',
-    textAlign: 'center',
-    lineHeight: 24,
-    fontFamily: 'Inter-Regular',
-  },
-  email: {
-    fontWeight: '600',
-    color: '#3b82f6',
-    fontFamily: 'Inter-SemiBold',
-  },
-  form: {
-    gap: 4,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 24,
-  },
-  footerText: {
-    color: '#6b7280',
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-  },
-  linkText: {
-    color: '#3b82f6',
-    fontSize: 14,
-    fontWeight: '600',
-    fontFamily: 'Inter-SemiBold',
-  },
-});

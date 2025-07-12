@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { AuthCard } from './AuthCard';
 import { AuthInput } from './AuthInput';
 import { AuthButton } from './AuthButton';
@@ -9,11 +9,17 @@ import { useAuth } from '@/hooks/useAuth';
 interface LoginFormProps {
   onNavigateToRegister: () => void;
   onNavigateToForgotPassword: () => void;
+  onNavigateToVerification: (email: string) => void;
 }
 
-export function LoginForm({ onNavigateToRegister, onNavigateToForgotPassword }: LoginFormProps) {
-  const [email, setEmail] = useState('demo@example.com');
-  const [password, setPassword] = useState('password123');
+export function LoginForm({ 
+  onNavigateToRegister, 
+  onNavigateToForgotPassword,
+  onNavigateToVerification 
+}: LoginFormProps) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
   
   const { login, isLoading, error } = useAuth();
@@ -38,106 +44,95 @@ export function LoginForm({ onNavigateToRegister, onNavigateToForgotPassword }: 
   const handleLogin = async () => {
     if (!validateForm()) return;
     
-    await login({ email: email.trim(), password });
+    const result = await login({ 
+      email: email.trim(), 
+      password,
+      rememberMe 
+    });
+
+    if (!result.success && result.data?.requiresVerification) {
+      onNavigateToVerification(email.trim());
+    }
+  };
+
+  const updateField = (field: string, value: string) => {
+    if (field === 'email') setEmail(value);
+    if (field === 'password') setPassword(value);
+    
+    if (fieldErrors[field]) {
+      setFieldErrors(prev => ({ ...prev, [field]: '' }));
+    }
   };
 
   return (
     <AuthCard>
-      <View style={styles.header}>
-        <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Sign in to your account</Text>
+      <View className="items-center mb-8">
+        <Text className="text-3xl font-bold text-gray-900 mb-2 font-inter-bold">
+          Welcome Back
+        </Text>
+        <Text className="text-gray-600 text-center font-inter-regular">
+          Sign in to your account
+        </Text>
       </View>
 
       {error && <ErrorMessage message={error} />}
 
-      <View style={styles.form}>
-        <AuthInput
-          label="Email"
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Enter your email"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          error={fieldErrors.email}
-        />
+      <AuthInput
+        label="Email"
+        value={email}
+        onChangeText={(value) => updateField('email', value)}
+        placeholder="Enter your email"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        leftIcon="mail"
+        error={fieldErrors.email}
+      />
 
-        <AuthInput
-          label="Password"
-          value={password}
-          onChangeText={setPassword}
-          placeholder="Enter your password"
-          secureTextEntry
-          error={fieldErrors.password}
-        />
+      <AuthInput
+        label="Password"
+        value={password}
+        onChangeText={(value) => updateField('password', value)}
+        placeholder="Enter your password"
+        isPassword
+        leftIcon="lock-closed"
+        error={fieldErrors.password}
+      />
 
+      <View className="flex-row items-center justify-between mb-6">
         <TouchableOpacity 
-          style={styles.forgotPassword}
-          onPress={onNavigateToForgotPassword}
+          className="flex-row items-center"
+          onPress={() => setRememberMe(!rememberMe)}
         >
-          <Text style={styles.forgotPasswordText}>Forgot your password?</Text>
+          <View className={`w-5 h-5 rounded border-2 mr-2 items-center justify-center ${
+            rememberMe ? 'bg-blue-500 border-blue-500' : 'border-gray-300'
+          }`}>
+            {rememberMe && (
+              <Text className="text-white text-xs">✓</Text>
+            )}
+          </View>
+          <Text className="text-sm text-gray-600 font-inter-regular">Remember me</Text>
         </TouchableOpacity>
 
-        <AuthButton
-          title="Sign In"
-          onPress={handleLogin}
-          loading={isLoading}
-        />
+        <TouchableOpacity onPress={onNavigateToForgotPassword}>
+          <Text className="text-sm text-blue-500 font-inter-regular">
+            Forgot password?
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={onNavigateToRegister}>
-            <Text style={styles.linkText}>Sign up</Text>
-          </TouchableOpacity>
-        </View>
+      <AuthButton
+        title="Sign In"
+        onPress={handleLogin}
+        loading={isLoading}
+        style={{ marginBottom: 24 }}
+      />
+
+      <View className="flex-row justify-center items-center">
+        <Text className="text-gray-600 font-inter-regular">Don't have an account? </Text>
+        <TouchableOpacity onPress={onNavigateToRegister}>
+          <Text className="text-blue-500 font-semibold font-inter-semibold">Sign up</Text>
+        </TouchableOpacity>
       </View>
     </AuthCard>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 8,
-    fontFamily: 'Inter-Bold',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6b7280',
-    fontFamily: 'Inter-Regular',
-  },
-  form: {
-    gap: 4,
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: 24,
-  },
-  forgotPasswordText: {
-    color: '#3b82f6',
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 24,
-  },
-  footerText: {
-    color: '#6b7280',
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-  },
-  linkText: {
-    color: '#3b82f6',
-    fontSize: 14,
-    fontWeight: '600',
-    fontFamily: 'Inter-SemiBold',
-  },
-});

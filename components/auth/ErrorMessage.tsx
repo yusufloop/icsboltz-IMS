@@ -1,6 +1,6 @@
-import { AlertCircle } from 'lucide-react';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { View, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface ErrorMessageProps {
   message: string;
@@ -8,29 +8,11 @@ interface ErrorMessageProps {
 
 export function ErrorMessage({ message }: ErrorMessageProps) {
   return (
-    <View style={styles.container}>
-      <AlertCircle size={16} color="#ef4444" />
-      <Text style={styles.text}>{message}</Text>
+    <View className="flex-row items-center bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+      <Ionicons name="alert-circle" size={16} color="#ef4444" />
+      <Text className="text-red-600 text-sm ml-2 flex-1 font-inter-regular">
+        {message}
+      </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fef2f2',
-    borderColor: '#fecaca',
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
-  },
-  text: {
-    color: '#dc2626',
-    fontSize: 14,
-    marginLeft: 8,
-    flex: 1,
-    fontFamily: 'Inter-Regular',
-  },
-});
