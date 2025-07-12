@@ -61,10 +61,6 @@ export default function RequestsScreen() {
     setExpandedCard(expandedCard === cardId ? null : cardId);
   };
 
-  const handleCreateRequest = () => {
-    router.push('/(tabs)/new-request');
-  };
-
   return (
     <SafeAreaView className="flex-1 bg-bg-primary">
       <ScrollView 
@@ -144,7 +140,6 @@ export default function RequestsScreen() {
 
           <TouchableOpacity 
             className="bg-primary rounded-full w-10 h-10 items-center justify-center shadow-md active:opacity-80 active:scale-95"
-            onPress={handleCreateRequest}
           >
             <MaterialIcons 
               name="add" 
