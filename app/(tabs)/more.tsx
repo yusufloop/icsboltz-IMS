@@ -16,30 +16,36 @@ export default function MoreScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
           <Ionicons name="star" size={24} color="#000" />
           <Text style={styles.headerTitle}>More</Text>
         </View>
 
-        {/* Menu Items */}
+        {/* Menu Items Container */}
         <View style={styles.menuContainer}>
           {/* Demurrage Charge */}
           <TouchableOpacity style={styles.menuItem} onPress={handleDemurrageCharge}>
             <Text style={styles.menuItemText}>Demurrage Charge</Text>
-            <Ionicons name="chevron-forward" size={20} color="#666" />
+            <Ionicons name="chevron-forward" size={20} color="#999" />
           </TouchableOpacity>
 
+          {/* Separator Line */}
           <View style={styles.separator} />
+        </View>
 
-          {/* Help & Support */}
+        {/* Large spacing between sections */}
+        <View style={styles.largeSpacer} />
+
+        {/* Help & Support Section */}
+        <View style={styles.menuContainer}>
           <TouchableOpacity style={styles.menuItem} onPress={handleHelpSupport}>
             <View style={styles.menuItemLeft}>
               <Ionicons name="chatbubble-outline" size={20} color="#666" style={styles.menuIcon} />
               <Text style={styles.menuItemText}>Help & Support</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#666" />
+            <Ionicons name="chevron-forward" size={20} color="#999" />
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -70,7 +76,6 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     backgroundColor: '#fff',
-    marginTop: 20,
     marginHorizontal: 20,
     borderRadius: 12,
     overflow: 'hidden',
@@ -82,6 +87,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     backgroundColor: '#fff',
+    minHeight: 56,
   },
   menuItemLeft: {
     flexDirection: 'row',
@@ -100,5 +106,8 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#e5e5e5',
     marginLeft: 20,
+  },
+  largeSpacer: {
+    height: 200, // Large spacing to match the image layout
   },
 });
