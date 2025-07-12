@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons } from '@expo/vector-icons';
 import { RequestCard } from '@/components/ui/RequestCard';
 import { PremiumCard } from '@/components/ui/PremiumCard';
 import Animated, { FadeInDown } from 'react-native-reanimated';
