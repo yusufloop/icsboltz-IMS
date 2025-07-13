@@ -1,4 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import { Animated, Text, TouchableOpacity, View } from 'react-native';
@@ -400,13 +401,34 @@ export function RequestCard({
                           
                           return (
                             <View key={action} className="flex-1" style={{ marginRight: index === 0 ? 12 : 0 }}>
-                              <PremiumButton
-                                title={buttonConfig.title}
-                                onPress={buttonConfig.onPress}
-                                variant={buttonConfig.variant}
-                                size="sm"
-                                icon={buttonConfig.icon}
-                              />
+                              {action === 'resubmit' ? (
+                                // Custom button for resubmit action to bypass PremiumButton gradient issue
+                                <TouchableOpacity
+                                  onPress={buttonConfig.onPress}
+                                  activeOpacity={0.8}
+                                >
+                                  <LinearGradient
+                                    colors={['#409CFF', '#0A84FF']}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 1 }}
+                                    className="rounded-lg items-center justify-center flex-row px-3 py-2 min-h-[36px]"
+                                    style={{ borderRadius: 8 }}
+                                  >
+                                    {buttonConfig.icon}
+                                    <Text className="font-semibold text-sm text-white">
+                                      {buttonConfig.title}
+                                    </Text>
+                                  </LinearGradient>
+                                </TouchableOpacity>
+                              ) : (
+                                <PremiumButton
+                                  title={buttonConfig.title}
+                                  onPress={buttonConfig.onPress}
+                                  variant={buttonConfig.variant}
+                                  size="sm"
+                                  icon={buttonConfig.icon}
+                                />
+                              )}
                             </View>
                           );
                         })}
@@ -421,13 +443,34 @@ export function RequestCard({
                       
                       return (
                         <View key={action} style={{ marginTop: index === 0 && availableActions.length >= 2 ? 8 : 0 }}>
-                          <PremiumButton
-                            title={buttonConfig.title}
-                            onPress={buttonConfig.onPress}
-                            variant={buttonConfig.variant}
-                            size="sm"
-                            icon={buttonConfig.icon}
-                          />
+                          {action === 'resubmit' ? (
+                            // Custom button for resubmit action to bypass PremiumButton gradient issue
+                            <TouchableOpacity
+                              onPress={buttonConfig.onPress}
+                              activeOpacity={0.8}
+                            >
+                              <LinearGradient
+                                colors={['#409CFF', '#0A84FF']}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                                className="rounded-lg items-center justify-center flex-row px-3 py-2 min-h-[36px]"
+                                style={{ borderRadius: 8 }}
+                              >
+                                {buttonConfig.icon}
+                                <Text className="font-semibold text-sm text-white">
+                                  {buttonConfig.title}
+                                </Text>
+                              </LinearGradient>
+                            </TouchableOpacity>
+                          ) : (
+                            <PremiumButton
+                              title={buttonConfig.title}
+                              onPress={buttonConfig.onPress}
+                              variant={buttonConfig.variant}
+                              size="sm"
+                              icon={buttonConfig.icon}
+                            />
+                          )}
                         </View>
                       );
                     })}
@@ -435,10 +478,30 @@ export function RequestCard({
                     {/* Handle single button case */}
                     {availableActions.length === 1 && (
                       (() => {
-                        const buttonConfig = getButtonConfig(availableActions[0]);
+                        const action = availableActions[0];
+                        const buttonConfig = getButtonConfig(action);
                         if (!buttonConfig) return null;
                         
-                        return (
+                        return action === 'resubmit' ? (
+                          // Custom button for resubmit action to bypass PremiumButton gradient issue
+                          <TouchableOpacity
+                            onPress={buttonConfig.onPress}
+                            activeOpacity={0.8}
+                          >
+                            <LinearGradient
+                              colors={['#409CFF', '#0A84FF']}
+                              start={{ x: 0, y: 0 }}
+                              end={{ x: 1, y: 1 }}
+                              className="rounded-lg items-center justify-center flex-row px-3 py-2 min-h-[36px]"
+                              style={{ borderRadius: 8 }}
+                            >
+                              {buttonConfig.icon}
+                              <Text className="font-semibold text-sm text-white">
+                                {buttonConfig.title}
+                              </Text>
+                            </LinearGradient>
+                          </TouchableOpacity>
+                        ) : (
                           <PremiumButton
                             title={buttonConfig.title}
                             onPress={buttonConfig.onPress}
