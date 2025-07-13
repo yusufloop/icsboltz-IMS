@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { UserCard } from '../../components/ui/UserCard';
-import { type UserRole } from '../../constants/UserRoles';
+import { UserRole } from '@/constants/UserRoles';
+import { UserCard } from '@/components/ui/UserCard';
+
 
 // Sample user data
 const sampleUsers = [

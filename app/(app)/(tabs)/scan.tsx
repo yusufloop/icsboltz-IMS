@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { PremiumCard } from '../../components/ui/PremiumCard';
-import { PremiumButton } from '../../components/ui/PremiumButton';
-import { PremiumInput } from '../../components/ui/PremiumInput';
+import { PremiumCard } from '@/components/ui/PremiumCard';
+import { PremiumButton } from '@/components/ui/PremiumButton';
+import { PremiumInput } from '@/components/ui/PremiumInput';
+
 
 export default function ScanScreen() {
   const [manualCode, setManualCode] = useState('');

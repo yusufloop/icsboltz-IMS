@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { PremiumCard } from '../../components/ui/PremiumCard';
-import { PremiumStatusBadge } from '../../components/ui/PremiumStatusBadge';
+import { PremiumCard } from '@/components/ui/PremiumCard';
+import { PremiumStatusBadge } from '@/components/ui/PremiumStatusBadge';
+
 
 interface Notification {
   id: string;
