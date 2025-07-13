@@ -4,7 +4,7 @@ import { AuthCard } from './AuthCard';
 import { AuthInput } from './AuthInput';
 import { AuthButton } from './AuthButton';
 import { ErrorMessage } from './ErrorMessage';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/lib/auth';
 
 interface LoginFormProps {
   onNavigateToRegister: () => void;

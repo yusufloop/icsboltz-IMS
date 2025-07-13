@@ -5,20 +5,20 @@ import {
   Inter_600SemiBold,
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
-import { Stack } from 'expo-router';
+import { Slot } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import 'react-native-reanimated';
 import '../global.css';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { AuthProvider } from '@/lib/auth';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useFrameworkReady();
-  const colorScheme = useColorScheme();
+  
   const [loaded] = useFonts({
     'Inter-Regular': Inter_400Regular,
     'Inter-SemiBold': Inter_600SemiBold,
@@ -36,9 +36,9 @@ export default function RootLayout() {
   }
 
   return (
-    <>
-      <Stack screenOptions={{ headerShown: false }} />
+    <AuthProvider>
+      <Slot />
       <StatusBar style="auto" />
-    </>
+    </AuthProvider>
   );
 }

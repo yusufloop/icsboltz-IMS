@@ -1,51 +1,41 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
+import { LoginForm } from '@/components/auth/LoginForm';
+import { useAuth } from '@/lib/auth';
 import { router } from 'expo-router';
+import React, { useEffect } from 'react';
+import { SafeAreaView, View } from 'react-native';
 
 export default function AuthScreen() {
-  const navigateToTabs = () => {
-    router.replace('/(tabs)');
-  };
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/(tabs)');
+    }
+  }, [isAuthenticated]);
 
   const navigateToRegister = () => {
     router.push('/(auth)/register');
   };
 
+  const navigateToForgotPassword = () => {
+    router.push('/(auth)/forgot-password');
+  };
+
+  const navigateToVerification = (email: string) => {
+    router.push({
+      pathname: '/(auth)/verify',
+      params: { email }
+    });
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f8fafc' }}>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 24 }}>
-          Login Screen
-        </Text>
-        
-        <TouchableOpacity
-          onPress={navigateToTabs}
-          style={{
-            backgroundColor: '#0A84FF',
-            paddingHorizontal: 24,
-            paddingVertical: 12,
-            borderRadius: 8,
-            marginBottom: 16
-          }}
-        >
-          <Text style={{ color: 'white', fontWeight: '600' }}>
-            Go to Dashboard (Skip Auth)
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={navigateToRegister}
-          style={{
-            backgroundColor: '#F2F2F7',
-            paddingHorizontal: 24,
-            paddingVertical: 12,
-            borderRadius: 8
-          }}
-        >
-          <Text style={{ color: '#1C1C1E', fontWeight: '600' }}>
-            Go to Register
-          </Text>
-        </TouchableOpacity>
+      <View style={{ flex: 1 }}>
+        <LoginForm
+          onNavigateToRegister={navigateToRegister}
+          onNavigateToForgotPassword={navigateToForgotPassword}
+          onNavigateToVerification={navigateToVerification}
+        />
       </View>
     </SafeAreaView>
   );

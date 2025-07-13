@@ -1,12 +1,12 @@
-import { Tabs } from 'expo-router';
-import { MaterialIcons } from '@expo/vector-icons';
-import React from 'react';
-import { Platform } from 'react-native';
+import { Tabs } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
+import React from "react";
+import { Platform } from "react-native";
 
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { ICSBOLTZ_CURRENT_USER_ROLE } from '@/constants/UserRoles';
+import TabBarBackground from "@/components/ui/TabBarBackground";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { ICSBOLTZ_CURRENT_USER_ROLE } from "@/constants/UserRoles";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -17,46 +17,46 @@ export default function TabLayout() {
     const baseTabs = [
       {
         name: "index",
-        title: 'Dashboard',
-        icon: 'home',
+        title: "Dashboard",
+        icon: "home",
       },
       {
         name: "requests",
-        title: 'My Requests',
-        icon: 'assignment',
+        title: "My Requests",
+        icon: "assignment",
       },
     ];
 
     // Role-specific third tab
     let roleSpecificTab;
     switch (currentRole) {
-      case 'REQUESTER':
+      case "REQUESTER":
         roleSpecificTab = {
           name: "scan",
-          title: 'Scan',
-          icon: 'qr-code-scanner',
+          title: "Scan",
+          icon: "qr-code-scanner",
         };
         break;
-      case 'HEAD_OF_DEPARTMENT':
-      case 'GENERAL_MANAGER':
+      case "HEAD_OF_DEPARTMENT":
+      case "GENERAL_MANAGER":
         roleSpecificTab = {
           name: "notifications",
-          title: 'Notifications',
-          icon: 'notifications',
+          title: "Notifications",
+          icon: "notifications",
         };
         break;
-      case 'ADMIN':
+      case "ADMIN":
         roleSpecificTab = {
           name: "user",
-          title: 'Users',
-          icon: 'people',
+          title: "Users",
+          icon: "people",
         };
         break;
       default:
         roleSpecificTab = {
           name: "scan",
-          title: 'Scan',
-          icon: 'qr-code-scanner',
+          title: "Scan",
+          icon: "qr-code-scanner",
         };
     }
 
@@ -65,8 +65,8 @@ export default function TabLayout() {
       roleSpecificTab,
       {
         name: "more",
-        title: 'More',
-        icon: 'more-horiz',
+        title: "More",
+        icon: "more-horiz",
       },
     ];
   };
@@ -76,16 +76,17 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
-            position: 'absolute',
+            position: "absolute",
           },
           default: {},
         }),
-      }}>
+      }}
+    >
       {tabs.map((tab) => (
         <Tabs.Screen
           key={tab.name}
@@ -98,9 +99,9 @@ export default function TabLayout() {
           }}
         />
       ))}
-      
+
       {/* Hidden tabs that shouldn't appear in navigation but need to exist for routing */}
-      {currentRole !== 'REQUESTER' && (
+      {currentRole !== "REQUESTER" && (
         <Tabs.Screen
           name="scan"
           options={{
@@ -108,7 +109,7 @@ export default function TabLayout() {
           }}
         />
       )}
-      {(currentRole === 'REQUESTER' || currentRole === 'ADMIN') && (
+      {(currentRole === "REQUESTER" || currentRole === "ADMIN") && (
         <Tabs.Screen
           name="notifications"
           options={{
@@ -116,7 +117,7 @@ export default function TabLayout() {
           }}
         />
       )}
-      {currentRole !== 'ADMIN' && (
+      {currentRole !== "ADMIN" && (
         <Tabs.Screen
           name="user"
           options={{
@@ -124,6 +125,12 @@ export default function TabLayout() {
           }}
         />
       )}
+      <Tabs.Screen
+        name="profile"
+        options={{
+          href: null, // This hides the tab from navigation
+        }}
+      />
     </Tabs>
   );
 }
