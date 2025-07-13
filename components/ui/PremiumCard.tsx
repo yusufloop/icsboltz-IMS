@@ -32,10 +32,10 @@ export function PremiumCard({
   // Combines all classes in a predictable order
   const finalClasses = [
     // Core styles
-    'rounded-lg',
+    'rounded-xl',
 
     // Variant styles
-    variant === 'default' && 'bg-bg-secondary shadow-md',
+    variant === 'default' && 'bg-bg-secondary',
     variant === 'glass' && 'bg-white/80 backdrop-blur-lg border border-white/20',
 
     // Layout styles
@@ -45,8 +45,21 @@ export function PremiumCard({
   .filter(Boolean) // Removes any false/null/undefined values
   .join(' ');
 
+  // Enhanced shadow styles based on design philosophy
+  const shadowStyle = variant === 'default' ? {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+  } : {};
+
   return (
-    <View className={finalClasses} style={style} {...props}>
+    <View 
+      className={finalClasses} 
+      style={[shadowStyle, style]} 
+      {...props}
+    >
       {children}
     </View>
   );

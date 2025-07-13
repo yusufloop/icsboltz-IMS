@@ -128,6 +128,9 @@ export function PremiumButton({
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           className={getButtonClasses()}
+          style={{
+            borderRadius: 8, // Explicit border radius for LinearGradient
+          }}
         >
           {renderContent()}
         </LinearGradient>

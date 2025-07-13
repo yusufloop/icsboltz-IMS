@@ -2,10 +2,23 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import { ICSBOLTZ_CURRENT_USER_ROLE } from '@/constants/UserRoles';
 
 export default function MoreScreen() {
-  const handleDemurrageCharge = () => {
-    console.log('Navigate to Demurrage Charge');
+  // Check if current user is a requester - hide View Request for requesters
+  const isRequester = ICSBOLTZ_CURRENT_USER_ROLE === 'REQUESTER';
+
+  const handleNewRequest = () => {
+    router.push('/new-request');
+  };
+
+  const handleResubmitRequest = () => {
+    router.push('/resubmit-request');
+  };
+
+  const handleViewRequest = () => {
+    router.push('/view-request');
   };
 
   const handleHelpSupport = () => {
@@ -23,14 +36,43 @@ export default function MoreScreen() {
 
         {/* Menu Items Container */}
         <View style={styles.menuContainer}>
-          {/* Demurrage Charge */}
-          <TouchableOpacity style={styles.menuItem} onPress={handleDemurrageCharge}>
-            <Text style={styles.menuItemText}>Demurrage Charge</Text>
+          {/* New Request */}
+          <TouchableOpacity style={styles.menuItem} onPress={handleNewRequest}>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="add-circle-outline" size={20} color="#666" style={styles.menuIcon} />
+              <Text style={styles.menuItemText}>New Request</Text>
+            </View>
             <Ionicons name="chevron-forward" size={20} color="#999" />
           </TouchableOpacity>
 
           {/* Separator Line */}
           <View style={styles.separator} />
+
+          {/* Resubmit Request */}
+          <TouchableOpacity style={styles.menuItem} onPress={handleResubmitRequest}>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="refresh-outline" size={20} color="#666" style={styles.menuIcon} />
+              <Text style={styles.menuItemText}>Resubmit Request</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#999" />
+          </TouchableOpacity>
+
+          {/* Conditional separator and View Request - only show for non-requesters */}
+          {!isRequester && (
+            <>
+              {/* Separator Line */}
+              <View style={styles.separator} />
+
+              {/* View Request */}
+              <TouchableOpacity style={styles.menuItem} onPress={handleViewRequest}>
+                <View style={styles.menuItemLeft}>
+                  <Ionicons name="eye-outline" size={20} color="#666" style={styles.menuIcon} />
+                  <Text style={styles.menuItemText}>View Request</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#999" />
+              </TouchableOpacity>
+            </>
+          )}
         </View>
 
         {/* Large spacing between sections */}
