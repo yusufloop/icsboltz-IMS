@@ -4,12 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { RequestCard } from '@/components/ui/RequestCard';
 import { PremiumCard } from '@/components/ui/PremiumCard';
-import { NewRequestModal } from '@/components/modals/NewRequestModal';
+import { router } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 export default function RequestsScreen() {
-  const [expandedCard, setExpandedCard] = useState<string | null>(null);
-  const [showNewRequestModal, setShowNewRequestModal] = useState(false);
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
 
   const requests = [
     { 
@@ -60,17 +59,19 @@ export default function RequestsScreen() {
   ];
 
   const handleCardToggle = (cardId: string) => {
-    setExpandedCard(expandedCard === cardId ? null : cardId);
+    setExpandedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(cardId)) {
+        newSet.delete(cardId);
+      } else {
+        newSet.add(cardId);
+      }
+      return newSet;
+    });
   };
 
   const handleCreateRequest = () => {
-    setShowNewRequestModal(true);
-  };
-
-  const handleNewRequestSubmit = (requestData: any) => {
-    console.log('New request submitted:', requestData);
-    setShowNewRequestModal(false);
-    // Here you would typically send the data to your backend
+    router.push('/new-request');
   };
 
   return (
@@ -81,69 +82,70 @@ export default function RequestsScreen() {
         contentContainerStyle={{ paddingBottom: 100 }}
       >
         {/* Header */}
-        <View className="flex-row items-center px-4 py-4 bg-bg-secondary shadow-md">
+        <View className="flex-row items-center px-6 py-6 bg-bg-secondary shadow-lg">
           <MaterialIcons 
-            name="star" 
-            size={24} 
+            name="assignment" 
+            size={28} 
             color="#0A84FF" 
           />
-          <Text className="text-2xl font-bold text-text-primary ml-3">
+          <Text className="text-3xl font-bold text-text-primary ml-4 leading-tight">
             My Requests
           </Text>
         </View>
 
         {/* Search Bar */}
-        <View className="px-4 pt-6">
-          <PremiumCard>
+        <View className="px-6 pt-8">
+          <PremiumCard className="shadow-lg">
             <View className="flex-row items-center">
               <MaterialIcons 
                 name="search" 
-                size={20} 
+                size={22} 
                 color="#8A8A8E"
-                style={{ marginRight: 12 }}
+                style={{ marginRight: 14 }}
               />
               <TextInput
-                placeholder="Search"
-                placeholderTextColor="#8A8A8E"
-                className="flex-1 text-base text-text-primary font-system"
+                placeholder="Search requests..."
+                placeholderTextColor="#AEAEB2"
+                className="flex-1 text-base text-text-primary leading-relaxed"
+                style={{ fontFamily: 'System' }}
               />
             </View>
           </PremiumCard>
         </View>
 
         {/* Filter Controls */}
-        <View className="flex-row items-center justify-between px-4 pt-6 mb-6">
-          <View className="flex-row items-center space-x-6">
-            <TouchableOpacity className="flex-row items-center py-2 active:opacity-80">
+        <View className="flex-row items-center justify-between px-6 pt-2 mb-4">
+          <View className="flex-row items-center space-x-8">
+            <TouchableOpacity className="flex-row items-center py-3 px-2 active:opacity-80 active:scale-95">
               <MaterialIcons 
                 name="sort" 
-                size={20} 
+                size={22} 
                 color="#8A8A8E"
-                style={{ marginRight: 4 }}
+                style={{ marginRight: 6 }}
               />
-              <Text className="text-sm text-text-secondary font-system">
+              <Text className="text-base text-text-secondary font-medium">
                 Sort
               </Text>
               <MaterialIcons 
                 name="keyboard-arrow-down" 
-                size={20} 
+                size={22} 
                 color="#8A8A8E"
-                style={{ marginLeft: 4 }}
+                style={{ marginLeft: 6 }}
               />
             </TouchableOpacity>
 
-            <TouchableOpacity className="flex-row items-center py-2 active:opacity-80">
+            <TouchableOpacity className="flex-row items-center py-3 px-2 active:opacity-80 active:scale-95">
               <MaterialIcons 
-                name="filter-list" 
-                size={20} 
+                name="tune" 
+                size={22} 
                 color="#8A8A8E"
-                style={{ marginRight: 4 }}
+                style={{ marginRight: 6 }}
               />
-              <Text className="text-sm text-text-secondary font-system">
+              <Text className="text-base text-text-secondary font-medium">
                 Filter
               </Text>
-              <View className="bg-primary rounded-full w-5 h-5 items-center justify-center ml-2">
-                <Text className="text-white text-xs font-semibold">
+              <View className="bg-primary rounded-full w-6 h-6 items-center justify-center ml-3 shadow-sm">
+                <Text className="text-white text-xs font-bold">
                   2
                 </Text>
               </View>
@@ -151,19 +153,19 @@ export default function RequestsScreen() {
           </View>
 
           <TouchableOpacity 
-            className="bg-primary rounded-full w-10 h-10 items-center justify-center shadow-md active:opacity-80 active:scale-95"
+            className="bg-gradient-to-br from-[#409CFF] to-[#0A84FF] rounded-xl w-12 h-12 items-center justify-center shadow-lg active:opacity-90 active:scale-95"
             onPress={handleCreateRequest}
           >
             <MaterialIcons 
               name="add" 
-              size={24} 
-              color="#FFFFFF"
+              size={36} 
+              color="#0d19ffff"
             />
           </TouchableOpacity>
         </View>
 
         {/* Requests List */}
-        <View className="px-4">
+        <View className="px-6">
           {requests.map((request, index) => (
             <Animated.View
               key={request.id}
@@ -177,7 +179,7 @@ export default function RequestsScreen() {
                 priority={request.priority}
                 amount={request.amount}
                 company={request.company}
-                isExpanded={expandedCard === request.id}
+                isExpanded={expandedCards.has(request.id)}
                 onToggle={() => handleCardToggle(request.id)}
               />
             </Animated.View>
@@ -185,12 +187,6 @@ export default function RequestsScreen() {
         </View>
       </ScrollView>
 
-      {/* New Request Modal */}
-      <NewRequestModal
-        visible={showNewRequestModal}
-        onClose={() => setShowNewRequestModal(false)}
-        onSubmit={handleNewRequestSubmit}
-      />
     </SafeAreaView>
   );
 }
