@@ -58,6 +58,21 @@ Successfully implemented a comprehensive "View Request" page that utilizes the e
 
 ## 2. Recent Changes
 
+- **IMPLEMENTED: Resubmit Button Hardcode Fix** (`components/ui/RequestCard.tsx`)
+  - **CRITICAL FIX**: Applied hardcode fix to bypass PremiumButton gradient issue for resubmit action
+  - **Import Added**: Added LinearGradient from expo-linear-gradient to imports
+  - **Conditional Rendering**: Implemented conditional logic in all three button rendering sections:
+    - Side-by-side buttons (first 2 actions)
+    - Full-width buttons (remaining actions after first 2)
+    - Single button case (when only 1 action available)
+  - **Custom Button Implementation**: For 'resubmit' action, renders TouchableOpacity with LinearGradient instead of PremiumButton
+  - **Style Matching**: Custom button matches PremiumButton 'sm' size and gradient variant styling
+  - **Preserved Layout**: Maintained existing complex layout logic for side-by-side and full-width button arrangements
+  - **Touch Handling**: Proper onPress handler attachment to TouchableOpacity for working button functionality
+  - **All Other Actions**: Continue to use existing PremiumButton component as before
+  - **Gradient Colors**: Uses same gradient colors as PremiumButton (['#409CFF', '#0A84FF'])
+  - **Icon Support**: Properly renders icon from button config with correct styling
+
 - **IMPLEMENTED: Multiple Card Expansion in My Requests** (`app/(tabs)/requests.tsx`)
   - **NEW FEATURE**: Changed from single card expansion to multiple card expansion capability
   - **State Management**: Replaced `expandedCard` (string | null) with `expandedCards` (Set<string>)
