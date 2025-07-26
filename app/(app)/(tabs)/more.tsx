@@ -8,6 +8,7 @@ import { ICSBOLTZ_CURRENT_USER_ROLE } from '@/constants/UserRoles';
 export default function MoreScreen() {
   // Check if current user is a requester - hide View Request for requesters
   const isRequester = ICSBOLTZ_CURRENT_USER_ROLE === 'REQUESTER';
+  const isGeneralManager = ICSBOLTZ_CURRENT_USER_ROLE === 'GENERAL_MANAGER';
 
   const handleNewRequest = () => {
     router.push('/new-request');
@@ -19,6 +20,10 @@ export default function MoreScreen() {
 
   const handleViewRequest = () => {
     router.push('/view-request');
+  };
+
+  const handleGMReview = () => {
+    router.push('/gm-view-request-step1');
   };
 
   const handleHelpSupport = () => {
@@ -68,6 +73,23 @@ export default function MoreScreen() {
                 <View style={styles.menuItemLeft}>
                   <Ionicons name="eye-outline" size={20} color="#666" style={styles.menuIcon} />
                   <Text style={styles.menuItemText}>View Request</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#999" />
+              </TouchableOpacity>
+            </>
+          )}
+
+          {/* GM Review - only show for General Manager */}
+          {isGeneralManager && (
+            <>
+              {/* Separator Line */}
+              <View style={styles.separator} />
+
+              {/* GM Review */}
+              <TouchableOpacity style={styles.menuItem} onPress={handleGMReview}>
+                <View style={styles.menuItemLeft}>
+                  <Ionicons name="checkmark-circle-outline" size={20} color="#666" style={styles.menuIcon} />
+                  <Text style={styles.menuItemText}>GM Review</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="#999" />
               </TouchableOpacity>

@@ -1,18 +1,35 @@
 import { Tabs } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
-import { Platform } from "react-native";
+import { Platform, View } from "react-native";
+import { Slot } from "expo-router";
 
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { ICSBOLTZ_CURRENT_USER_ROLE } from "@/constants/UserRoles";
+import { Sidebar } from "@/components/ui/Sidebar";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const currentRole = ICSBOLTZ_CURRENT_USER_ROLE;
 
-  // Define role-based tab configurations
+  // For web, use sidebar layout
+  if (Platform.OS === 'web') {
+    return (
+      <View className="flex-1 flex-row bg-gray-50">
+        {/* Sidebar */}
+        <Sidebar className="h-full" />
+        
+        {/* Main Content Area */}
+        <View className="flex-1">
+          <Slot />
+        </View>
+      </View>
+    );
+  }
+
+  // For mobile, use tab navigation
   const getRoleBasedTabs = () => {
     const baseTabs = [
       {

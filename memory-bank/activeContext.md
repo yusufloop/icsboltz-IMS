@@ -2,6 +2,53 @@
 
 ## 1. Current Work Focus
 
+**COMPLETED: Mobile Version of 3-Step GM View Request Pages**
+Successfully created mobile versions of the 3-step GM view request pages (`gm-view-request-step1.tsx`, `gm-view-request-step2.tsx`, `gm-view-request-step3.tsx`) adapted from their web counterparts with mobile-optimized sizing and layout.
+
+**Key Mobile Adaptations:**
+- **MOBILE LAYOUT**: Replaced web-specific centered containers and max-width constraints with mobile-friendly full-width layout
+- **SAFEAREAVIEW**: Used SafeAreaView instead of regular View for proper mobile screen handling
+- **MOBILE TEXT SIZING**: Reduced text sizes from web versions (text-lg → text-base, text-sm → text-xs, etc.)
+- **MOBILE FIELD SIZING**: Adjusted input field heights (min-h-[44px] → min-h-[36px], min-h-[80px] → min-h-[60px])
+- **MOBILE SPACING**: Reduced padding and margins (px-6 py-6 → px-4 py-4, space-y-6 → space-y-4)
+- **MOBILE ICONS**: Scaled down icon sizes (size={24} → size={20}, size={20} → size={16})
+- **MOBILE PROGRESS INDICATOR**: Smaller progress circles (w-8 h-8 → w-6 h-6) and thinner connecting lines (h-1 → h-0.5)
+- **MOBILE BUTTONS**: Reduced button heights (min-h-[44px] → min-h-[40px]) and adjusted text sizes
+- **MOBILE DROPDOWNS**: Adjusted dropdown heights and scroll areas for mobile screens
+- **MOBILE ATTACHMENTS**: Smaller upload area and icons for mobile interface
+
+**COMPLETED: Web Version of View Request Page**
+Successfully created `view-request.web.tsx` - a comprehensive web version of the view request page following the same design pattern as the new request web version with centered card layout and proper web styling.
+
+**Key Features Implemented:**
+- **CENTERED CARD LAYOUT**: Follows the same design pattern as new-request.web.tsx with max-width container and proper spacing
+- **ROLE-BASED FIELD EDITING**: Fields are editable/read-only based on user role permissions with visual indicators
+- **COMPREHENSIVE REQUEST INFORMATION**: Displays all request details including technical and financial information in organized sections
+- **DYNAMIC ACTION BUTTONS**: Shows Approve/Reject buttons only for users with appropriate permissions in sticky footer
+- **STATUS BADGE INTEGRATION**: Color-coded status badge in header matching the request status
+- **WEB-OPTIMIZED DROPDOWNS**: Custom dropdown implementations for Priority, Department, and Approval Level selections
+- **RESPONSIVE DESIGN**: Proper flex layouts and web-specific styling with gray background and white card
+- **ATTACHMENT HANDLING**: File upload area with drag-and-drop styling (non-functional for requesters)
+- **COMMENTS SYSTEM**: Supports HOD comments, manager comments, and rejection reasons with proper conditional rendering
+- **FORM VALIDATION**: Rejection requires reason input with proper error handling
+
+**COMPLETED: Web Version of New Requests Page**
+Successfully created `new-request.web.tsx` - a popup-style web version of the new requests page matching the provided design with shorter width, file upload area, and all form fields.
+
+**COMPLETED: Web Version of Requests Page**
+Successfully created `requests.web.tsx` - a production-ready web version of the requests page with table layout, row selection, expansion functionality, and proper navigation integration.
+
+**Key Features Implemented:**
+- **TABLE-BASED LAYOUT**: Complete table implementation with headers, data rows, and proper column alignment
+- **ROW SELECTION**: Individual checkboxes and "Select All" functionality using Set-based state management
+- **ROW EXPANSION**: Click-to-expand rows with action panels (View Details, Approve, Reject buttons)
+- **SEARCH FUNCTIONALITY**: Header search bar with proper styling and state management
+- **STATUS DISPLAY**: Color-coded status text (green/red/orange) without badge components
+- **IMAGE DISPLAY**: 40x40 pixel images in File/Image column using placeholder service
+- **STATIC DATA**: 7 sample RequestData objects with all three status types for testing
+- **NAVIGATION**: "New Requests" button properly navigates to `/new-request` route
+- **RESPONSIVE DESIGN**: Proper flex layouts and Tailwind CSS styling matching UI requirements
+
 **COMPLETED: Role-Based Navigation System with User Management**
 Successfully implemented a comprehensive role-based navigation system that dynamically shows different tabs based on user roles, along with user management capabilities.
 
@@ -57,6 +104,14 @@ Successfully implemented a comprehensive "View Request" page that utilizes the e
   - **Fallback UI**: Shows appropriate message when no actions are available for a role
 
 ## 2. Recent Changes
+
+- **CREATED: Web Requests Page** (`app/(app)/(tabs)/requests.web.tsx`)
+  - **NEW FILE**: Complete web version of requests page with table layout
+  - **DATA STRUCTURE**: Implemented RequestData interface with proper TypeScript typing
+  - **TABLE IMPLEMENTATION**: Header row with column titles and data rows with proper alignment
+  - **INTERACTIVITY**: Row selection, expansion, and action panel functionality
+  - **STYLING**: Tailwind CSS classes for professional web interface design
+  - **NAVIGATION**: Integrated with existing routing system for "New Requests" button
 
 - **IMPLEMENTED: Resubmit Button Hardcode Fix** (`components/ui/RequestCard.tsx`)
   - **CRITICAL FIX**: Applied hardcode fix to bypass PremiumButton gradient issue for resubmit action

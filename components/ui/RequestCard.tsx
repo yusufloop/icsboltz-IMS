@@ -5,6 +5,7 @@ import React, { useRef, useState } from 'react';
 import { Animated, Text, TouchableOpacity, View } from 'react-native';
 import {
   getCurrentUserActions,
+  ICSBOLTZ_CURRENT_USER_ROLE,
   type ButtonAction
 } from '../../constants/UserRoles';
 import { PremiumButton } from './PremiumButton';
@@ -186,6 +187,39 @@ export function RequestCard({
   const handleView = () => {
     console.log('View action for request', id);
     // TODO: Implement view functionality
+  };
+
+  const handleViewDetails = () => {
+    // Navigate to appropriate view page based on user role
+    if (ICSBOLTZ_CURRENT_USER_ROLE === 'GENERAL_MANAGER') {
+      // Navigate to GM view for General Managers
+      router.push({
+        pathname: '/gm-view-request-step1',
+        params: {
+          id,
+          itemRequested,
+          priority,
+          amount,
+          company,
+          status,
+          date,
+        },
+      });
+    } else {
+      // Navigate to regular view for other roles
+      router.push({
+        pathname: '/view-request',
+        params: {
+          id,
+          itemRequested,
+          priority,
+          amount,
+          company,
+          status,
+          date,
+        },
+      });
+    }
   };
 
   const handleWarranty = () => {
@@ -515,9 +549,20 @@ export function RequestCard({
                   </>
                 )}
                 
+                {/* Universal View Details Button - Available for all users */}
+                <View style={{ marginTop: availableActions.length > 0 ? 8 : 0 }}>
+                  <PremiumButton
+                    title="View Details"
+                    onPress={handleViewDetails}
+                    variant="secondary"
+                    size="sm"
+                    icon={<MaterialIcons name="visibility" size={18} color="#6B7280" style={{ marginRight: 8 }} />}
+                  />
+                </View>
+
                 {/* Fallback message if no actions available */}
                 {availableActions.length === 0 && (
-                  <View className="bg-gray-50 rounded-lg p-4">
+                  <View className="bg-gray-50 rounded-lg p-4 mb-3">
                     <Text className="text-center text-text-secondary text-sm">
                       No actions available for your role
                     </Text>
