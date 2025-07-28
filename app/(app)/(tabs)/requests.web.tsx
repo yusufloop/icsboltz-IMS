@@ -238,19 +238,19 @@ export default function RequestsWebScreen() {
               <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0 text-center" style={{ flex: 2 }}>
                 Name
               </Text>
-              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0" style={{ flex: 3 }}>
+              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0 text-center" style={{ flex: 3 }}>
                 Reasons for Requests
               </Text>
-              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0" style={{ flex: 1 }}>
+              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0 text-center" style={{ flex: 1 }}>
                 Quantity
               </Text>
-              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0" style={{ flex: 2 }}>
+              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0 text-center" style={{ flex: 2 }}>
                 Charge to Department
               </Text>
-              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0" style={{ flex: 1 }}>
+              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0 text-center" style={{ flex: 1 }}>
                 Status
               </Text>
-              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0" style={{ flex: 1 }}>
+              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0 text-center" style={{ flex: 1 }}>
                 File/Image
               </Text>
             </View>
@@ -285,22 +285,22 @@ export default function RequestsWebScreen() {
                     <Text className="text-sm text-gray-900 flex-1 min-w-0 text-center" style={{ flex: 2 }}>
                       {request.name}
                     </Text>
-                    <Text className="text-sm text-gray-600 flex-1 min-w-0" style={{ flex: 3 }}>
+                    <Text className="text-sm text-gray-600 flex-1 min-w-0 text-center" style={{ flex: 3 }}>
                       {request.reasonsForRequests}
                     </Text>
-                    <Text className="text-sm text-gray-900 flex-1 min-w-0" style={{ flex: 1 }}>
+                    <Text className="text-sm text-gray-900 flex-1 min-w-0 text-center" style={{ flex: 1 }}>
                       {request.quantity}
                     </Text>
-                    <Text className="text-sm text-gray-600 flex-1 min-w-0" style={{ flex: 2 }}>
+                    <Text className="text-sm text-gray-600 flex-1 min-w-0 text-center" style={{ flex: 2 }}>
                       {request.chargeToDepartment}
                     </Text>
-                    <Text className={`text-sm font-medium flex-1 min-w-0 ${getStatusTextColor(request.status)}`} style={{ flex: 1 }}>
+                    <Text className={`text-sm font-medium flex-1 min-w-0 text-center ${getStatusTextColor(request.status)}`} style={{ flex: 1 }}>
                       {request.status}
                     </Text>
-                    <View className="flex-1 min-w-0" style={{ flex: 1 }}>
+                    <View className="flex-1 min-w-0 items-center justify-center" style={{ flex: 1 }}>
                       <Image 
                         source={{ uri: request.image }}
-                        className="w-10 h-10 rounded"
+                        className="w-10 h-10 rounded "
                         resizeMode="cover"
                       />
                     </View>

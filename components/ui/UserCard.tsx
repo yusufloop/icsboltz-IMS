@@ -1,6 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useRef, useState } from 'react';
 import { Animated, Text, TouchableOpacity, View, Image } from 'react-native';
+import { router } from 'expo-router';
 import { PremiumCard } from './PremiumCard';
 import { 
   ICSBOLTZ_CURRENT_USER_ROLE, 
@@ -132,12 +133,12 @@ export function UserCard({
   // User action handlers
   const handleViewProfile = () => {
     console.log('View Profile action for user', id);
-    // TODO: Implement view profile functionality
+    router.push('/view-user');
   };
 
   const handleEditUser = () => {
     console.log('Edit User action for user', id);
-    // TODO: Implement edit user functionality
+    router.push('/view-user');
   };
 
   const handleSuspendUser = () => {
