@@ -1,73 +1,42 @@
-import React, { useState } from 'react';
-import { AuthContainer } from '@/components/auth/AuthContainer';
 import { LoginForm } from '@/components/auth/LoginForm';
-import { RegisterForm } from '@/components/auth/RegisterForm';
-import { ForgotPasswordForm } from '@/components/auth/ForgotPasswordForm';
-import { EmailVerificationForm } from '@/components/auth/EmailVerificationForm';
-import { Dashboard } from '@/components/dashboard/Dashboard';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/lib/auth';
+import { router } from 'expo-router';
+import React, { useEffect } from 'react';
+import { SafeAreaView, View } from 'react-native';
 
-type AuthScreen = 'login' | 'register' | 'forgotPassword' | 'verification';
-
-export default function AuthIndex() {
-  const [currentScreen, setCurrentScreen] = useState<AuthScreen>('login');
-  const [verificationEmail, setVerificationEmail] = useState('');
+export default function AuthScreen() {
   const { isAuthenticated } = useAuth();
 
-  if (isAuthenticated) {
-    return <Dashboard />;
-  }
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/(tabs)');
+    }
+  }, [isAuthenticated]);
 
-  const navigateToLogin = () => setCurrentScreen('login');
-  const navigateToRegister = () => setCurrentScreen('register');
-  const navigateToForgotPassword = () => setCurrentScreen('forgotPassword');
-  const navigateToVerification = (email: string) => {
-    setVerificationEmail(email);
-    setCurrentScreen('verification');
+  const navigateToRegister = () => {
+    router.push('/(auth)/register');
   };
 
-  const renderCurrentScreen = () => {
-    switch (currentScreen) {
-      case 'login':
-        return (
-          <LoginForm
-            onNavigateToRegister={navigateToRegister}
-            onNavigateToForgotPassword={navigateToForgotPassword}
-          />
-        );
-      case 'register':
-        return (
-          <RegisterForm
-            onNavigateToLogin={navigateToLogin}
-            onNavigateToVerification={navigateToVerification}
-          />
-        );
-      case 'forgotPassword':
-        return (
-          <ForgotPasswordForm
-            onNavigateToLogin={navigateToLogin}
-          />
-        );
-      case 'verification':
-        return (
-          <EmailVerificationForm
-            email={verificationEmail}
-            onNavigateToLogin={navigateToLogin}
-          />
-        );
-      default:
-        return (
-          <LoginForm
-            onNavigateToRegister={navigateToRegister}
-            onNavigateToForgotPassword={navigateToForgotPassword}
-          />
-        );
-    }
+  const navigateToForgotPassword = () => {
+    router.push('/(auth)/forgot-password');
+  };
+
+  const navigateToVerification = (email: string) => {
+    router.push({
+      pathname: '/(auth)/verify',
+      params: { email }
+    });
   };
 
   return (
-    <AuthContainer>
-      {renderCurrentScreen()}
-    </AuthContainer>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f8fafc' }}>
+      <View style={{ flex: 1 }}>
+        <LoginForm
+          onNavigateToRegister={navigateToRegister}
+          onNavigateToForgotPassword={navigateToForgotPassword}
+          onNavigateToVerification={navigateToVerification}
+        />
+      </View>
+    </SafeAreaView>
   );
 }

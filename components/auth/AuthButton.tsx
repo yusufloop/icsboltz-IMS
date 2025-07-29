@@ -1,83 +1,80 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle } from 'react-native';
+import { TouchableOpacity, Text, ActivityIndicator, ViewStyle } from 'react-native';
 
 interface AuthButtonProps {
   title: string;
   onPress: () => void;
   loading?: boolean;
   variant?: 'primary' | 'secondary';
-  style?: ViewStyle;
   disabled?: boolean;
+  className?: string;
 }
 
-export function AuthButton({ 
-  title, 
-  onPress, 
-  loading = false, 
+export function AuthButton({
+  title,
+  onPress,
+  loading = false,
   variant = 'primary',
-  style,
   disabled = false,
+  className = '',
 }: AuthButtonProps) {
-  const isPrimary = variant === 'primary';
-  
+  const isDisabled = disabled || loading;
+
+  const getButtonClasses = () => {
+    let baseClasses = 'rounded-xl py-4 px-6 items-center justify-center min-h-[52px]';
+    
+    if (isDisabled) {
+      baseClasses += ' bg-gray-300';
+    } else {
+      switch (variant) {
+        case 'primary':
+          baseClasses += ' bg-blue-500 active:bg-blue-600';
+          break;
+        case 'secondary':
+          baseClasses += ' bg-gray-100 border border-gray-300 active:bg-gray-200';
+          break;
+      }
+    }
+    
+    return `${baseClasses} ${className}`;
+  };
+
+  const getTextClasses = () => {
+    let textClasses = 'text-base font-semibold';
+    
+    if (isDisabled) {
+      textClasses += ' text-gray-500';
+    } else {
+      switch (variant) {
+        case 'primary':
+          textClasses += ' text-white';
+          break;
+        case 'secondary':
+          textClasses += ' text-gray-700';
+          break;
+      }
+    }
+    
+    return textClasses;
+  };
+
   return (
     <TouchableOpacity
-      style={[
-        styles.button,
-        isPrimary ? styles.primaryButton : styles.secondaryButton,
-        (loading || disabled) && styles.disabledButton,
-        style,
-      ]}
+      className={getButtonClasses()}
       onPress={onPress}
-      disabled={loading || disabled}
+      disabled={isDisabled}
       activeOpacity={0.8}
     >
       {loading ? (
         <ActivityIndicator 
-          color={isPrimary ? '#ffffff' : '#3b82f6'} 
+          color={variant === 'primary' ? '#ffffff' : '#3b82f6'} 
           size="small" 
         />
       ) : (
-        <Text style={[
-          styles.buttonText,
-          isPrimary ? styles.primaryButtonText : styles.secondaryButtonText,
-        ]}>
+        <Text className={getTextClasses()}>
           {title}
         </Text>
       )}
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    borderRadius: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 52,
-  },
-  primaryButton: {
-    backgroundColor: '#3b82f6',
-  },
-  secondaryButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-  },
-  disabledButton: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    fontFamily: 'Inter-SemiBold',
-  },
-  primaryButtonText: {
-    color: '#ffffff',
-  },
-  secondaryButtonText: {
-    color: '#374151',
-  },
-});

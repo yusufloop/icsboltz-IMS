@@ -1,18 +1,22 @@
+import { useAuth } from '@/lib/auth';
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { ArrowLeft } from 'lucide-react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { AuthButton } from './AuthButton';
 import { AuthCard } from './AuthCard';
 import { AuthInput } from './AuthInput';
-import { AuthButton } from './AuthButton';
 import { ErrorMessage } from './ErrorMessage';
 import { SuccessMessage } from './SuccessMessage';
-import { useAuth } from '@/hooks/useAuth';
 
 interface ForgotPasswordFormProps {
   onNavigateToLogin: () => void;
+  onNavigateToPasswordReset: (resetToken: string) => void;
 }
 
-export function ForgotPasswordForm({ onNavigateToLogin }: ForgotPasswordFormProps) {
+export function ForgotPasswordForm({ 
+  onNavigateToLogin, 
+  onNavigateToPasswordReset 
+}: ForgotPasswordFormProps) {
   const [email, setEmail] = useState('');
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
   const [successMessage, setSuccessMessage] = useState('');
@@ -39,22 +43,36 @@ export function ForgotPasswordForm({ onNavigateToLogin }: ForgotPasswordFormProp
     
     if (result.success) {
       setSuccessMessage(result.message || '');
+      // In development, show the reset token in console
+      if (result.data?.resetToken) {
+        console.log('🔗 Reset token:', result.data.resetToken);
+        console.log('🔑 Reset code:', result.data.resetCode);
+        // Auto-navigate to reset form in development
+        setTimeout(() => {
+          onNavigateToPasswordReset(result.data.resetToken);
+        }, 3000);
+      }
     }
   };
 
   return (
     <AuthCard>
       <TouchableOpacity 
-        style={styles.backButton}
+        className="flex-row items-center mb-6"
         onPress={onNavigateToLogin}
       >
-        <ArrowLeft size={20} color="#6b7280" />
-        <Text style={styles.backText}>Back to login</Text>
+        <Ionicons name="arrow-back" size={20} color="#6b7280" />
+        <Text className="text-gray-500 ml-2 font-inter-regular">Back to login</Text>
       </TouchableOpacity>
 
-      <View style={styles.header}>
-        <Text style={styles.title}>Reset Password</Text>
-        <Text style={styles.subtitle}>
+      <View className="items-center mb-8">
+        <View className="w-20 h-20 bg-orange-100 rounded-full items-center justify-center mb-4">
+          <Ionicons name="lock-closed" size={40} color="#f59e0b" />
+        </View>
+        <Text className="text-3xl font-bold text-gray-900 mb-2 font-inter-bold">
+          Reset Password
+        </Text>
+        <Text className="text-gray-600 text-center font-inter-regular">
           Enter your email address and we'll send you a link to reset your password
         </Text>
       </View>
@@ -62,77 +80,34 @@ export function ForgotPasswordForm({ onNavigateToLogin }: ForgotPasswordFormProp
       {error && <ErrorMessage message={error} />}
       {successMessage && <SuccessMessage message={successMessage} />}
 
-      <View style={styles.form}>
-        <AuthInput
-          label="Email"
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Enter your email"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          error={fieldErrors.email}
-        />
+      <AuthInput
+        label="Email"
+        value={email}
+        onChangeText={setEmail}
+        placeholder="Enter your email"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        leftIcon="mail"
+        error={fieldErrors.email}
+      />
 
-        <AuthButton
-          title="Send Reset Link"
-          onPress={handleForgotPassword}
-          loading={isLoading}
-        />
+      <AuthButton
+        title="Send Reset Link"
+        onPress={handleForgotPassword}
+        loading={isLoading}
+        style={{ marginBottom: 24 }}
+      />
 
-        {successMessage && (
-          <TouchableOpacity 
-            style={styles.loginButton}
-            onPress={onNavigateToLogin}
-          >
-            <Text style={styles.loginButtonText}>Return to Login</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      {successMessage && (
+        <TouchableOpacity 
+          className="items-center"
+          onPress={onNavigateToLogin}
+        >
+          <Text className="text-blue-500 font-semibold font-inter-semibold">
+            Return to Login
+          </Text>
+        </TouchableOpacity>
+      )}
     </AuthCard>
   );
 }
-
-const styles = StyleSheet.create({
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  backText: {
-    color: '#6b7280',
-    fontSize: 14,
-    marginLeft: 8,
-    fontFamily: 'Inter-Regular',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 8,
-    fontFamily: 'Inter-Bold',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6b7280',
-    textAlign: 'center',
-    lineHeight: 24,
-    fontFamily: 'Inter-Regular',
-  },
-  form: {
-    gap: 4,
-  },
-  loginButton: {
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  loginButtonText: {
-    color: '#3b82f6',
-    fontSize: 14,
-    fontWeight: '600',
-    fontFamily: 'Inter-SemiBold',
-  },
-});

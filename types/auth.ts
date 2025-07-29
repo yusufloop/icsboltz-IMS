@@ -1,36 +1,23 @@
-export interface User {
+export interface Profile {
   id: string;
+  full_name: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  isEmailVerified: boolean;
-  createdAt: Date;
+  avatar_url?: string;
+  created_at: string;
+  updated_at: string;
 }
 
-export interface AuthState {
-  user: User | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
+export interface AuthError {
+  message: string;
 }
 
-export interface LoginCredentials {
+export interface SignInData {
   email: string;
   password: string;
 }
 
-export interface RegisterCredentials {
+export interface SignUpData {
   email: string;
   password: string;
-  confirmPassword: string;
-  firstName: string;
-  lastName: string;
-}
-
-export interface ResetPasswordData {
-  email: string;
-}
-
-export interface VerificationData {
-  email: string;
-  code: string;
+  fullName: string;
 }

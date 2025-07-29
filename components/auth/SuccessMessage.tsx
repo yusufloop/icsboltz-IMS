@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { CheckCircle } from 'lucide-react-native';
+import { View, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface SuccessMessageProps {
   message: string;
@@ -8,29 +8,11 @@ interface SuccessMessageProps {
 
 export function SuccessMessage({ message }: SuccessMessageProps) {
   return (
-    <View style={styles.container}>
-      <CheckCircle size={16} color="#10b981" />
-      <Text style={styles.text}>{message}</Text>
+    <View className="flex-row items-center bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+      <Ionicons name="checkmark-circle" size={16} color="#10b981" />
+      <Text className="text-green-600 text-sm ml-2 flex-1 font-inter-regular">
+        {message}
+      </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f0fdf4',
-    borderColor: '#bbf7d0',
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
-  },
-  text: {
-    color: '#059669',
-    fontSize: 14,
-    marginLeft: 8,
-    flex: 1,
-    fontFamily: 'Inter-Regular',
-  },
-});

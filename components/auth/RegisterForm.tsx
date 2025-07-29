@@ -1,11 +1,11 @@
+import { useAuth } from '@/lib/auth';
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { AuthButton } from './AuthButton';
 import { AuthCard } from './AuthCard';
 import { AuthInput } from './AuthInput';
-import { AuthButton } from './AuthButton';
 import { ErrorMessage } from './ErrorMessage';
 import { SuccessMessage } from './SuccessMessage';
-import { useAuth } from '@/hooks/useAuth';
 
 interface RegisterFormProps {
   onNavigateToLogin: () => void;
@@ -44,8 +44,10 @@ export function RegisterForm({ onNavigateToLogin, onNavigateToVerification }: Re
     
     if (!formData.password.trim()) {
       errors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+    } else if (formData.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      errors.password = 'Password must contain uppercase, lowercase, and number';
     }
     
     if (!formData.confirmPassword.trim()) {
@@ -86,125 +88,85 @@ export function RegisterForm({ onNavigateToLogin, onNavigateToVerification }: Re
 
   return (
     <AuthCard>
-      <View style={styles.header}>
-        <Text style={styles.title}>Create Account</Text>
-        <Text style={styles.subtitle}>Sign up to get started</Text>
+      <View className="items-center mb-8">
+        <Text className="text-3xl font-bold text-gray-900 mb-2 font-inter-bold">
+          Create Account
+        </Text>
+        <Text className="text-gray-600 text-center font-inter-regular">
+          Sign up to get started
+        </Text>
       </View>
 
       {error && <ErrorMessage message={error} />}
       {successMessage && <SuccessMessage message={successMessage} />}
 
-      <View style={styles.form}>
-        <View style={styles.nameRow}>
+      <View className="flex-row space-x-3 mb-5">
+        <View className="flex-1">
           <AuthInput
             label="First Name"
             value={formData.firstName}
             onChangeText={(value) => updateField('firstName', value)}
             placeholder="First name"
-            style={styles.nameInput}
+            leftIcon="person"
             error={fieldErrors.firstName}
           />
+        </View>
+        <View className="flex-1">
           <AuthInput
             label="Last Name"
             value={formData.lastName}
             onChangeText={(value) => updateField('lastName', value)}
             placeholder="Last name"
-            style={styles.nameInput}
+            leftIcon="person"
             error={fieldErrors.lastName}
           />
         </View>
+      </View>
 
-        <AuthInput
-          label="Email"
-          value={formData.email}
-          onChangeText={(value) => updateField('email', value)}
-          placeholder="Enter your email"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          error={fieldErrors.email}
-        />
+      <AuthInput
+        label="Email"
+        value={formData.email}
+        onChangeText={(value) => updateField('email', value)}
+        placeholder="Enter your email"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        leftIcon="mail"
+        error={fieldErrors.email}
+      />
 
-        <AuthInput
-          label="Password"
-          value={formData.password}
-          onChangeText={(value) => updateField('password', value)}
-          placeholder="Create a password"
-          secureTextEntry
-          error={fieldErrors.password}
-        />
+      <AuthInput
+        label="Password"
+        value={formData.password}
+        onChangeText={(value) => updateField('password', value)}
+        placeholder="Create a password"
+        isPassword
+        leftIcon="lock-closed"
+        error={fieldErrors.password}
+      />
 
-        <AuthInput
-          label="Confirm Password"
-          value={formData.confirmPassword}
-          onChangeText={(value) => updateField('confirmPassword', value)}
-          placeholder="Confirm your password"
-          secureTextEntry
-          error={fieldErrors.confirmPassword}
-        />
+      <AuthInput
+        label="Confirm Password"
+        value={formData.confirmPassword}
+        onChangeText={(value) => updateField('confirmPassword', value)}
+        placeholder="Confirm your password"
+        isPassword
+        leftIcon="lock-closed"
+        error={fieldErrors.confirmPassword}
+      />
 
-        <AuthButton
-          title="Create Account"
-          onPress={handleRegister}
-          loading={isLoading}
-          style={styles.submitButton}
-        />
+      <AuthButton
+        title="Create Account"
+        onPress={handleRegister}
+        loading={isLoading}
+        style={{ marginBottom: 24 }}
+      />
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Already have an account? </Text>
-          <TouchableOpacity onPress={onNavigateToLogin}>
-            <Text style={styles.linkText}>Sign in</Text>
-          </TouchableOpacity>
-        </View>
+      <View className="flex-row justify-center items-center">
+        <Text className="text-gray-600 font-inter-regular">Already have an account? </Text>
+        <TouchableOpacity onPress={onNavigateToLogin}>
+          <Text className="text-blue-500 font-semibold font-inter-semibold">Sign in</Text>
+        </TouchableOpacity>
       </View>
     </AuthCard>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 8,
-    fontFamily: 'Inter-Bold',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6b7280',
-    fontFamily: 'Inter-Regular',
-  },
-  form: {
-    gap: 4,
-  },
-  nameRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  nameInput: {
-    flex: 1,
-  },
-  submitButton: {
-    marginTop: 8,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 24,
-  },
-  footerText: {
-    color: '#6b7280',
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-  },
-  linkText: {
-    color: '#3b82f6',
-    fontSize: 14,
-    fontWeight: '600',
-    fontFamily: 'Inter-SemiBold',
-  },
-});
