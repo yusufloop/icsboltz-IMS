@@ -52,15 +52,15 @@ const DEPARTMENT_OPTIONS = [
 export default function ResubmitRequestScreen() {
   const params = useLocalSearchParams();
   
-  // Initialize form data with existing request data if available
+  // Initialize form data with existing request data or pre-filled sample data
   const [formData, setFormData] = useState<RequestFormData>({
-    itemRequested: (params.itemRequested as string) || '',
-    quantity: (params.quantity as string) || '',
-    reasonForRequest: (params.reasonForRequest as string) || '',
-    phoneNo: (params.phoneNo as string) || '',
-    dateNeededBy: params.dateNeededBy ? new Date(params.dateNeededBy as string) : null,
+    itemRequested: (params.itemRequested as string) || 'MacBook Pro 16-inch M3 Max',
+    quantity: (params.quantity as string) || '1',
+    reasonForRequest: (params.reasonForRequest as string) || 'New laptop for a senior designer who needs better performance for video editing and 3D rendering.',
+    phoneNo: (params.phoneNo as string) || '012-345 6789',
+    dateNeededBy: params.dateNeededBy ? new Date(params.dateNeededBy as string) : new Date(),
     priority: (params.priority as 'Low' | 'Medium' | 'High') || 'High',
-    chargeToDepartment: (params.chargeToDepartment as string) || '',
+    chargeToDepartment: (params.chargeToDepartment as string) || 'Design Department',
     attachments: [],
     hodComments: (params.hodComments as string) || 'Request requires additional documentation and clarification on budget allocation. Please provide detailed specifications and updated cost estimates.',
   });

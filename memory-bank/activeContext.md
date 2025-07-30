@@ -119,6 +119,23 @@ Successfully implemented a comprehensive "View Request" page that utilizes the e
 
 ## 2. Recent Changes
 
+**COMPLETED: Updated View User Pages to Match New User Design** (`app/(screens)/view-user.tsx` & `app/(screens)/view-user.web.tsx`)
+- **MOBILE VERSION**: Already had correct structure with editable fields and status dropdown with color indicators
+- **WEB VERSION**: Completely redesigned to match new-user.web.tsx structure with pre-filled editable fields
+- **STATUS DROPDOWN**: Added new status dropdown field with color-coded indicators for both mobile and web
+- **STATUS OPTIONS**: Implemented Active (green), Suspended (orange), Terminated (red), On Leave (blue), Pending (gray)
+- **PRE-FILLED FIELDS**: All fields are pre-populated with existing user data but remain fully editable
+- **CONSISTENT DESIGN**: Web version follows exact same layout as new-user.web.tsx with two-column design
+- **FORM VALIDATION**: Maintained all validation logic including email format and required field checks
+- **NAVIGATION**: Updated header text to "Edit User" and button text to "Save Changes"
+- **COLOR MAPPING**: Implemented STATUS_COLORS constant matching the provided color scheme
+
+- **UPDATED: Sidebar ite** to White (`components/ui/Sidebar.tsx`)
+  - **STYLINI NEFIRNMENTT**:Updptted sidebar rroerlcolor or fromorder- ray`300r-gray-order00` to2`0bofdrego testrppaaraacae
+  - **WWITT BCCKGD*UoDfirmConfirmdebsidabar alleadyrue uhwtitb kackouwundh(ior both e)xpandeoth dxpandnd and collapsed slptesd states
+  - **CONSISTENT STYLING**: Maintained all existing hover states, active states, and navigation functionality
+  - **VISUAL IMPROVEMENT**: Softer border provides better visual hierarchy while maintaining clean white appearance
+
 - **CREATED: Web Requests Page** (`app/(app)/(tabs)/requests.web.tsx`)
   - **NEW FILE**: Complete web version of requests page with table layout
   - **DATA STRUCTURE**: Implemented RequestData interface with proper TypeScript typing

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { PremiumCard } from '@/components/ui/PremiumCard';
 import { PremiumStatusBadge } from '@/components/ui/PremiumStatusBadge';
+import { router } from 'expo-router';
 
 
 interface Notification {
@@ -74,6 +75,7 @@ const sampleNotifications: Notification[] = [
 export default function NotificationsScreen() {
   const [notifications, setNotifications] = useState<Notification[]>(sampleNotifications);
   const [filter, setFilter] = useState<'all' | 'unread' | 'request' | 'approval' | 'system' | 'urgent'>('all');
+  const [expandedNotifications, setExpandedNotifications] = useState<Set<string>>(new Set());
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -152,6 +154,31 @@ export default function NotificationsScreen() {
   const filteredNotifications = getFilteredNotifications();
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
+  // Helper functions for expandable notifications
+  const isRequestNotification = (notification: Notification) => {
+    return notification.type === 'request' || notification.type === 'urgent';
+  };
+
+  const toggleNotificationExpansion = (notificationId: string) => {
+    setExpandedNotifications(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(notificationId)) {
+        newSet.delete(notificationId);
+      } else {
+        newSet.add(notificationId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleStatusHistory = (requestId: string) => {
+    router.push(`/status-history?requestId=${requestId}`);
+  };
+
+  const handleViewDetails = (requestId: string) => {
+    router.push(`/view-request?requestId=${requestId}`);
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
       {/* Header */}
@@ -221,61 +248,108 @@ export default function NotificationsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {filteredNotifications.length > 0 ? (
-          filteredNotifications.map((notification) => (
-            <TouchableOpacity
-              key={notification.id}
-              onPress={() => markAsRead(notification.id)}
-              activeOpacity={0.7}
-              className="mb-4"
-            >
-              <PremiumCard className={`${!notification.isRead ? 'border-l-4 border-l-primary' : ''}`}>
-                <View className="flex-row items-start">
-                  {/* Icon */}
-                  <View 
-                    className="rounded-full p-3 mr-4"
-                    style={{ backgroundColor: getNotificationColor(notification.type) + '20' }}
-                  >
-                    <MaterialIcons 
-                      name={getNotificationIcon(notification.type) as any} 
-                      size={24} 
-                      color={getNotificationColor(notification.type)} 
-                    />
-                  </View>
-                  
-                  {/* Content */}
-                  <View className="flex-1">
-                    <View className="flex-row items-start justify-between mb-2">
-                      <Text className={`text-lg font-semibold ${!notification.isRead ? 'text-text-primary' : 'text-text-secondary'} flex-1 mr-2`}>
-                        {notification.title}
-                      </Text>
-                      
-                      {!notification.isRead && (
-                        <View className="w-3 h-3 bg-primary rounded-full mt-1" />
-                      )}
-                    </View>
-                    
-                    <Text className="text-text-secondary leading-relaxed mb-3">
-                      {notification.message}
-                    </Text>
-                    
-                    <View className="flex-row items-center justify-between">
-                      <Text className="text-sm text-text-tertiary">
-                        {notification.timestamp}
-                      </Text>
-                      
-                      {notification.requestId && (
-                        <PremiumStatusBadge 
-                          text={notification.requestId}
-                          status={notification.type === 'urgent' ? 'error' : 'info'} 
-                          size="sm"
+          filteredNotifications.map((notification) => {
+            const isExpanded = expandedNotifications.has(notification.id);
+            const isRequestType = isRequestNotification(notification);
+            
+            return (
+              <View key={notification.id} className="mb-4">
+                <TouchableOpacity
+                  onPress={() => {
+                    if (isRequestType && notification.requestId) {
+                      toggleNotificationExpansion(notification.id);
+                    } else {
+                      markAsRead(notification.id);
+                    }
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <PremiumCard className={`${!notification.isRead ? 'border-l-4 border-l-primary' : ''}`}>
+                    <View className="flex-row items-start">
+                      {/* Icon */}
+                      <View 
+                        className="rounded-full p-3 mr-4"
+                        style={{ backgroundColor: getNotificationColor(notification.type) + '20' }}
+                      >
+                        <MaterialIcons 
+                          name={getNotificationIcon(notification.type) as any} 
+                          size={24} 
+                          color={getNotificationColor(notification.type)} 
                         />
-                      )}
+                      </View>
+                      
+                      {/* Content */}
+                      <View className="flex-1">
+                        {!isExpanded ? (
+                          // Normal state
+                          <>
+                            <View className="flex-row items-start justify-between mb-2">
+                              <Text className={`text-lg font-semibold ${!notification.isRead ? 'text-text-primary' : 'text-text-secondary'} flex-1 mr-2`}>
+                                {notification.title}
+                              </Text>
+                              
+                              {!notification.isRead && (
+                                <View className="w-3 h-3 bg-primary rounded-full mt-1" />
+                              )}
+                            </View>
+                            
+                            <Text className="text-text-secondary leading-relaxed mb-3">
+                              {notification.message}
+                            </Text>
+                            
+                            <View className="flex-row items-center justify-between">
+                              <Text className="text-sm text-text-tertiary">
+                                {notification.timestamp}
+                              </Text>
+                              
+                              {notification.requestId && (
+                                <PremiumStatusBadge 
+                                  text={notification.requestId}
+                                  status={notification.type === 'urgent' ? 'error' : 'info'} 
+                                  size="sm"
+                                />
+                              )}
+                            </View>
+                          </>
+                        ) : (
+                          // Expanded state - shrunk content
+                          <View className="flex-row items-center justify-between">
+                            <View className="flex-1">
+                              <Text className={`text-base font-semibold ${!notification.isRead ? 'text-text-primary' : 'text-text-secondary'}`}>
+                                {notification.title}
+                              </Text>
+                              <Text className="text-sm text-text-tertiary mt-1">
+                                {notification.timestamp}
+                              </Text>
+                            </View>
+                            
+                            {/* Action Buttons */}
+                            <View className="flex-row space-x-2 ml-4">
+                              <TouchableOpacity
+                                onPress={() => handleStatusHistory(notification.requestId!)}
+                                className="bg-blue-500 px-3 py-2 rounded-lg"
+                                activeOpacity={0.8}
+                              >
+                                <Text className="text-white text-sm font-medium">Status History</Text>
+                              </TouchableOpacity>
+                              
+                              <TouchableOpacity
+                                onPress={() => handleViewDetails(notification.requestId!)}
+                                className="bg-green-500 px-3 py-2 rounded-lg"
+                                activeOpacity={0.8}
+                              >
+                                <Text className="text-white text-sm font-medium">View Details</Text>
+                              </TouchableOpacity>
+                            </View>
+                          </View>
+                        )}
+                      </View>
                     </View>
-                  </View>
-                </View>
-              </PremiumCard>
-            </TouchableOpacity>
-          ))
+                  </PremiumCard>
+                </TouchableOpacity>
+              </View>
+            );
+          })
         ) : (
           <View className="flex-1 items-center justify-center py-20">
             <MaterialIcons name="notifications-none" size={64} color="#D1D5DB" />

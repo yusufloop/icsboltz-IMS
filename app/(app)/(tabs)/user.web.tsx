@@ -3,7 +3,9 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Animated, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-// Data structure interface
+// --- DATA AND INTERFACES ---
+
+// IMPROVEMENT: Added 'status' to the UserData interface
 interface UserData {
   id: string;
   name: string;
@@ -11,25 +13,34 @@ interface UserData {
   email: string;
   role: 'Admin' | 'General Manager' | 'HoD' | 'User';
   department: string;
-  // IMPROVEMENT: Added status to control the indicator dot
-  status: 'online' | 'offline';
+  status: 'Active' | 'Suspended' | 'Terminated' | 'On Leave' | 'Pending';
 }
 
-// Static data array with updated status field
+// IMPROVEMENT: Added a status color mapping for the indicator dot
+const STATUS_COLORS: { [key in UserData['status']]: string } = {
+  Active: 'bg-green-500',
+  Suspended: 'bg-orange-500',
+  Terminated: 'bg-red-600',
+  'On Leave': 'bg-blue-500',
+  Pending: 'bg-gray-400',
+};
+
+
+// IMPROVEMENT: Added a 'status' field to each user object
 const staticUsersData: UserData[] = [
-  { id: '1', name: 'Richard Martin', contactNumber: '7687764556', email: 'richard@gmail.com', role: 'Admin', department: 'Marketing', status: 'online' },
-  { id: '2', name: 'Veandir', contactNumber: '9867545566', email: 'veandier@gmail.com', role: 'Admin', department: 'Finance', status: 'offline' },
-  { id: '3', name: 'Charin', contactNumber: '9267545457', email: 'charin@gmail.com', role: 'General Manager', department: 'HR', status: 'online' },
-  { id: '4', name: 'Hoffman', contactNumber: '9367546531', email: 'hoffman@gmail.com', role: 'General Manager', department: 'Finance', status: 'offline' },
-  { id: '5', name: 'Fainden Juke', contactNumber: '9667545982', email: 'fainden@gmail.com', role: 'HoD', department: 'HR', status: 'offline' },
-  { id: '6', name: 'Martin', contactNumber: '9867545457', email: 'martin@gmail.com', role: 'Admin', department: 'Finance', status: 'online' },
-  { id: '7', name: 'Joe Nike', contactNumber: '9567545769', email: 'joenike@gmail.com', role: 'HoD', department: 'Finance', status: 'online' },
-  { id: '8', name: 'Dender Luke', contactNumber: '9667545980', email: 'dender@gmail.com', role: 'HoD', department: 'Operations', status: 'offline' },
-  { id: '9', name: 'Martin', contactNumber: '9867545457', email: 'martin@gmail.com', role: 'HoD', department: 'Operations', status: 'online' },
-  { id: '10', name: 'Joe Nike', contactNumber: '9567545769', email: 'joenike@gmail.com', role: 'HoD', department: 'Operations', status: 'offline' },
-  { id: '11', name: 'Dender Luke', contactNumber: '9667545980', email: 'dender@gmail.com', role: 'User', department: 'Finance', status: 'online' },
-  { id: '12', name: 'Joe Nike', contactNumber: '9567545769', email: 'joenike@gmail.com', role: 'User', department: 'Operations', status: 'offline' },
-  { id: '13', name: 'Joe Nike', contactNumber: '9567545769', email: 'joenike@gmail.com', role: 'User', department: 'Operations', status: 'online' }
+  { id: '1', name: 'Ahmad bin Rahman', contactNumber: '0123456789', email: 'ahmad.rahman@icsboltz.com.my', role: 'Admin', department: 'Marketing', status: 'Active' },
+  { id: '2', name: 'Siti Nurhaliza binti Ishak', contactNumber: '0198765432', email: 'siti.nurhaliza@icsboltz.com.my', role: 'Admin', department: 'Finance', status: 'On Leave' },
+  { id: '3', name: 'Tan Chin Ho', contactNumber: '0161234567', email: 'tan.chinho@icsboltz.com.my', role: 'General Manager', department: 'HR', status: 'Active' },
+  { id: '4', name: 'Kumaravel a/l Muthu', contactNumber: '0178901234', email: 'kumaravel.m@icsboltz.com.my', role: 'General Manager', department: 'Finance', status: 'Suspended' },
+  { id: '5', name: 'Lee Wei Shen', contactNumber: '0145678901', email: 'lee.weishen@icsboltz.com.my', role: 'HoD', department: 'HR', status: 'Terminated' },
+  { id: '6', name: 'Zafri bin Idris', contactNumber: '0182345678', email: 'zafri.idris@icsboltz.com.my', role: 'Admin', department: 'Finance', status: 'Active' },
+  { id: '7', name: 'Nur Aina binti Khalid', contactNumber: '0139012345', email: 'nur.aina@icsboltz.com.my', role: 'HoD', department: 'Finance', status: 'Pending' },
+  { id: '8', name: 'Rajendran a/l Suresh', contactNumber: '0116789012', email: 'rajendran.s@icsboltz.com.my', role: 'HoD', department: 'Operations', status: 'Active' },
+  { id: '9', name: 'Wong Jia Yi', contactNumber: '0103456789', email: 'wong.jiayi@icsboltz.com.my', role: 'HoD', department: 'Operations', status: 'Active' },
+  { id: '10', name: 'Muhammad Faiz bin Salleh', contactNumber: '0128765432', email: 'm.faiz@icsboltz.com.my', role: 'HoD', department: 'Operations', status: 'On Leave' },
+  { id: '11', name: 'Priya d/o Subramaniam', contactNumber: '0195678901', email: 'priya.s@icsboltz.com.my', role: 'User', department: 'Finance', status: 'Suspended' },
+  { id: '12', name: 'Amirul bin Hafiz', contactNumber: '0162345678', email: 'amirul.hafiz@icsboltz.com.my', role: 'User', department: 'Operations', status: 'Active' },
+  { id: '13', name: 'Aisyah binti Hassan', contactNumber: '0179012345', email: 'aisyah.hassan@icsboltz.com.my', role: 'User', department: 'Operations', status: 'Terminated' }
 ];
 
 export default function UsersWebScreen() {
@@ -85,7 +96,6 @@ export default function UsersWebScreen() {
 
   // Handle navigation to new user
   const handleNewUser = () => {
-    // TODO: Navigate to new user creation page
     console.log('Navigate to new user page');
     router.push('/new-user');
   };
@@ -172,7 +182,7 @@ export default function UsersWebScreen() {
               <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0 text-center" style={{ flex: 2 }}>
                 Contact Number
               </Text>
-              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0 text-center" style={{ flex: 3 }}>
+              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0" style={{ flex: 3 }}>
                 Email
               </Text>
               <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0 text-center" style={{ flex: 2 }}>
@@ -189,7 +199,7 @@ export default function UsersWebScreen() {
               const isSelected = selectedRows.has(user.id);
 
               return (
-                <View key={user.id} className={isExpanded ? 'bg-white rounded-lg shadow-lg shadow-blue-50 my-1 mx-2 pb-4' : ''}>
+                <View key={user.id} className={isExpanded ? 'bg-white rounded-lg shadow-lg shadow-blue-50 my-1 mx-2' : ''}>
                   <TouchableOpacity
                     className={`flex-row items-center px-6 py-4 ${
                       !isExpanded ? `border-b border-gray-100 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}` : ''
@@ -210,19 +220,17 @@ export default function UsersWebScreen() {
                       )}
                     </TouchableOpacity>
 
-                    {/* 
-                      IMPROVEMENT: User Name column replaced with a component
-                      - A View now wraps the icon and text to create the combined component.
-                      - A `relative` container holds the icon and the `absolute` positioned status dot.
-                    */}
-                    <View className="flex-1 flex-row items-center space-x-3" style={{ flex: 2 }}>
-                      <View className="relative">
-                        <View className="w-9 h-9 bg-gray-200 rounded-full items-center justify-center">
-                          <MaterialIcons name="person" size={20} color="#A1A1AA" />
+                    {/* IMPROVEMENT: Replaced simple Text with an Icon + Name + Status component */}
+                    <View className="flex-1 min-w-0 flex-row items-center" style={{ flex: 2 }}>
+                      <View className="relative mr-3">
+                        <View className="w-10 h-10 rounded-full bg-gray-200 items-center justify-center">
+                          <MaterialIcons name="person" size={24} color="#A1A1AA" />
                         </View>
-                        {user.status === 'online' && (
-                          <View className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
-                        )}
+                        <View 
+                          className={`w-3.5 h-3.5 rounded-full absolute top-0 right-0 border-2 border-white ${
+                            STATUS_COLORS[user.status] || 'bg-gray-400'
+                          }`} 
+                        />
                       </View>
                       <Text className="text-sm text-gray-900 font-medium">
                         {user.name}
@@ -232,7 +240,7 @@ export default function UsersWebScreen() {
                     <Text className="text-sm text-gray-600 flex-1 min-w-0 text-center" style={{ flex: 2 }}>
                       {user.contactNumber}
                     </Text>
-                    <Text className="text-sm text-gray-600 flex-1 min-w-0 text-center" style={{ flex: 3 }}>
+                    <Text className="text-sm text-gray-600 flex-1 min-w-0" style={{ flex: 3 }}>
                       {user.email}
                     </Text>
                     <Text className={`text-sm font-medium flex-1 min-w-0 text-center ${getRoleTextColor(user.role)}`} style={{ flex: 2 }}>
@@ -245,22 +253,22 @@ export default function UsersWebScreen() {
 
                   {/* Expandable Action Panel */}
                   {isExpanded && (
-                    <Animated.View className="px-6 pt-2 pb-6">
+                    <Animated.View className="px-6 pt-2 pb-8]">
                       <View className="flex-row justify-center space-x-3">
                         <TouchableOpacity 
-                          className="bg-gray-600 rounded-lg px-4 py-2"
+                          className="bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 mb-4"
                           onPress={() => handleUserDetails(user)}
                         >
-                          <Text className="text-white font-medium">Details</Text>
+                          <Text className="text-gray-800 font-medium">Details</Text>
                         </TouchableOpacity>
                         <TouchableOpacity 
-                          className="bg-blue-600 rounded-lg px-4 py-2"
+                          className="bg-blue-600 rounded-lg px-4 py-2 mb-4"
                           onPress={() => handleEditUser(user)}
                         >
                           <Text className="text-white font-medium">Edit</Text>
                         </TouchableOpacity>
                         <TouchableOpacity 
-                          className="bg-red-600 rounded-lg px-4 py-2"
+                          className="bg-red-600 rounded-lg px-4 py-2 mb-4"
                           onPress={() => handleDeleteUser(user)}
                         >
                           <Text className="text-white font-medium">Delete</Text>

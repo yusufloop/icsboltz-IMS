@@ -31,7 +31,7 @@ export const ICSBOLTZ_ROLE_DEFINITIONS: Record<UserRole, RoleConfig> = {
   ADMIN: {
     name: 'Administrator',
     description: 'Full system access with administrative privileges',
-    allowedActions: ['view', 'approve', 'warranty'],
+    allowedActions: ['view', 'approve', 'warranty','reject'],
     priority: 4,
   },
   GENERAL_MANAGER: {
