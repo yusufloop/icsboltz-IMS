@@ -29,10 +29,10 @@ export default function ResubmitRequestWeb() {
   const params = useLocalSearchParams();
   
   const [formData, setFormData] = useState({
-    itemName: (params.itemRequested as string) || '',
-    quantity: (params.quantity as string) || '',
-    reason: (params.reasonForRequest as string) || '',
-    phoneNo: (params.phoneNo as string) || '',
+    itemName: (params.itemRequested as string) || 'Dell XPS 15 Laptop',
+    quantity: (params.quantity as string) || '2',
+    reason: (params.reasonForRequest as string) || 'Replacement for outdated equipment for the new marketing hires. Required for graphic design and video editing tasks.',
+    phoneNo: (params.phoneNo as string) || '016-123 4567',
     dateNeeded: params.dateNeededBy ? new Date(params.dateNeededBy as string) : new Date(), // Default to today
     priority: (params.priority as string) || 'High',
     department: (params.chargeToDepartment as string) || 'Marketing',

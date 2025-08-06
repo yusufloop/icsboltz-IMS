@@ -173,6 +173,11 @@ export default function RequestsWebScreen() {
       });
     }
   };
+  
+  // Handle navigation to status history page
+  const handleStatusHistory = (request: RequestData) => {
+    router.push('/status-history');
+  };
 
   return (
     <View className="flex-1 bg-gray-50">
@@ -316,11 +321,11 @@ export default function RequestsWebScreen() {
                         >
                           <Text className="text-white font-medium">View Details</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity className="bg-green-600 rounded-lg px-4 py-2">
-                          <Text className="text-white font-medium">Approve</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity className="bg-red-600 rounded-lg px-4 py-2">
-                          <Text className="text-white font-medium">Reject</Text>
+                        <TouchableOpacity 
+                          className="bg-yellow-500 rounded-lg px-4 py-2"
+                          onPress={() => handleStatusHistory(request)}
+                        >
+                          <Text className="text-white font-medium">Status History</Text>
                         </TouchableOpacity>
                       </View>
                     </Animated.View>

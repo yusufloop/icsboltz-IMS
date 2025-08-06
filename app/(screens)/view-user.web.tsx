@@ -1,287 +1,415 @@
-import { MaterialIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Animated, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { router } from 'expo-router';
+import { MaterialIcons } from '@expo/vector-icons';
 
-// --- DATA AND INTERFACES ---
-
-// IMPROVEMENT: Added 'status' to the UserData interface
-interface UserData {
-  id: string;
-  name: string;
-  contactNumber: string;
-  email: string;
-  role: 'Admin' | 'General Manager' | 'HoD' | 'User';
-  department: string;
-  status: 'Active' | 'Suspended' | 'Terminated' | 'On Leave' | 'Pending';
-}
-
-// IMPROVEMENT: Added a status color mapping for the indicator dot
-const STATUS_COLORS: { [key in UserData['status']]: string } = {
-  Active: 'bg-green-500',
-  Suspended: 'bg-orange-500',
-  Terminated: 'bg-red-600',
-  'On Leave': 'bg-blue-500',
-  Pending: 'bg-gray-400',
-};
-
-
-// IMPROVEMENT: Added a 'status' field to each user object
-const staticUsersData: UserData[] = [
-  { id: '1', name: 'Richard Martin', contactNumber: '7687764556', email: 'richard@gmail.com', role: 'Admin', department: 'Marketing', status: 'Active' },
-  { id: '2', name: 'Veandir', contactNumber: '9867545566', email: 'veandier@gmail.com', role: 'Admin', department: 'Finance', status: 'On Leave' },
-  { id: '3', name: 'Charin', contactNumber: '9267545457', email: 'charin@gmail.com', role: 'General Manager', department: 'HR', status: 'Active' },
-  { id: '4', name: 'Hoffman', contactNumber: '9367546531', email: 'hoffman@gmail.com', role: 'General Manager', department: 'Finance', status: 'Suspended' },
-  { id: '5', name: 'Fainden Juke', contactNumber: '9667545982', email: 'fainden@gmail.com', role: 'HoD', department: 'HR', status: 'Terminated' },
-  { id: '6', name: 'Martin', contactNumber: '9867545457', email: 'martin@gmail.com', role: 'Admin', department: 'Finance', status: 'Active' },
-  { id: '7', name: 'Joe Nike', contactNumber: '9567545769', email: 'joenike@gmail.com', role: 'HoD', department: 'Finance', status: 'Pending' },
-  { id: '8', name: 'Dender Luke', contactNumber: '9667545980', email: 'dender@gmail.com', role: 'HoD', department: 'Operations', status: 'Active' },
-  { id: '9', name: 'Martin', contactNumber: '9867545457', email: 'martin@gmail.com', role: 'HoD', department: 'Operations', status: 'Active' },
-  { id: '10', name: 'Joe Nike', contactNumber: '9567545769', email: 'joenike@gmail.com', role: 'HoD', department: 'Operations', status: 'On Leave' },
-  { id: '11', name: 'Dender Luke', contactNumber: '9667545980', email: 'dender@gmail.com', role: 'User', department: 'Finance', status: 'Suspended' },
-  { id: '12', name: 'Joe Nike', contactNumber: '9567545769', email: 'joenike@gmail.com', role: 'User', department: 'Operations', status: 'Active' },
-  { id: '13', name: 'Joe Nike', contactNumber: '9567545769', email: 'joenike@gmail.com', role: 'User', department: 'Operations', status: 'Terminated' }
+// --- CONSTANTS FOR DROPDOWNS ---
+const ROLE_OPTIONS = [
+  'Admin',
+  'Manager', 
+  'Employee',
+  'Supervisor'
 ];
 
-export default function UsersWebScreen() {
-  const [users] = useState<UserData[]>(staticUsersData);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
+const DEPARTMENT_OPTIONS = [
+  'Marketing',
+  'Sales',
+  'IT',
+  'HR',
+  'Finance',
+  'Operations'
+];
 
-  // Handle row selection
-  const handleRowSelect = (id: string) => {
-    const newSelectedRows = new Set(selectedRows);
-    if (newSelectedRows.has(id)) {
-      newSelectedRows.delete(id);
-    } else {
-      newSelectedRows.add(id);
+const RANK_OPTIONS = [
+  'CEO',
+  'Director',
+  'Manager',
+  'Senior',
+  'Junior',
+  'Intern'
+];
+
+const STATUS_OPTIONS = [
+  'Active',
+  'Suspended',
+  'Terminated',
+  'On Leave',
+  'Pending'
+];
+
+// Status color mapping
+const STATUS_COLORS: { [key: string]: string } = {
+  'Active': 'bg-green-500',
+  'Suspended': 'bg-orange-500',
+  'Terminated': 'bg-red-600',
+  'On Leave': 'bg-blue-500',
+  'Pending': 'bg-gray-400',
+};
+
+export default function ViewUserWeb() {
+  // Pre-filled form data (in real app, this would come from props or API)
+  const [formData, setFormData] = useState({
+    name: 'Muhammad Faiz bin Salleh',
+    email: 'm.faiz@icsboltz.com.my',
+    phoneNo: '012-876 5432',
+    role: 'Developer',
+    department: 'IT',
+    rank: 'Junior',
+    status: 'Active',
+  });
+
+  // --- STATE FOR DROPDOWN VISIBILITY ---
+  const [showRoleDropdown, setShowRoleDropdown] = useState(false);
+  const [showDepartmentDropdown, setShowDepartmentDropdown] = useState(false);
+  const [showRankDropdown, setShowRankDropdown] = useState(false);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleImageUpload = () => {
+    // Handle image upload logic here
+    console.log('Image upload clicked');
+  };
+
+  const handleSubmit = () => {
+    // Validate required fields
+    if (!formData.name.trim()) {
+      Alert.alert('Error', 'Please enter the user name');
+      return;
     }
-    setSelectedRows(newSelectedRows);
-  };
-
-  // Handle select all
-  const handleSelectAll = () => {
-    if (selectedRows.size === users.length) {
-      setSelectedRows(new Set());
-    } else {
-      setSelectedRows(new Set(users.map(user => user.id)));
+    
+    if (!formData.email.trim()) {
+      Alert.alert('Error', 'Please enter the email address');
+      return;
     }
-  };
 
-  // Handle row expansion
-  const handleRowClick = (id: string) => {
-    if (expandedRow === id) {
-      setExpandedRow(null);
-    } else {
-      setExpandedRow(id);
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
     }
-  };
 
-  // Get role text color
-  const getRoleTextColor = (role: string) => {
-    switch (role) {
-      case 'Admin':
-        return 'text-blue-600';
-      case 'General Manager':
-        return 'text-orange-500';
-      case 'HoD':
-        return 'text-purple-600';
-      case 'User':
-        return 'text-gray-600';
-      default:
-        return 'text-gray-600';
+    if (!formData.phoneNo.trim()) {
+      Alert.alert('Error', 'Please enter the phone number');
+      return;
     }
+
+    if (!formData.role) {
+      Alert.alert('Error', 'Please select a role');
+      return;
+    }
+
+    if (!formData.department) {
+      Alert.alert('Error', 'Please select a department');
+      return;
+    }
+
+    if (!formData.rank) {
+      Alert.alert('Error', 'Please select a rank');
+      return;
+    }
+
+    if (!formData.status) {
+      Alert.alert('Error', 'Please select a status');
+      return;
+    }
+
+    // Handle form submission
+    console.log('User updated:', formData);
+    Alert.alert('Success', 'User has been updated successfully!', [
+      { text: 'OK', onPress: () => router.back() }
+    ]);
+  };
+  
+  const handleBack = () => {
+    router.back();
   };
 
-  // Handle navigation to new user
-  const handleNewUser = () => {
-    console.log('Navigate to new user page');
-    router.push('/new-user');
-  };
-
-  // Handle user actions
-  const handleUserDetails = (user: UserData) => {
-    console.log('View user details:', user);
-    router.push('/view-user');
-  };
-
-  const handleEditUser = (user: UserData) => {
-    console.log('Edit user:', user);
-    router.push('/view-user');
-  };
-
-  const handleDeleteUser = (user: UserData) => {
-    console.log('Delete user:', user);
+  const getStatusColor = (status: string) => {
+    return STATUS_COLORS[status] || 'bg-gray-400';
   };
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Top Header Bar */}
-      <View className="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-10 flex-row items-center justify-between">
-        {/* Search Input (Left side) */}
-        <View className="relative flex-1 max-w-md">
-          <MaterialIcons 
-            name="search" 
-            size={20} 
-            color="#6B7280" 
-            style={{ position: 'absolute', left: 12, top: 12, zIndex: 1 }}
-          />
-          <TextInput
-            placeholder="Search product, supplier, order"
-            placeholderTextColor="#9CA3AF"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            className="bg-gray-50 border border-gray-200 rounded-lg pl-10 pr-4 py-3 text-gray-900"
-          />
-        </View>
-
-        {/* Action Buttons (Right side) */}
-        <View className="flex-row items-center space-x-3 ml-6">
-          <TouchableOpacity className="flex-row items-center bg-white border border-gray-200 rounded-lg px-4 py-3">
-            <MaterialIcons name="tune" size={20} color="#6B7280" style={{ marginRight: 8 }} />
-            <Text className="text-gray-700 font-medium">Filters</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            className="bg-blue-600 rounded-lg px-5 py-3 flex-row items-center"
-            onPress={handleNewUser}
+      {/* Header */}
+      <View className="bg-white border-b border-gray-200 px-6 py-4">
+        <View className="flex-row items-center max-w-4xl mx-auto w-full">
+          <TouchableOpacity
+            onPress={handleBack}
+            className="mr-4 p-2 -ml-2 active:opacity-80"
           >
-            <MaterialIcons name="add" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
-            <Text className="text-white font-medium">New User</Text>
+            <MaterialIcons name="arrow-back" size={24} color="#1C1C1E" />
           </TouchableOpacity>
+          <View className="flex-1">
+            <Text className="text-2xl font-bold text-text-primary">
+              Edit User
+            </Text>
+            <Text className="text-sm text-text-secondary mt-1">
+              Update user information and settings
+            </Text>
+          </View>
         </View>
       </View>
 
-      {/* Main Content Area */}
-      <View className="flex-1 p-6">
-        <View className="bg-white rounded-lg border border-gray-200 shadow-sm flex-1">
-          {/* Card Title */}
-          <View className="border-b border-gray-200 px-6 py-4">
-            <Text className="text-xl font-semibold text-gray-900">Users</Text>
-          </View>
-
-          {/* Table Container */}
-          <ScrollView className="flex-1">
-            {/* Table Header */}
-            <View className="bg-gray-50 border-b border-gray-200 flex-row items-center px-6 py-3">
-              <TouchableOpacity 
-                className={`w-6 h-6 border rounded mr-4 items-center justify-center ${
-                  selectedRows.size === users.length && users.length > 0 ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
-                }`}
-                onPress={handleSelectAll}
-              >
-                {selectedRows.size === users.length && users.length > 0 && (
-                  <MaterialIcons name="check" size={16} color="white" />
-                )}
-              </TouchableOpacity>
-              
-              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0" style={{ flex: 2 }}>
-                User Name
-              </Text>
-              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0 text-center" style={{ flex: 2 }}>
-                Contact Number
-              </Text>
-              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0" style={{ flex: 3 }}>
-                Email
-              </Text>
-              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0 text-center" style={{ flex: 2 }}>
-                Role
-              </Text>
-              <Text className="text-sm font-semibold text-gray-700 flex-1 min-w-0 text-center" style={{ flex: 2 }}>
-                Department
-              </Text>
-            </View>
-
-            {/* Table Rows */}
-            {users.map((user, index) => {
-              const isExpanded = expandedRow === user.id;
-              const isSelected = selectedRows.has(user.id);
-
-              return (
-                <View key={user.id} className={isExpanded ? 'bg-white rounded-lg shadow-lg shadow-blue-50 my-1 mx-2' : ''}>
-                  <TouchableOpacity
-                    className={`flex-row items-center px-6 py-4 ${
-                      !isExpanded ? `border-b border-gray-100 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}` : ''
-                    }`}
-                    onPress={() => handleRowClick(user.id)}
-                  >
+      {/* Main Content Container */}
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={true}
+        contentContainerStyle={{ paddingBottom: 120 }}
+      >
+        <View className="px-6 py-6">
+          <View className="max-w-4xl mx-auto w-full">
+            {/* Form Card */}
+            <View className="bg-white rounded-lg shadow-sm border border-gray-200">
+              {/* Form Content */}
+              <View className="px-6 py-6">
+                <View className="flex-row space-x-8">
+                  {/* Left Column - Image Upload */}
+                  <View className="flex-1 max-w-sm">
                     <TouchableOpacity 
-                      className={`w-6 h-6 border rounded mr-4 items-center justify-center ${
-                        isSelected ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
-                      }`}
-                      onPress={(e) => {
-                        e.stopPropagation();
-                        handleRowSelect(user.id);
-                      }}
+                      className="border-2 border-dashed rounded-lg p-8 items-center border-gray-300 bg-gray-50 min-h-[280px] justify-center"
+                      onPress={handleImageUpload}
                     >
-                      {isSelected && (
-                        <MaterialIcons name="check" size={16} color="white" />
-                      )}
+                      <View className="w-16 h-16 border-2 border-dashed border-gray-400 rounded-full mb-4 items-center justify-center">
+                        <MaterialIcons name="person" size={24} color="#9CA3AF" />
+                      </View>
+                      <Text className="text-gray-500 text-center mb-2">
+                        Drag image here
+                      </Text>
+                      <Text className="text-gray-400 text-center mb-3">or</Text>
+                      <Text className="text-blue-500 font-medium">Browse image</Text>
                     </TouchableOpacity>
+                  </View>
 
-                    {/* IMPROVEMENT: Replaced simple Text with an Icon + Name + Status component */}
-                    <View className="flex-1 min-w-0 flex-row items-center" style={{ flex: 2 }}>
-                      <View className="relative mr-3">
-                        <View className="w-10 h-10 rounded-full bg-gray-200 items-center justify-center">
-                          <MaterialIcons name="person" size={24} color="#A1A1AA" />
-                        </View>
-                        <View 
-                          className={`w-3.5 h-3.5 rounded-full absolute top-0 right-0 border-2 border-white ${
-                            STATUS_COLORS[user.status] || 'bg-gray-400'
-                          }`} 
+                  {/* Right Column - Form Fields */}
+                  <View className="flex-1 max-w-lg space-y-6">
+                    {/* Name */}
+                    <View>
+                      <Text className="text-sm font-semibold text-text-primary mb-2">
+                        Name
+                      </Text>
+                      <View className="rounded-lg bg-bg-secondary border border-gray-300 flex-row items-center px-4 py-3 min-h-[44px]">
+                        <TextInput
+                          className="flex-1 text-base text-text-primary"
+                          value={formData.name}
+                          onChangeText={(text) => handleInputChange('name', text)}
+                          placeholder="Enter name"
+                          placeholderTextColor="#8A8A8E"
                         />
                       </View>
-                      <Text className="text-sm text-gray-900 font-medium">
-                        {user.name}
-                      </Text>
                     </View>
 
-                    <Text className="text-sm text-gray-600 flex-1 min-w-0 text-center" style={{ flex: 2 }}>
-                      {user.contactNumber}
-                    </Text>
-                    <Text className="text-sm text-gray-600 flex-1 min-w-0" style={{ flex: 3 }}>
-                      {user.email}
-                    </Text>
-                    <Text className={`text-sm font-medium flex-1 min-w-0 text-center ${getRoleTextColor(user.role)}`} style={{ flex: 2 }}>
-                      {user.role}
-                    </Text>
-                    <Text className="text-sm text-gray-600 flex-1 min-w-0 text-center" style={{ flex: 2 }}>
-                      {user.department}
+                    {/* Email */}
+                    <View>
+                      <Text className="text-sm font-semibold text-text-primary mb-2">
+                        Email
+                      </Text>
+                      <View className="rounded-lg bg-bg-secondary border border-gray-300 flex-row items-center px-4 py-3 min-h-[44px]">
+                        <TextInput
+                          className="flex-1 text-base text-text-primary"
+                          value={formData.email}
+                          onChangeText={(text) => handleInputChange('email', text)}
+                          placeholder="Enter email"
+                          placeholderTextColor="#8A8A8E"
+                          keyboardType="email-address"
+                          autoCapitalize="none"
+                        />
+                      </View>
+                    </View>
+
+                    {/* Phone No */}
+                    <View>
+                      <Text className="text-sm font-semibold text-text-primary mb-2">
+                        Phone No
+                      </Text>
+                      <View className="rounded-lg bg-bg-secondary border border-gray-300 flex-row items-center px-4 py-3 min-h-[44px]">
+                        <TextInput
+                          className="flex-1 text-base text-text-primary"
+                          value={formData.phoneNo}
+                          onChangeText={(text) => handleInputChange('phoneNo', text)}
+                          placeholder="Enter Phone Number"
+                          placeholderTextColor="#8A8A8E"
+                          keyboardType="phone-pad"
+                        />
+                      </View>
+                    </View>
+
+                    {/* Role Dropdown */}
+                    <View>
+                      <Text className="text-sm font-semibold text-text-primary mb-2">
+                        Role
+                      </Text>
+                      <TouchableOpacity 
+                        className="rounded-lg bg-bg-secondary border border-gray-300 flex-row items-center px-4 py-3 min-h-[44px] active:opacity-80"
+                        onPress={() => setShowRoleDropdown(!showRoleDropdown)}
+                      >
+                        <Text className={`flex-1 text-base ${formData.role ? 'text-text-primary' : 'text-gray-500'}`}>
+                          {formData.role || 'Select Role'}
+                        </Text>
+                        <MaterialIcons name="unfold-more" size={20} color="#8A8A8E" />
+                      </TouchableOpacity>
+
+                      {showRoleDropdown && (
+                        <View className="bg-white border border-gray-200 rounded-lg shadow-md mt-2 max-h-48">
+                          <ScrollView>
+                            {ROLE_OPTIONS.map((option) => (
+                              <TouchableOpacity
+                                key={option}
+                                onPress={() => {
+                                  handleInputChange('role', option);
+                                  setShowRoleDropdown(false);
+                                }}
+                                className="px-4 py-3 border-b border-gray-200 last:border-b-0"
+                              >
+                                <Text className="text-base text-text-primary">{option}</Text>
+                              </TouchableOpacity>
+                            ))}
+                          </ScrollView>
+                        </View>
+                      )}
+                    </View>
+
+                    {/* Department Dropdown */}
+                    <View>
+                      <Text className="text-sm font-semibold text-text-primary mb-2">
+                        Department
+                      </Text>
+                      <TouchableOpacity 
+                        className="rounded-lg bg-bg-secondary border border-gray-300 flex-row items-center px-4 py-3 min-h-[44px] active:opacity-80"
+                        onPress={() => setShowDepartmentDropdown(!showDepartmentDropdown)}
+                      >
+                        <Text className={`flex-1 text-base ${formData.department ? 'text-text-primary' : 'text-gray-500'}`}>
+                          {formData.department || 'Select Department'}
+                        </Text>
+                        <MaterialIcons name="unfold-more" size={20} color="#8A8A8E" />
+                      </TouchableOpacity>
+
+                      {showDepartmentDropdown && (
+                        <View className="bg-white border border-gray-200 rounded-lg shadow-md mt-2 max-h-48">
+                          <ScrollView>
+                            {DEPARTMENT_OPTIONS.map((option) => (
+                              <TouchableOpacity
+                                key={option}
+                                onPress={() => {
+                                  handleInputChange('department', option);
+                                  setShowDepartmentDropdown(false);
+                                }}
+                                className="px-4 py-3 border-b border-gray-200 last:border-b-0"
+                              >
+                                <Text className="text-base text-text-primary">{option}</Text>
+                              </TouchableOpacity>
+                            ))}
+                          </ScrollView>
+                        </View>
+                      )}
+                    </View>
+
+                    {/* Rank Dropdown */}
+                    <View>
+                      <Text className="text-sm font-semibold text-text-primary mb-2">
+                        Rank
+                      </Text>
+                      <TouchableOpacity 
+                        className="rounded-lg bg-bg-secondary border border-gray-300 flex-row items-center px-4 py-3 min-h-[44px] active:opacity-80"
+                        onPress={() => setShowRankDropdown(!showRankDropdown)}
+                      >
+                        <Text className={`flex-1 text-base ${formData.rank ? 'text-text-primary' : 'text-gray-500'}`}>
+                          {formData.rank || 'Select Rank'}
+                        </Text>
+                        <MaterialIcons name="unfold-more" size={20} color="#8A8A8E" />
+                      </TouchableOpacity>
+
+                      {showRankDropdown && (
+                        <View className="bg-white border border-gray-200 rounded-lg shadow-md mt-2 max-h-48">
+                          <ScrollView>
+                            {RANK_OPTIONS.map((option) => (
+                              <TouchableOpacity
+                                key={option}
+                                onPress={() => {
+                                  handleInputChange('rank', option);
+                                  setShowRankDropdown(false);
+                                }}
+                                className="px-4 py-3 border-b border-gray-200 last:border-b-0"
+                              >
+                                <Text className="text-base text-text-primary">{option}</Text>
+                              </TouchableOpacity>
+                            ))}
+                          </ScrollView>
+                        </View>
+                      )}
+                    </View>
+
+                    {/* Status Dropdown */}
+                    <View>
+                      <Text className="text-sm font-semibold text-text-primary mb-2">
+                        Status
+                      </Text>
+                      <TouchableOpacity 
+                        className="rounded-lg bg-bg-secondary border border-gray-300 flex-row items-center px-4 py-3 min-h-[44px] active:opacity-80"
+                        onPress={() => setShowStatusDropdown(!showStatusDropdown)}
+                      >
+                        <View className="flex-row items-center flex-1">
+                          <View className={`w-3 h-3 rounded-full ${getStatusColor(formData.status)} mr-3`} />
+                          <Text className={`text-base ${formData.status ? 'text-text-primary' : 'text-gray-500'}`}>
+                            {formData.status || 'Select Status'}
+                          </Text>
+                        </View>
+                        <MaterialIcons name="unfold-more" size={20} color="#8A8A8E" />
+                      </TouchableOpacity>
+
+                      {showStatusDropdown && (
+                        <View className="bg-white border border-gray-200 rounded-lg shadow-md mt-2 max-h-48">
+                          <ScrollView>
+                            {STATUS_OPTIONS.map((option) => (
+                              <TouchableOpacity
+                                key={option}
+                                onPress={() => {
+                                  handleInputChange('status', option);
+                                  setShowStatusDropdown(false);
+                                }}
+                                className="px-4 py-3 border-b border-gray-200 last:border-b-0 flex-row items-center"
+                              >
+                                <View className={`w-3 h-3 rounded-full ${getStatusColor(option)} mr-3`} />
+                                <Text className="text-base text-text-primary">{option}</Text>
+                              </TouchableOpacity>
+                            ))}
+                          </ScrollView>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+                </View>
+              </View>
+
+              {/* Sticky Footer with Action Buttons */}
+              <View className="border-t border-gray-200 px-6 py-4 bg-white">
+                <View className="flex-row space-x-4">
+                  <TouchableOpacity
+                    onPress={handleBack}
+                    className="flex-1 bg-gray-100 border border-gray-300 rounded-lg px-4 py-3 min-h-[44px] items-center justify-center active:opacity-80"
+                  >
+                    <Text className="text-base font-semibold text-gray-600">
+                      Cancel
                     </Text>
                   </TouchableOpacity>
 
-                  {/* Expandable Action Panel */}
-                  {isExpanded && (
-                    <Animated.View className="px-6 pt-2 pb-4">
-                      <View className="flex-row justify-center space-x-3">
-                        <TouchableOpacity 
-                          className="bg-gray-100 border border-gray-300 rounded-lg px-4 py-2"
-                          onPress={() => handleUserDetails(user)}
-                        >
-                          <Text className="text-gray-800 font-medium">Details</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                          className="bg-blue-600 rounded-lg px-4 py-2"
-                          onPress={() => handleEditUser(user)}
-                        >
-                          <Text className="text-white font-medium">Edit</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                          className="bg-red-600 rounded-lg px-4 py-2"
-                          onPress={() => handleDeleteUser(user)}
-                        >
-                          <Text className="text-white font-medium">Delete</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </Animated.View>
-                  )}
+                  <TouchableOpacity
+                    onPress={handleSubmit}
+                    className="flex-1 bg-blue-500 border border-blue-600 rounded-lg px-4 py-3 min-h-[44px] items-center justify-center active:opacity-80"
+                  >
+                    <Text className="text-base font-semibold text-white">
+                      Save Changes
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-              );
-            })}
-          </ScrollView>
+              </View>
+            </View>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }

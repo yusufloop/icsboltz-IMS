@@ -64,12 +64,12 @@ const STATUS_OPTIONS = [
 // --- MAIN COMPONENT ---
 export default function ViewUserScreen() {
   const [formData, setFormData] = useState<UserFormData>({
-    name: 'John Doe',
-    email: 'john.doe@company.com',
-    phoneNo: '0123456789',
-    role: 'Manager',
+    name: 'Muhammad Faiz bin Salleh',
+    email: 'm.faiz@icsboltz.com.my',
+    phoneNo: '012-876 5432',
+    role: 'Developer',
     department: 'IT',
-    rank: 'Senior',
+    rank: 'Junior',
     status: 'Active',
   });
 

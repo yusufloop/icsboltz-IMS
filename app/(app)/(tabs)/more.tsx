@@ -9,6 +9,7 @@ export default function MoreScreen() {
   // Check if current user is a requester - hide View Request for requesters
   const isRequester = ICSBOLTZ_CURRENT_USER_ROLE === 'REQUESTER';
   const isGeneralManager = ICSBOLTZ_CURRENT_USER_ROLE === 'GENERAL_MANAGER';
+  const isAdmin = ICSBOLTZ_CURRENT_USER_ROLE === 'ADMIN';
 
   const handleNewRequest = () => {
     router.push('/new-request');
@@ -26,6 +27,30 @@ export default function MoreScreen() {
     router.push('/gm-view-request-step1');
   };
 
+  const handleToolLifecycleRules = () => {
+    router.push('/tool-lifecycle-rules');
+  };
+
+  const handleToolShelflifeRules = () => {
+    router.push('/tool-shelflife-rules');
+  };
+
+  const handleWarranty = () => {
+    router.push('/warranty');
+  };
+
+  const handleStatusHistory = () => {
+    router.push('/status-history');
+  };
+
+  const handleRequesterDashboard = () => {
+    router.push('/requester-dashboard');
+  };
+
+  const handleUserProfile = () => {
+    router.push('/user-profile');
+  };
+
   const handleHelpSupport = () => {
     console.log('Navigate to Help & Support');
   };
@@ -41,11 +66,11 @@ export default function MoreScreen() {
 
         {/* Menu Items Container */}
         <View style={styles.menuContainer}>
-          {/* New Request */}
-          <TouchableOpacity style={styles.menuItem} onPress={handleNewRequest}>
+          {/* User Profile */}
+          <TouchableOpacity style={styles.menuItem} onPress={handleUserProfile}>
             <View style={styles.menuItemLeft}>
-              <Ionicons name="add-circle-outline" size={20} color="#666" style={styles.menuIcon} />
-              <Text style={styles.menuItemText}>New Request</Text>
+              <Ionicons name="person-outline" size={20} color="#666" style={styles.menuIcon} />
+              <Text style={styles.menuItemText}>User Profile</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#999" />
           </TouchableOpacity>
@@ -53,7 +78,7 @@ export default function MoreScreen() {
           {/* Separator Line */}
           <View style={styles.separator} />
 
-          {/* Resubmit Request */}
+          {/* New Request */}
           <TouchableOpacity style={styles.menuItem} onPress={handleResubmitRequest}>
             <View style={styles.menuItemLeft}>
               <Ionicons name="refresh-outline" size={20} color="#666" style={styles.menuIcon} />
@@ -80,7 +105,7 @@ export default function MoreScreen() {
           )}
 
           {/* GM Review - only show for General Manager */}
-          {isGeneralManager && (
+        
             <>
               {/* Separator Line */}
               <View style={styles.separator} />
@@ -94,6 +119,68 @@ export default function MoreScreen() {
                 <Ionicons name="chevron-forward" size={20} color="#999" />
               </TouchableOpacity>
             </>
+         
+
+          {/* Separator Line */}
+          <View style={styles.separator} />
+
+          {/* Tool Life Cycle Rules */}
+          <TouchableOpacity style={styles.menuItem} onPress={handleToolLifecycleRules}>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="settings-outline" size={20} color="#666" style={styles.menuIcon} />
+              <Text style={styles.menuItemText}>Tool Life Cycle Rules</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#999" />
+          </TouchableOpacity>
+
+          {/* Tool Shelf Life Rules */}
+          <TouchableOpacity style={styles.menuItem} onPress={handleToolShelflifeRules}>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="library-outline" size={20} color="#666" style={styles.menuIcon} />
+              <Text style={styles.menuItemText}>Tool Shelf Life Rules</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#999" />
+          </TouchableOpacity>
+
+          {/* Separator Line */}
+          <View style={styles.separator} />
+
+          {/* Tool Warranties */}
+          <TouchableOpacity style={styles.menuItem} onPress={handleWarranty}>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="shield-checkmark-outline" size={20} color="#666" style={styles.menuIcon} />
+              <Text style={styles.menuItemText}>Tool Warranties</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#999" />
+          </TouchableOpacity>
+
+          {/* Separator Line */}
+          <View style={styles.separator} />
+
+          {/* Status History */}
+          <TouchableOpacity style={styles.menuItem} onPress={handleStatusHistory}>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="time-outline" size={20} color="#666" style={styles.menuIcon} />
+              <Text style={styles.menuItemText}>Status History</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#999" />
+          </TouchableOpacity>
+
+          {/* Requester Dashboard - only show for Admin */}
+          {isAdmin && (
+            <>
+              {/* Separator Line */}
+              <View style={styles.separator} />
+
+              {/* Requester Dashboard */}
+              <TouchableOpacity style={styles.menuItem} onPress={handleRequesterDashboard}>
+                <View style={styles.menuItemLeft}>
+                  <Ionicons name="grid-outline" size={20} color="#666" style={styles.menuIcon} />
+                  <Text style={styles.menuItemText}>Requester Dashboard</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#999" />
+              </TouchableOpacity>
+            </>
           )}
         </View>
 
@@ -101,7 +188,7 @@ export default function MoreScreen() {
         <View style={styles.largeSpacer} />
 
         {/* Help & Support Section */}
-        <View style={styles.menuContainer}>
+        {/* <View style={styles.menuContainer}>
           <TouchableOpacity style={styles.menuItem} onPress={handleHelpSupport}>
             <View style={styles.menuItemLeft}>
               <Ionicons name="chatbubble-outline" size={20} color="#666" style={styles.menuIcon} />
@@ -109,7 +196,7 @@ export default function MoreScreen() {
             </View>
             <Ionicons name="chevron-forward" size={20} color="#999" />
           </TouchableOpacity>
-        </View>
+        </View> */}
       </ScrollView>
     </SafeAreaView>
   );
