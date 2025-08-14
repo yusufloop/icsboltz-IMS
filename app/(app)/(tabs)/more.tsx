@@ -61,7 +61,7 @@ export default function MoreScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Ionicons name="star" size={24} color="#000" />
-          <Text style={styles.headerTitle}>More</Text>
+          <Text style={styles.headerTitle}>Settings</Text>
         </View>
 
         {/* Menu Items Container */}

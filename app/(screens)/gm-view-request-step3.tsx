@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'reac
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 
 // --- INTERFACES AND CONSTANTS ---
 interface RequestViewData {
@@ -29,6 +30,10 @@ export default function GMViewRequestStep3() {
     gmApproval: '', // Empty for GM to fill
   });
 
+  // Confirmation modal states
+  const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+
   const handleBack = () => {
     router.back();
   };
@@ -38,26 +43,7 @@ export default function GMViewRequestStep3() {
       Alert.alert('Error', 'Please provide comments for your approval');
       return;
     }
-
-    Alert.alert(
-      'Approve Request',
-      `Are you sure you want to approve request ${requestData.requestId}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Approve',
-          style: 'default',
-          onPress: () => {
-            console.log('Request approved by GM:', requestData.requestId, 'Comments:', requestData.gmApproval);
-            Alert.alert(
-              'Success',
-              'Request has been approved successfully!',
-              [{ text: 'OK', onPress: () => router.push('/requests') }]
-            );
-          }
-        }
-      ]
-    );
+    setShowApproveModal(true);
   };
 
   const handleReject = () => {
@@ -65,26 +51,17 @@ export default function GMViewRequestStep3() {
       Alert.alert('Error', 'Please provide a reason for rejection');
       return;
     }
+    setShowRejectModal(true);
+  };
 
-    Alert.alert(
-      'Reject Request',
-      `Are you sure you want to reject request ${requestData.requestId}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Reject',
-          style: 'destructive',
-          onPress: () => {
-            console.log('Request rejected by GM:', requestData.requestId, 'Reason:', requestData.gmApproval);
-            Alert.alert(
-              'Success',
-              'Request has been rejected successfully!',
-              [{ text: 'OK', onPress: () => router.push('/requests') }]
-            );
-          }
-        }
-      ]
-    );
+  const confirmApprove = () => {
+    console.log('Request approved by GM:', requestData.requestId, 'Comments:', requestData.gmApproval);
+    router.push('/requests');
+  };
+
+  const confirmReject = () => {
+    console.log('Request rejected by GM:', requestData.requestId, 'Reason:', requestData.gmApproval);
+    router.push('/requests');
   };
 
   const handleStepNavigation = (step: number) => {
@@ -284,6 +261,30 @@ export default function GMViewRequestStep3() {
           </View>
         </View>
       </ScrollView>
+
+      {/* Confirmation Modals */}
+      <ConfirmationModal
+        isOpen={showApproveModal}
+        onClose={() => setShowApproveModal(false)}
+        onConfirm={confirmApprove}
+        title="Approve Request"
+        message="Thank you for your approval! Your decision has been recorded."
+        confirmText="OK"
+        type="success"
+        showIcon={true}
+      />
+
+      <ConfirmationModal
+        isOpen={showRejectModal}
+        onClose={() => setShowRejectModal(false)}
+        onConfirm={confirmReject}
+        title="Confirm Rejection"
+        message={`Are you sure you want to reject request ${requestData.requestId}?`}
+        confirmText="Reject"
+        cancelText="Cancel"
+        type="error"
+        showIcon={true}
+      />
     </SafeAreaView>
   );
 }

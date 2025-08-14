@@ -75,6 +75,7 @@ export default function ViewUserWeb() {
 
   const handleSubmit = () => {
     // Validate required fields
+    router.push('/user');
     if (!formData.name.trim()) {
       Alert.alert('Error', 'Please enter the user name');
       return;

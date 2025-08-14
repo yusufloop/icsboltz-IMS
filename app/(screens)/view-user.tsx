@@ -85,6 +85,7 @@ export default function ViewUserScreen() {
 
   const handleSubmit = () => {
     // Validate required fields
+    
     if (!formData.name.trim()) {
       Alert.alert('Error', 'Please enter the user name');
       return;

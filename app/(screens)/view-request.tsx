@@ -1,6 +1,7 @@
 import { PremiumButton } from '@/components/ui/PremiumButton';
 import { PremiumCard } from '@/components/ui/PremiumCard';
 import { PremiumStatusBadge } from '@/components/ui/PremiumStatusBadge';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { ICSBOLTZ_CURRENT_USER_ROLE, hasPermission } from '@/constants/UserRoles';
 import { MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -110,6 +111,10 @@ export default function ViewRequestScreen() {
   const [showPriorityPicker, setShowPriorityPicker] = useState(false);
   const [showDepartmentPicker, setShowDepartmentPicker] = useState(false);
   const [showApprovalLevelPicker, setShowApprovalLevelPicker] = useState(false);
+  
+  // Confirmation modal states
+  const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
 
   // Check user permissions
   const canApprove = hasPermission(ICSBOLTZ_CURRENT_USER_ROLE, 'approve');
@@ -142,25 +147,7 @@ export default function ViewRequestScreen() {
   };
 
   const handleApprove = () => {
-    Alert.alert(
-      'Approve Request',
-      `Are you sure you want to approve request ${requestData.requestId}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Approve',
-          style: 'default',
-          onPress: () => {
-            console.log('Request approved:', requestData.requestId);
-            Alert.alert(
-              'Success',
-              'Request has been approved successfully!',
-              [{ text: 'OK', onPress: () => router.back() }]
-            );
-          }
-        }
-      ]
-    );
+    setShowApproveModal(true);
   };
 
   const handleReject = () => {
@@ -168,26 +155,17 @@ export default function ViewRequestScreen() {
       Alert.alert('Error', 'Please provide a reason for rejection');
       return;
     }
+    setShowRejectModal(true);
+  };
 
-    Alert.alert(
-      'Reject Request',
-      `Are you sure you want to reject request ${requestData.requestId}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Reject',
-          style: 'destructive',
-          onPress: () => {
-            console.log('Request rejected:', requestData.requestId, 'Reason:', requestData.rejectionReason);
-            Alert.alert(
-              'Success',
-              'Request has been rejected successfully!',
-              [{ text: 'OK', onPress: () => router.back() }]
-            );
-          }
-        }
-      ]
-    );
+  const confirmApprove = () => {
+    console.log('Request approved:', requestData.requestId);
+    router.push('/requests');
+  };
+
+  const confirmReject = () => {
+    console.log('Request rejected:', requestData.requestId, 'Reason:', requestData.rejectionReason);
+    router.push('/requests');
   };
 
   const handleBack = () => {
@@ -685,6 +663,30 @@ export default function ViewRequestScreen() {
             </PremiumCard>
           </View>
         </Modal>
+
+        {/* Confirmation Modals */}
+        <ConfirmationModal
+          isOpen={showApproveModal}
+          onClose={() => setShowApproveModal(false)}
+          onConfirm={confirmApprove}
+          title="Approve Request"
+          message="Thank you for your approval! Your decision has been recorded."
+          confirmText="OK"
+          type="success"
+          showIcon={true}
+        />
+
+        <ConfirmationModal
+          isOpen={showRejectModal}
+          onClose={() => setShowRejectModal(false)}
+          onConfirm={confirmReject}
+          title="Confirm Rejection"
+          message={`Are you sure you want to reject request ${requestData.requestId}?`}
+          confirmText="Reject"
+          cancelText="Cancel"
+          type="error"
+          showIcon={true}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
