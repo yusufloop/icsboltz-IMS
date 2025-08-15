@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { MaterialIcons } from '@expo/vector-icons';
+import { router, useLocalSearchParams } from 'expo-router';
+import React, { useState } from 'react';
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 // --- INTERFACES AND CONSTANTS ---
 interface RequestViewData {
@@ -28,62 +29,43 @@ export default function GMViewRequestStep3Web() {
     gmApproval: '', // Empty for GM to fill
   });
 
+  // Confirmation modal states
+  const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+
+  // State to track validation error for GM comments/rejection reason
+  const [gmApprovalError, setGmApprovalError] = useState(false);
+
   const handleBack = () => {
     router.back();
   };
 
   const handleApprove = () => {
     if (!requestData.gmApproval.trim()) {
-      Alert.alert('Error', 'Please provide comments for your approval');
+      setGmApprovalError(true); // Set error state to true
       return;
     }
-
-    Alert.alert(
-      'Approve Request',
-      `Are you sure you want to approve request ${requestData.requestId}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Approve',
-          style: 'default',
-          onPress: () => {
-            console.log('Request approved by GM:', requestData.requestId, 'Comments:', requestData.gmApproval);
-            Alert.alert(
-              'Success',
-              'Request has been approved successfully!',
-              [{ text: 'OK', onPress: () => router.push('/requests') }]
-            );
-          }
-        }
-      ]
-    );
+    setGmApprovalError(false); // Clear error state
+    setShowApproveModal(true);
   };
 
   const handleReject = () => {
     if (!requestData.gmApproval.trim()) {
-      Alert.alert('Error', 'Please provide a reason for rejection');
+      setGmApprovalError(true); // Set error state to true
       return;
     }
+    setGmApprovalError(false); // Clear error state
+    setShowRejectModal(true);
+  };
 
-    Alert.alert(
-      'Reject Request',
-      `Are you sure you want to reject request ${requestData.requestId}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Reject',
-          style: 'destructive',
-          onPress: () => {
-            console.log('Request rejected by GM:', requestData.requestId, 'Reason:', requestData.gmApproval);
-            Alert.alert(
-              'Success',
-              'Request has been rejected successfully!',
-              [{ text: 'OK', onPress: () => router.push('/requests') }]
-            );
-          }
-        }
-      ]
-    );
+  const confirmApprove = () => {
+    console.log('Request approved by GM:', requestData.requestId, 'Comments:', requestData.gmApproval);
+    router.push('/requests');
+  };
+
+  const confirmReject = () => {
+    console.log('Request rejected by GM:', requestData.requestId, 'Reason:', requestData.gmApproval);
+    router.push('/requests');
   };
 
   const handleStepNavigation = (step: number) => {
@@ -243,10 +225,15 @@ export default function GMViewRequestStep3Web() {
                     <Text className="text-sm font-semibold text-text-primary mb-2">
                       Approval from GM <Text className="text-red-500">*</Text>
                     </Text>
-                    <View className="rounded-lg bg-bg-secondary border border-gray-300 px-4 py-3 min-h-[100px]">
+                    <View className={`rounded-lg bg-bg-secondary border px-4 py-3 min-h-[100px] ${gmApprovalError ? 'border-red-500' : 'border-gray-300'}`}>
                       <TextInput
                         value={requestData.gmApproval}
-                        onChangeText={(text) => setRequestData(prev => ({ ...prev, gmApproval: text }))}
+                        onChangeText={(text) => {
+                          setRequestData(prev => ({ ...prev, gmApproval: text }));
+                          if (gmApprovalError) {
+                            setGmApprovalError(false);
+                          }
+                        }}
                         placeholder="Please provide your comments and decision rationale..."
                         placeholderTextColor="#8A8A8E"
                         multiline
@@ -287,6 +274,30 @@ export default function GMViewRequestStep3Web() {
           </View>
         </View>
       </ScrollView>
+
+      {/* Confirmation Modals */}
+      <ConfirmationModal
+        isOpen={showApproveModal}
+        onClose={() => setShowApproveModal(false)}
+        onConfirm={confirmApprove}
+        title="Approve Request"
+        message="Thank you for your approval! Your decision has been recorded."
+        confirmText="OK"
+        type="success"
+        showIcon={true}
+      />
+
+      <ConfirmationModal
+        isOpen={showRejectModal}
+        onClose={() => setShowRejectModal(false)}
+        onConfirm={confirmReject}
+        title="Confirm Rejection"
+        message={`Are you sure you want to reject request ${requestData.requestId}?`}
+        confirmText="Reject"
+        cancelText="Cancel"
+        type="error"
+        showIcon={true}
+      />
     </View>
   );
 }

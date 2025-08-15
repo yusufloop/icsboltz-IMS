@@ -60,9 +60,11 @@ export function Sidebar({ className = '' }: SidebarProps) {
   });
 
   const getRoleBasedNavigation = (): NavigationItem[] => {
+    // --- IMPROVEMENT: Added "My Loans" to the base navigation ---
     const baseNavigation: NavigationItem[] = [
       { id: 'dashboard', title: 'Dashboard', icon: 'dashboard', route: '/' },
       { id: 'requests', title: 'My Requests', icon: 'assignment', route: '/requests' },
+      { id: 'loans', title: 'My Loans', icon: 'card-giftcard', route: '/loan' }, // Added this line
     ];
 
     const roleSpecificItems: NavigationItem[] = [];
@@ -84,7 +86,7 @@ export function Sidebar({ className = '' }: SidebarProps) {
         roleSpecificItems.push({ id: 'scan', title: 'QR Scan', icon: 'qr-code-scanner', route: '/scan' });
     }
 
-    return [...baseNavigation, ...roleSpecificItems, { id: 'more', title: 'More', icon: 'more-horiz', route: '/more' }];
+    return [...baseNavigation, ...roleSpecificItems, { id: 'more', title: 'Settings', icon: 'more-horiz', route: '/more' }];
   };
 
   const userNavigation: NavigationItem[] = [

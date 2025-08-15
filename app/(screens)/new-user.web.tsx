@@ -55,10 +55,12 @@ export default function NewUserWeb() {
 
   const handleSubmit = () => {
     // Validate required fields
+    
     if (!formData.name.trim()) {
       Alert.alert('Error', 'Please enter the user name');
       return;
     }
+    router.push('/user');
     
     if (!formData.email.trim()) {
       Alert.alert('Error', 'Please enter the email address');
