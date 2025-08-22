@@ -89,7 +89,7 @@ export default function RequestsScreen() {
             color="#0A84FF" 
           />
           <Text className="text-3xl font-bold text-text-primary ml-4 leading-tight">
-            My Requests
+            My Tools
           </Text>
         </View>
 

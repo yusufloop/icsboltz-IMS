@@ -23,6 +23,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 // Changed interface to reflect Loan data
 interface LoanFormData {
   itemLoaned: string;
+  brand: string;
+  manufacturer: string;
+  internalSerialNumber: string;
+  manufacturerSerialNumber: string;
+  modelNumber: string;
+  specifications: string;
   quantity: string;
   reasonForLoan: string;
   phoneNo: string;
@@ -55,6 +61,12 @@ export default function NewLoanScreen() {
   // Updated state to use LoanFormData interface
   const [formData, setFormData] = useState<LoanFormData>({
     itemLoaned: '',
+    brand: '',
+    manufacturer: '',
+    internalSerialNumber: '',
+    manufacturerSerialNumber: '',
+    modelNumber: '',
+    specifications: '',
     quantity: '',
     reasonForLoan: '',
     phoneNo: '',
@@ -71,6 +83,8 @@ export default function NewLoanScreen() {
 
   const [showPriorityPicker, setShowPriorityPicker] = useState(false);
   const [showDepartmentPicker, setShowDepartmentPicker] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // --- HANDLER FUNCTIONS ---
   const updateField = (field: keyof LoanFormData, value: any) => {
@@ -103,27 +117,43 @@ export default function NewLoanScreen() {
     }
   };
 
-  const handleSubmit = () => {
+  const showConfirmation = () => {
     // Updated validation to check for itemLoaned
     if (!formData.itemLoaned.trim()) {
       Alert.alert('Error', 'Please enter the item to loan');
       return;
     }
+    setShowConfirmationModal(true);
+  };
+
+  const handleConfirmedSubmit = async () => {
+    setIsSubmitting(true);
     
-    // Updated console log for loan submission
-    console.log('New loan submitted:', formData);
-    
-    // Updated success message for loan
-    Alert.alert(
-      'Success', 
-      'Your loan has been submitted successfully!',
-      [
-        {
-          text: 'OK',
-          onPress: () => router.back()
-        }
-      ]
-    );
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Updated console log for loan submission
+      console.log('New loan submitted:', formData);
+      
+      setShowConfirmationModal(false);
+      setIsSubmitting(false);
+      
+      // Updated success message for loan
+      Alert.alert(
+        'Success', 
+        'Your loan has been submitted successfully!',
+        [
+          {
+            text: 'OK',
+            onPress: () => router.back()
+          }
+        ]
+      );
+    } catch (error) {
+      setIsSubmitting(false);
+      Alert.alert('Error', 'Failed to submit loan. Please try again.');
+    }
   };
 
   const handleBack = () => {
@@ -195,10 +225,58 @@ export default function NewLoanScreen() {
               />
             </View>
 
-            {/* Quantity */}
-            <View>
-              <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Quantity</Text>
+            {/* Brand and Manufacturer Row */}
+            <View className="flex-row space-x-4">
+              <View className="flex-1">
+                <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Brand</Text>
+                <TextInput
+                  value={formData.brand}
+                  onChangeText={(text) => updateField('brand', text)}
+                  className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3"
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Manufacturer</Text>
+                <TextInput
+                  value={formData.manufacturer}
+                  onChangeText={(text) => updateField('manufacturer', text)}
+                  className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3"
+                />
+              </View>
+            </View>
+
+            {/* Serial Numbers Row */}
+            <View className="flex-row space-x-4">
+              <View className="flex-1">
+                <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Internal Serial Number</Text>
+                <TextInput
+                  value={formData.internalSerialNumber}
+                  onChangeText={(text) => updateField('internalSerialNumber', text)}
+                  className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3"
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Manufacturer Serial Number</Text>
+                <TextInput
+                  value={formData.manufacturerSerialNumber}
+                  onChangeText={(text) => updateField('manufacturerSerialNumber', text)}
+                  className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3"
+                />
+              </View>
+            </View>
+
+            {/* Model Number and Quantity Row */}
+            <View className="flex-row space-x-4">
+              <View className="flex-1">
+                <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Model Number</Text>
+                <TextInput
+                  value={formData.modelNumber}
+                  onChangeText={(text) => updateField('modelNumber', text)}
+                  className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3"
+                />
+              </View>
               <View className="w-28">
+                <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Quantity</Text>
                 <TextInput
                   value={formData.quantity}
                   onChangeText={(text) => updateField('quantity', text)}
@@ -206,6 +284,19 @@ export default function NewLoanScreen() {
                   className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3"
                 />
               </View>
+            </View>
+
+            {/* Specifications */}
+            <View>
+              <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Specifications</Text>
+              <TextInput
+                value={formData.specifications}
+                onChangeText={(text) => updateField('specifications', text)}
+                multiline
+                textAlignVertical="top"
+                className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 min-h-[80px] px-4 py-3"
+                placeholder="Additional specifications and identifiers"
+              />
             </View>
 
             {/* Reason for Loan */}
@@ -323,7 +414,7 @@ export default function NewLoanScreen() {
           entering={FadeInDown.delay(300).duration(300)}
           className="absolute bottom-0 left-0 right-0 bg-bg-primary pt-3 pb-6 px-6 border-t border-gray-200"
         >
-          <PremiumButton title="Confirm" onPress={handleSubmit} variant="gradient" size="lg" />
+          <PremiumButton title="Confirm" onPress={showConfirmation} variant="gradient" size="lg" />
         </Animated.View>
 
         {/* PICKER MODALS */}
@@ -393,6 +484,56 @@ export default function NewLoanScreen() {
               <TouchableOpacity onPress={() => setShowDepartmentPicker(false)} className="mt-4">
                 <Text className="text-base text-text-secondary text-center">Cancel</Text>
               </TouchableOpacity>
+            </PremiumCard>
+          </View>
+        </Modal>
+
+        {/* Confirmation Modal */}
+        <Modal visible={showConfirmationModal} transparent animationType="fade" onRequestClose={() => !isSubmitting && setShowConfirmationModal(false)}>
+          <View className="flex-1 bg-black/50 justify-center items-center px-4">
+            <PremiumCard style={{ width: '100%', maxWidth: 350 }}>
+              <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Confirm Loan Submission</Text>
+              
+              <Text className="text-base text-text-secondary mb-4 text-center">
+                Are you sure you want to submit this loan request?
+              </Text>
+              
+              <View className="bg-gray-50 rounded-lg p-4 mb-4">
+                <Text className="text-sm font-semibold text-text-primary mb-2">Loan Summary:</Text>
+                <Text className="text-sm text-text-secondary">Item: {formData.itemLoaned || 'Not specified'}</Text>
+                <Text className="text-sm text-text-secondary">Priority: {formData.priority}</Text>
+                <Text className="text-sm text-text-secondary">Department: {formData.chargeToDepartment || 'Not selected'}</Text>
+                {formData.loanStartDate && (
+                  <Text className="text-sm text-text-secondary">Start: {formatDate(formData.loanStartDate)}</Text>
+                )}
+                {formData.loanEndDate && (
+                  <Text className="text-sm text-text-secondary">End: {formatDate(formData.loanEndDate)}</Text>
+                )}
+              </View>
+              
+              <Text className="text-xs text-text-secondary text-center mb-6">
+                Once submitted, this loan will be processed by the relevant department.
+              </Text>
+              
+              <View className="flex-row space-x-3">
+                <TouchableOpacity 
+                  onPress={() => setShowConfirmationModal(false)}
+                  disabled={isSubmitting}
+                  className="flex-1 bg-gray-100 rounded-lg py-3 active:opacity-80"
+                >
+                  <Text className="text-base font-semibold text-gray-600 text-center">Cancel</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  onPress={handleConfirmedSubmit}
+                  disabled={isSubmitting}
+                  className="flex-1 bg-blue-500 rounded-lg py-3 active:opacity-80"
+                >
+                  <Text className="text-base font-semibold text-white text-center">
+                    {isSubmitting ? 'Submitting...' : 'Confirm Submit'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </PremiumCard>
           </View>
         </Modal>

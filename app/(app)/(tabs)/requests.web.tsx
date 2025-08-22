@@ -212,7 +212,7 @@ export default function RequestsWebScreen() {
             onPress={handleNewRequest}
           >
             <MaterialIcons name="add" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
-            <Text className="text-white font-medium">New Requests</Text>
+            <Text className="text-white font-medium">New Tools</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -222,7 +222,7 @@ export default function RequestsWebScreen() {
         <View className="bg-white rounded-lg border border-gray-200 shadow-sm flex-1">
           {/* Card Title */}
           <View className="border-b border-gray-200 px-6 py-4">
-            <Text className="text-xl font-semibold text-gray-900">Request List</Text>
+            <Text className="text-xl font-semibold text-gray-900">Tools List</Text>
           </View>
 
           {/* Table Container */}

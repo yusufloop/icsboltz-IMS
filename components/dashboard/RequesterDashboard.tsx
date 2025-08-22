@@ -66,12 +66,19 @@ const RequesterDashboard: React.FC = () => {
     }
   };
 
-  const handleNewRequest = () => {
+  const handleNewTools = () => {
       router.push('/new-request');
+    };
+  const handleNewLoan = () => {
+      router.push('/new-loan');
     };
 
     const Request = () => {
       router.push('/requests');
+    };
+
+    const Loan = () => {
+      router.push('/loan');
     };
 
   return (
@@ -100,7 +107,7 @@ const RequesterDashboard: React.FC = () => {
               {/* My Recent Requests Widget */}
               <View className="bg-white p-6 rounded-xl shadow-md">
                 <View className="flex-row justify-between items-center mb-4">
-                  <Text className="text-xl font-bold text-gray-800">My Recent Requests</Text>
+                  <Text className="text-xl font-bold text-gray-800">My Recent Tools</Text>
                   <TouchableOpacity onPress={Request} className="flex-row items-center gap-1">
                     <Text className="text-sm font-semibold text-blue-600">View All</Text>
                     <MaterialIcons name="chevron-right" size={16} color="#2563eb" />
@@ -128,7 +135,7 @@ const RequesterDashboard: React.FC = () => {
               <View className="bg-white p-6 rounded-xl shadow-md">
                 <View className="flex-row justify-between items-center mb-4">
                   <Text className="text-xl font-bold text-gray-800">My Active Loans</Text>
-                  <TouchableOpacity onPress={Request} className="flex-row items-center gap-1">
+                  <TouchableOpacity onPress={Loan} className="flex-row items-center gap-1">
                     <Text className="text-sm font-semibold text-blue-600">View All</Text>
                     <MaterialIcons name="chevron-right" size={16} color="#2563eb" />
                   </TouchableOpacity>
@@ -160,11 +167,11 @@ const RequesterDashboard: React.FC = () => {
               <View className="bg-white p-6 rounded-xl shadow-md">
                 <Text className="text-xl font-bold text-gray-800 mb-4">Quick Actions</Text>
                 <View className="flex flex-col gap-4">
-                  <TouchableOpacity onPress={handleNewRequest} className="w-full flex-row items-center justify-center gap-2 bg-blue-600 active:bg-blue-700 py-3 px-4 rounded-lg">
+                  <TouchableOpacity onPress={handleNewTools} className="w-full flex-row items-center justify-center gap-2 bg-blue-600 active:bg-blue-700 py-3 px-4 rounded-lg">
                     <MaterialIcons name="add" size={22} color="#ffffff" />
-                    <Text className="text-white font-semibold">New Request</Text>
+                    <Text className="text-white font-semibold">New Tools</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={handleNewRequest} className="w-full flex-row items-center justify-center gap-2 bg-green-600 active:bg-green-700 py-3 px-4 rounded-lg">
+                  <TouchableOpacity onPress={handleNewLoan} className="w-full flex-row items-center justify-center gap-2 bg-green-600 active:bg-green-700 py-3 px-4 rounded-lg">
                     <MaterialIcons name="card-giftcard" size={22} color="#ffffff" />
                     <Text className="text-white font-semibold">New Loan</Text>
                   </TouchableOpacity>

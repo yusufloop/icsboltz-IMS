@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as DocumentPicker from 'expo-document-picker';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -18,10 +18,19 @@ import {
 } from 'react-native';
 import Animated, { FadeInDown, SlideInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { getToolLifecycleRules, ToolLifecycleRule } from '../../services/toolLifecycleService';
+import { getToolShelflifeRules, ToolShelflifeRule } from '../../services/toolShelflifeService';
+import { getWarranties, WarrantyItem } from '../../services/warrantyService';
 
 // --- INTERFACES AND CONSTANTS ---
 interface RequestFormData {
   itemRequested: string;
+  brand: string;
+  manufacturer: string;
+  internalSerialNumber: string;
+  manufacturerSerialNumber: string;
+  modelNumber: string;
+  specifications: string;
   quantity: string;
   reasonForRequest: string;
   phoneNo: string;
@@ -29,6 +38,9 @@ interface RequestFormData {
   priority: 'Low' | 'Medium' | 'High' | null;
   chargeToDepartment: string;
   attachments: any[];
+  toolLifecycleRule: string;
+  toolShelfLifeRule: string;
+  toolWarranties: string;
 }
 
 const PRIORITY_OPTIONS = [
@@ -51,6 +63,12 @@ const DEPARTMENT_OPTIONS = [
 export default function NewRequestScreen() {
   const [formData, setFormData] = useState<RequestFormData>({
     itemRequested: '',
+    brand: '',
+    manufacturer: '',
+    internalSerialNumber: '',
+    manufacturerSerialNumber: '',
+    modelNumber: '',
+    specifications: '',
     quantity: '',
     reasonForRequest: '',
     phoneNo: '',
@@ -58,16 +76,48 @@ export default function NewRequestScreen() {
     priority: 'High', // Default to High
     chargeToDepartment: '',
     attachments: [],
+    toolLifecycleRule: '',
+    toolShelfLifeRule: '',
+    toolWarranties: '',
   });
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showPriorityPicker, setShowPriorityPicker] = useState(false);
   const [showDepartmentPicker, setShowDepartmentPicker] = useState(false);
+  const [showLifecycleRulePicker, setShowLifecycleRulePicker] = useState(false);
+  const [showShelfLifeRulePicker, setShowShelfLifeRulePicker] = useState(false);
+  const [showWarrantiesPicker, setShowWarrantiesPicker] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Rule data states
+  const [lifecycleRules, setLifecycleRules] = useState<ToolLifecycleRule[]>([]);
+  const [shelfLifeRules, setShelfLifeRules] = useState<ToolShelflifeRule[]>([]);
+  const [warranties, setWarranties] = useState<WarrantyItem[]>([]);
 
   // --- HANDLER FUNCTIONS ---
   const updateField = (field: keyof RequestFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
+
+  // Load rule data on component mount
+  useEffect(() => {
+    const loadRuleData = async () => {
+      try {
+        const [lifecycleData, shelfLifeData, warrantyData] = await Promise.all([
+          getToolLifecycleRules(),
+          getToolShelflifeRules(),
+          getWarranties()
+        ]);
+        setLifecycleRules(lifecycleData);
+        setShelfLifeRules(shelfLifeData);
+        setWarranties(warrantyData);
+      } catch (error) {
+        console.error('Error loading rule data:', error);
+      }
+    };
+    loadRuleData();
+  }, []);
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
     setShowDatePicker(false);
@@ -87,26 +137,42 @@ export default function NewRequestScreen() {
     }
   };
 
-  const handleSubmit = () => {
+  const showConfirmation = () => {
     if (!formData.itemRequested.trim()) {
       Alert.alert('Error', 'Please enter the item requested');
       return;
     }
+    setShowConfirmationModal(true);
+  };
+
+  const handleConfirmedSubmit = async () => {
+    setIsSubmitting(true);
     
-    // Here you would typically send the data to your backend
-    console.log('New request submitted:', formData);
-    
-    // Show success message and navigate back
-    Alert.alert(
-      'Success', 
-      'Your request has been submitted successfully!',
-      [
-        {
-          text: 'OK',
-          onPress: () => router.back()
-        }
-      ]
-    );
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Here you would typically send the data to your backend
+      console.log('New request submitted:', formData);
+      
+      setShowConfirmationModal(false);
+      setIsSubmitting(false);
+      
+      // Show success message and navigate back
+      Alert.alert(
+        'Success', 
+        'Your request has been submitted successfully!',
+        [
+          {
+            text: 'OK',
+            onPress: () => router.back()
+          }
+        ]
+      );
+    } catch (error) {
+      setIsSubmitting(false);
+      Alert.alert('Error', 'Failed to submit request. Please try again.');
+    }
   };
 
   const handleBack = () => {
@@ -150,7 +216,7 @@ export default function NewRequestScreen() {
           
           <View>
             <Text className="text-xl font-bold text-text-primary">
-              New Request
+              New Tools
             </Text>
             <Text className="text-sm text-text-secondary mt-1">
               Fill in the information below for your request
@@ -178,10 +244,58 @@ export default function NewRequestScreen() {
               />
             </View>
 
-            {/* Quantity */}
-            <View>
-              <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Quantity</Text>
+            {/* Brand and Manufacturer Row */}
+            <View className="flex-row space-x-4">
+              <View className="flex-1">
+                <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Brand</Text>
+                <TextInput
+                  value={formData.brand}
+                  onChangeText={(text) => updateField('brand', text)}
+                  className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3"
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Manufacturer</Text>
+                <TextInput
+                  value={formData.manufacturer}
+                  onChangeText={(text) => updateField('manufacturer', text)}
+                  className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3"
+                />
+              </View>
+            </View>
+
+            {/* Serial Numbers Row */}
+            <View className="flex-row space-x-4">
+              <View className="flex-1">
+                <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Internal Serial Number</Text>
+                <TextInput
+                  value={formData.internalSerialNumber}
+                  onChangeText={(text) => updateField('internalSerialNumber', text)}
+                  className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3"
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Manufacturer Serial Number</Text>
+                <TextInput
+                  value={formData.manufacturerSerialNumber}
+                  onChangeText={(text) => updateField('manufacturerSerialNumber', text)}
+                  className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3"
+                />
+              </View>
+            </View>
+
+            {/* Model Number and Quantity Row */}
+            <View className="flex-row space-x-4">
+              <View className="flex-1">
+                <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Model Number</Text>
+                <TextInput
+                  value={formData.modelNumber}
+                  onChangeText={(text) => updateField('modelNumber', text)}
+                  className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3"
+                />
+              </View>
               <View className="w-28">
+                <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Quantity</Text>
                 <TextInput
                   value={formData.quantity}
                   onChangeText={(text) => updateField('quantity', text)}
@@ -189,6 +303,19 @@ export default function NewRequestScreen() {
                   className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3"
                 />
               </View>
+            </View>
+
+            {/* Specifications */}
+            <View>
+              <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Specifications</Text>
+              <TextInput
+                value={formData.specifications}
+                onChangeText={(text) => updateField('specifications', text)}
+                multiline
+                textAlignVertical="top"
+                className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 min-h-[80px] px-4 py-3"
+                placeholder="Additional specifications and identifiers"
+              />
             </View>
 
             {/* Reason for Request */}
@@ -261,6 +388,51 @@ export default function NewRequestScreen() {
               </TouchableOpacity>
             </View>
 
+            {/* Tool Lifecycle Rule */}
+            <View>
+              <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Tool Lifecycle Rule</Text>
+              <TouchableOpacity onPress={() => setShowLifecycleRulePicker(true)}>
+                <PremiumCard padding="">
+                  <View className="flex-row items-center justify-between px-4 py-3">
+                    <Text className={`text-base font-system ${formData.toolLifecycleRule ? 'text-text-primary' : 'text-text-secondary'}`}>
+                      {formData.toolLifecycleRule || 'Select lifecycle rule'}
+                    </Text>
+                    <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />
+                  </View>
+                </PremiumCard>
+              </TouchableOpacity>
+            </View>
+
+            {/* Tool Shelf Life Rule */}
+            <View>
+              <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Tool Shelf Life Rule</Text>
+              <TouchableOpacity onPress={() => setShowShelfLifeRulePicker(true)}>
+                <PremiumCard padding="">
+                  <View className="flex-row items-center justify-between px-4 py-3">
+                    <Text className={`text-base font-system ${formData.toolShelfLifeRule ? 'text-text-primary' : 'text-text-secondary'}`}>
+                      {formData.toolShelfLifeRule || 'Select shelf life rule'}
+                    </Text>
+                    <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />
+                  </View>
+                </PremiumCard>
+              </TouchableOpacity>
+            </View>
+
+            {/* Tool Warranties */}
+            <View>
+              <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Tool Warranties</Text>
+              <TouchableOpacity onPress={() => setShowWarrantiesPicker(true)}>
+                <PremiumCard padding="">
+                  <View className="flex-row items-center justify-between px-4 py-3">
+                    <Text className={`text-base font-system ${formData.toolWarranties ? 'text-text-primary' : 'text-text-secondary'}`}>
+                      {formData.toolWarranties || 'Select warranty'}
+                    </Text>
+                    <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />
+                  </View>
+                </PremiumCard>
+              </TouchableOpacity>
+            </View>
+
             {/* Attachments / Link */}
             <View>
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Attachments / Link</Text>
@@ -292,7 +464,7 @@ export default function NewRequestScreen() {
           entering={FadeInDown.delay(300).duration(300)}
           className="absolute bottom-0 left-0 right-0 bg-bg-primary pt-3 pb-6 px-6 border-t border-gray-200"
         >
-          <PremiumButton title="Confirm" onPress={handleSubmit} variant="gradient" size="lg" />
+          <PremiumButton title="Confirm" onPress={showConfirmation} variant="gradient" size="lg" />
         </Animated.View>
 
         {/* PICKER MODALS */}
@@ -352,6 +524,131 @@ export default function NewRequestScreen() {
               <TouchableOpacity onPress={() => setShowDepartmentPicker(false)} className="mt-4">
                 <Text className="text-base text-text-secondary text-center">Cancel</Text>
               </TouchableOpacity>
+            </PremiumCard>
+          </View>
+        </Modal>
+
+        {/* Tool Lifecycle Rule Picker Modal */}
+        <Modal visible={showLifecycleRulePicker} transparent animationType="fade" onRequestClose={() => setShowLifecycleRulePicker(false)}>
+          <View className="flex-1 bg-black/50 justify-center items-center px-4">
+            <PremiumCard style={{ width: '100%', maxWidth: 350, maxHeight: 400 }}>
+              <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Select Lifecycle Rule</Text>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {lifecycleRules.map((rule) => (
+                  <TouchableOpacity 
+                    key={rule.rule_id} 
+                    onPress={() => { 
+                      updateField('toolLifecycleRule', rule.rule_name); 
+                      setShowLifecycleRulePicker(false); 
+                    }} 
+                    className="py-3 border-b border-gray-200 last:border-b-0"
+                  >
+                    <Text className="text-base text-text-primary text-center font-medium">{rule.rule_name}</Text>
+                    <Text className="text-sm text-text-secondary text-center mt-1">{rule.tool_name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              <TouchableOpacity onPress={() => setShowLifecycleRulePicker(false)} className="mt-4">
+                <Text className="text-base text-text-secondary text-center">Cancel</Text>
+              </TouchableOpacity>
+            </PremiumCard>
+          </View>
+        </Modal>
+
+        {/* Tool Shelf Life Rule Picker Modal */}
+        <Modal visible={showShelfLifeRulePicker} transparent animationType="fade" onRequestClose={() => setShowShelfLifeRulePicker(false)}>
+          <View className="flex-1 bg-black/50 justify-center items-center px-4">
+            <PremiumCard style={{ width: '100%', maxWidth: 350, maxHeight: 400 }}>
+              <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Select Shelf Life Rule</Text>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {shelfLifeRules.map((rule) => (
+                  <TouchableOpacity 
+                    key={rule.rule_id} 
+                    onPress={() => { 
+                      updateField('toolShelfLifeRule', rule.rule_name); 
+                      setShowShelfLifeRulePicker(false); 
+                    }} 
+                    className="py-3 border-b border-gray-200 last:border-b-0"
+                  >
+                    <Text className="text-base text-text-primary text-center font-medium">{rule.rule_name}</Text>
+                    <Text className="text-sm text-text-secondary text-center mt-1">{rule.tool_name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              <TouchableOpacity onPress={() => setShowShelfLifeRulePicker(false)} className="mt-4">
+                <Text className="text-base text-text-secondary text-center">Cancel</Text>
+              </TouchableOpacity>
+            </PremiumCard>
+          </View>
+        </Modal>
+
+        {/* Tool Warranties Picker Modal */}
+        <Modal visible={showWarrantiesPicker} transparent animationType="fade" onRequestClose={() => setShowWarrantiesPicker(false)}>
+          <View className="flex-1 bg-black/50 justify-center items-center px-4">
+            <PremiumCard style={{ width: '100%', maxWidth: 350, maxHeight: 400 }}>
+              <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Select Warranty</Text>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {warranties.map((warranty) => (
+                  <TouchableOpacity 
+                    key={warranty.warranty_id} 
+                    onPress={() => { 
+                      updateField('toolWarranties', warranty.tool_name); 
+                      setShowWarrantiesPicker(false); 
+                    }} 
+                    className="py-3 border-b border-gray-200 last:border-b-0"
+                  >
+                    <Text className="text-base text-text-primary text-center font-medium">{warranty.tool_name}</Text>
+                    <Text className="text-sm text-text-secondary text-center mt-1">Duration: {warranty.duration} days</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+              <TouchableOpacity onPress={() => setShowWarrantiesPicker(false)} className="mt-4">
+                <Text className="text-base text-text-secondary text-center">Cancel</Text>
+              </TouchableOpacity>
+            </PremiumCard>
+          </View>
+        </Modal>
+
+        {/* Confirmation Modal */}
+        <Modal visible={showConfirmationModal} transparent animationType="fade" onRequestClose={() => !isSubmitting && setShowConfirmationModal(false)}>
+          <View className="flex-1 bg-black/50 justify-center items-center px-4">
+            <PremiumCard style={{ width: '100%', maxWidth: 350 }}>
+              <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Confirm Submission</Text>
+              
+              <Text className="text-base text-text-secondary mb-4 text-center">
+                Are you sure you want to submit this request?
+              </Text>
+              
+              <View className="bg-gray-50 rounded-lg p-4 mb-4">
+                <Text className="text-sm font-semibold text-text-primary mb-2">Request Summary:</Text>
+                <Text className="text-sm text-text-secondary">Item: {formData.itemRequested || 'Not specified'}</Text>
+                <Text className="text-sm text-text-secondary">Priority: {formData.priority}</Text>
+                <Text className="text-sm text-text-secondary">Department: {formData.chargeToDepartment || 'Not selected'}</Text>
+              </View>
+              
+              <Text className="text-xs text-text-secondary text-center mb-6">
+                Once submitted, this request will be processed by the relevant department.
+              </Text>
+              
+              <View className="flex-row space-x-3">
+                <TouchableOpacity 
+                  onPress={() => setShowConfirmationModal(false)}
+                  disabled={isSubmitting}
+                  className="flex-1 bg-gray-100 rounded-lg py-3 active:opacity-80"
+                >
+                  <Text className="text-base font-semibold text-gray-600 text-center">Cancel</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  onPress={handleConfirmedSubmit}
+                  disabled={isSubmitting}
+                  className="flex-1 bg-blue-500 rounded-lg py-3 active:opacity-80"
+                >
+                  <Text className="text-base font-semibold text-white text-center">
+                    {isSubmitting ? 'Submitting...' : 'Confirm Submit'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </PremiumCard>
           </View>
         </Modal>

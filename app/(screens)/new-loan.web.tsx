@@ -25,6 +25,12 @@ export default function NewLoanWeb() {
   // Updated state variable names for clarity and added loanEndDate
   const [formData, setFormData] = useState({
     itemLoaned: '',
+    brand: '',
+    manufacturer: '',
+    internalSerialNumber: '',
+    manufacturerSerialNumber: '',
+    modelNumber: '',
+    specifications: '',
     quantity: '',
     reasonForLoan: '',
     phoneNo: '',
@@ -37,6 +43,8 @@ export default function NewLoanWeb() {
   // --- STATE FOR DROPDOWN VISIBILITY ---
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
   const [showDepartmentDropdown, setShowDepartmentDropdown] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -47,10 +55,35 @@ export default function NewLoanWeb() {
     console.log('File upload clicked for loan');
   };
 
-  const handleSubmit = () => {
-    // Handle form submission for loan
-    console.log('New loan submitted:', formData);
-    router.back();
+  const showConfirmation = () => {
+    // Basic validation
+    if (!formData.itemLoaned.trim()) {
+      alert('Please enter the item to loan before submitting.');
+      return;
+    }
+    setShowConfirmationModal(true);
+  };
+
+  const handleConfirmedSubmit = async () => {
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Handle form submission for loan
+      console.log('New loan submitted:', formData);
+      
+      setShowConfirmationModal(false);
+      setIsSubmitting(false);
+      
+      // Show success message
+      alert('Your loan has been submitted successfully!');
+      router.back();
+    } catch (error) {
+      setIsSubmitting(false);
+      alert('Failed to submit loan. Please try again.');
+    }
   };
 
   const handleBack = () => {
@@ -134,19 +167,118 @@ export default function NewLoanWeb() {
                   </View>
                 </View>
 
-                {/* Quantity */}
+                {/* Brand and Manufacturer Row */}
+                <View className="flex-row space-x-4">
+                  <View className="flex-1">
+                    <Text className="text-sm font-semibold text-text-primary mb-2">
+                      Brand
+                    </Text>
+                    <View className="rounded-lg bg-bg-secondary border border-gray-300 flex-row items-center px-4 py-3 min-h-[44px]">
+                      <TextInput
+                        className="flex-1 text-base text-text-primary"
+                        value={formData.brand}
+                        onChangeText={(text) => handleInputChange('brand', text)}
+                        placeholder="Enter brand"
+                        placeholderTextColor="#8A8A8E"
+                      />
+                    </View>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-sm font-semibold text-text-primary mb-2">
+                      Manufacturer
+                    </Text>
+                    <View className="rounded-lg bg-bg-secondary border border-gray-300 flex-row items-center px-4 py-3 min-h-[44px]">
+                      <TextInput
+                        className="flex-1 text-base text-text-primary"
+                        value={formData.manufacturer}
+                        onChangeText={(text) => handleInputChange('manufacturer', text)}
+                        placeholder="Enter manufacturer"
+                        placeholderTextColor="#8A8A8E"
+                      />
+                    </View>
+                  </View>
+                </View>
+
+                {/* Serial Numbers Row */}
+                <View className="flex-row space-x-4">
+                  <View className="flex-1">
+                    <Text className="text-sm font-semibold text-text-primary mb-2">
+                      Internal Serial Number
+                    </Text>
+                    <View className="rounded-lg bg-bg-secondary border border-gray-300 flex-row items-center px-4 py-3 min-h-[44px]">
+                      <TextInput
+                        className="flex-1 text-base text-text-primary"
+                        value={formData.internalSerialNumber}
+                        onChangeText={(text) => handleInputChange('internalSerialNumber', text)}
+                        placeholder="Enter internal serial number"
+                        placeholderTextColor="#8A8A8E"
+                      />
+                    </View>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-sm font-semibold text-text-primary mb-2">
+                      Manufacturer Serial Number
+                    </Text>
+                    <View className="rounded-lg bg-bg-secondary border border-gray-300 flex-row items-center px-4 py-3 min-h-[44px]">
+                      <TextInput
+                        className="flex-1 text-base text-text-primary"
+                        value={formData.manufacturerSerialNumber}
+                        onChangeText={(text) => handleInputChange('manufacturerSerialNumber', text)}
+                        placeholder="Enter manufacturer serial number"
+                        placeholderTextColor="#8A8A8E"
+                      />
+                    </View>
+                  </View>
+                </View>
+
+                {/* Model Number and Quantity Row */}
+                <View className="flex-row space-x-4">
+                  <View className="flex-1">
+                    <Text className="text-sm font-semibold text-text-primary mb-2">
+                      Model Number
+                    </Text>
+                    <View className="rounded-lg bg-bg-secondary border border-gray-300 flex-row items-center px-4 py-3 min-h-[44px]">
+                      <TextInput
+                        className="flex-1 text-base text-text-primary"
+                        value={formData.modelNumber}
+                        onChangeText={(text) => handleInputChange('modelNumber', text)}
+                        placeholder="Enter model number"
+                        placeholderTextColor="#8A8A8E"
+                      />
+                    </View>
+                  </View>
+                  <View className="w-40">
+                    <Text className="text-sm font-semibold text-text-primary mb-2">
+                      Quantity
+                    </Text>
+                    <View className="rounded-lg bg-bg-secondary border border-gray-300 flex-row items-center px-4 py-3 min-h-[44px]">
+                      <TextInput
+                        className="flex-1 text-base text-text-primary"
+                        value={formData.quantity}
+                        onChangeText={(text) => handleInputChange('quantity', text)}
+                        placeholder="Enter quantity"
+                        placeholderTextColor="#8A8A8E"
+                        keyboardType="numeric"
+                      />
+                    </View>
+                  </View>
+                </View>
+
+                {/* Specifications */}
                 <View>
                   <Text className="text-sm font-semibold text-text-primary mb-2">
-                    Quantity
+                    Specifications
                   </Text>
-                  <View className="rounded-lg bg-bg-secondary border border-gray-300 flex-row items-center px-4 py-3 min-h-[44px]">
+                  <View className="rounded-lg bg-bg-secondary border border-gray-300 flex-row px-4 py-3 min-h-[80px]">
                     <TextInput
-                      className="flex-1 text-base text-text-primary"
-                      value={formData.quantity}
-                      onChangeText={(text) => handleInputChange('quantity', text)}
-                      placeholder="Enter quantity"
+                      value={formData.specifications}
+                      onChangeText={(text) => handleInputChange('specifications', text)}
+                      placeholder="Additional specifications and identifiers"
                       placeholderTextColor="#8A8A8E"
-                      keyboardType="numeric"
+                      multiline
+                      numberOfLines={3}
+                      className="flex-1 text-base text-text-primary"
+                      textAlignVertical="top"
                     />
                   </View>
                 </View>
@@ -294,7 +426,7 @@ export default function NewLoanWeb() {
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={handleSubmit}
+                    onPress={showConfirmation}
                     className="flex-1 bg-blue-500 border border-blue-600 rounded-lg px-4 py-3 min-h-[44px] items-center justify-center active:opacity-80"
                   >
                     <Text className="text-base font-semibold text-white">
@@ -307,6 +439,62 @@ export default function NewLoanWeb() {
           </View>
         </View>
       </ScrollView>
+
+      {/* Confirmation Modal */}
+      {showConfirmationModal && (
+        <View className="absolute inset-0 bg-black/50 flex-1 justify-center items-center px-6" style={{zIndex: 9999}}>
+          <View className="bg-white rounded-lg shadow-lg max-w-md w-full mx-4">
+            <View className="px-6 py-4 border-b border-gray-200">
+              <Text className="text-xl font-bold text-text-primary">Confirm Loan Submission</Text>
+            </View>
+            
+            <View className="px-6 py-4">
+              <Text className="text-base text-text-secondary mb-4">
+                Are you sure you want to submit this loan request?
+              </Text>
+              
+              <View className="bg-gray-50 rounded-lg p-4 mb-4">
+                <Text className="text-sm font-semibold text-text-primary mb-2">Loan Summary:</Text>
+                <Text className="text-sm text-text-secondary">Item: {formData.itemLoaned || 'Not specified'}</Text>
+                <Text className="text-sm text-text-secondary">Priority: {formData.priority}</Text>
+                <Text className="text-sm text-text-secondary">Department: {formData.department}</Text>
+                {formData.loanStartDate && (
+                  <Text className="text-sm text-text-secondary">Start Date: {formData.loanStartDate}</Text>
+                )}
+                {formData.loanEndDate && (
+                  <Text className="text-sm text-text-secondary">End Date: {formData.loanEndDate}</Text>
+                )}
+              </View>
+              
+              <Text className="text-xs text-text-secondary">
+                Once submitted, this loan will be processed by the relevant department.
+              </Text>
+            </View>
+            
+            <View className="px-6 py-4 border-t border-gray-200 flex-row space-x-3">
+              <TouchableOpacity
+                onPress={() => setShowConfirmationModal(false)}
+                disabled={isSubmitting}
+                className="flex-1 bg-gray-100 border border-gray-300 rounded-lg px-4 py-3 min-h-[44px] items-center justify-center active:opacity-80"
+              >
+                <Text className="text-base font-semibold text-gray-600">Cancel</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                onPress={handleConfirmedSubmit}
+                disabled={isSubmitting}
+                className="flex-1 bg-blue-500 border border-blue-600 rounded-lg px-4 py-3 min-h-[44px] items-center justify-center active:opacity-80"
+              >
+                {isSubmitting ? (
+                  <Text className="text-base font-semibold text-white">Submitting...</Text>
+                ) : (
+                  <Text className="text-base font-semibold text-white">Confirm Submit</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
