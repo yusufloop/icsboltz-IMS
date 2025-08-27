@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { AuthCard } from './AuthCard';
 import { AuthInput } from './AuthInput';
 import { AuthButton } from './AuthButton';
@@ -67,6 +67,11 @@ export function LoginForm({
   return (
     <AuthCard>
       <View className="items-center mb-8">
+        <Image
+          source={require('@/assets/images/logo-besar.png')}
+          style={{ width: 200, height: 80, marginBottom: 16 }}
+          resizeMode="contain"
+        />
         <Text className="text-3xl font-bold text-gray-900 mb-2 font-inter-bold">
           Welcome Back
         </Text>

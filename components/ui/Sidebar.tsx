@@ -171,13 +171,15 @@ export function Sidebar({ className = '' }: SidebarProps) {
           style={{ height: 40 }}
         >
           <Animated.Image
-            source={require('@/assets/images/icon.png')}
+            source={require('@/assets/images/icon-kecik.png')}
             style={{ width: 32, height: 32, opacity: logoIconOpacity, position: 'absolute' }}
             resizeMode="contain"
           />
-          <Animated.View style={{ opacity: contentOpacity, position: 'absolute' }}>
-            <Text className="text-xl font-bold text-gray-900">IVMS</Text>
-          </Animated.View>
+          <Animated.Image
+            source={require('@/assets/images/logo-besar.png')}
+            style={{ width: 120, height: 32, opacity: contentOpacity, position: 'absolute' }}
+            resizeMode="contain"
+          />
         </TouchableOpacity>
       </View>
 
