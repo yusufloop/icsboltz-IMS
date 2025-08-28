@@ -14,8 +14,6 @@ import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeInDown, SlideInUp } from 'react-native-reanimated';
-import { PremiumCard } from '@/components/ui/PremiumCard';
-import { PremiumButton } from '@/components/ui/PremiumButton';
 
 // --- INTERFACES AND CONSTANTS ---
 interface UserFormData {
@@ -207,14 +205,14 @@ export default function NewUserScreen() {
             <View>
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Role</Text>
               <TouchableOpacity onPress={() => setShowRolePicker(true)}>
-                <PremiumCard padding="">
+                <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
                   <View className="flex-row items-center justify-between px-4 py-3">
                     <Text className={`text-base font-system ${formData.role ? 'text-text-primary' : 'text-text-secondary'}`}>
                       {formData.role || 'Admin'}
                     </Text>
                     <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />
                   </View>
-                </PremiumCard>
+                </View>
               </TouchableOpacity>
             </View>
 
@@ -222,14 +220,14 @@ export default function NewUserScreen() {
             <View>
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Department</Text>
               <TouchableOpacity onPress={() => setShowDepartmentPicker(true)}>
-                <PremiumCard padding="">
+                <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
                   <View className="flex-row items-center justify-between px-4 py-3">
                     <Text className={`text-base font-system ${formData.department ? 'text-text-primary' : 'text-text-secondary'}`}>
                       {formData.department || 'Marketing'}
                     </Text>
                     <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />
                   </View>
-                </PremiumCard>
+                </View>
               </TouchableOpacity>
             </View>
 
@@ -237,14 +235,14 @@ export default function NewUserScreen() {
             <View>
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Rank</Text>
               <TouchableOpacity onPress={() => setShowRankPicker(true)}>
-                <PremiumCard padding="">
+                <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
                   <View className="flex-row items-center justify-between px-4 py-3">
                     <Text className={`text-base font-system ${formData.rank ? 'text-text-primary' : 'text-text-secondary'}`}>
                       {formData.rank || 'CEO'}
                     </Text>
                     <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />
                   </View>
-                </PremiumCard>
+                </View>
               </TouchableOpacity>
             </View>
 
@@ -261,13 +259,15 @@ export default function NewUserScreen() {
           entering={FadeInDown.delay(300).duration(300)}
           className="absolute bottom-0 left-0 right-0 bg-bg-primary pt-3 pb-6 px-6 border-t border-gray-200"
         >
-          <PremiumButton title="Add" onPress={handleSubmit} variant="gradient" size="lg" />
+          <TouchableOpacity onPress={handleSubmit} className="bg-blue-500 rounded-xl py-4 active:opacity-80">
+            <Text className="text-white text-lg font-semibold text-center">Add</Text>
+          </TouchableOpacity>
         </Animated.View>
 
         {/* PICKER MODALS */}
         <Modal visible={showRolePicker} transparent animationType="fade" onRequestClose={() => setShowRolePicker(false)}>
           <View className="flex-1 bg-black/50 justify-center items-center px-4">
-            <PremiumCard style={{ width: '100%', maxWidth: 300 }}>
+            <View className="bg-white rounded-2xl p-6 w-full max-w-[300px] shadow-lg">
               <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Select Role</Text>
               {ROLE_OPTIONS.map((role) => (
                 <TouchableOpacity 
@@ -284,15 +284,15 @@ export default function NewUserScreen() {
               <TouchableOpacity onPress={() => setShowRolePicker(false)} className="mt-4">
                 <Text className="text-base text-text-secondary text-center">Cancel</Text>
               </TouchableOpacity>
-            </PremiumCard>
+            </View>
           </View>
         </Modal>
 
         <Modal visible={showDepartmentPicker} transparent animationType="fade" onRequestClose={() => setShowDepartmentPicker(false)}>
           <View className="flex-1 bg-black/50 justify-center items-center px-4">
-            <PremiumCard style={{ width: '100%', maxWidth: 300, maxHeight: 400 }}>
-              <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Select Department</Text>
-              <ScrollView showsVerticalScrollIndicator={false}>
+            <View className="bg-white rounded-2xl w-full max-w-[300px] max-h-[400px] shadow-lg">
+              <Text className="text-lg font-semibold text-text-primary my-4 text-center">Select Department</Text>
+              <ScrollView showsVerticalScrollIndicator={false} className="px-6">
                 {DEPARTMENT_OPTIONS.map((department) => (
                   <TouchableOpacity 
                     key={department} 
@@ -306,18 +306,18 @@ export default function NewUserScreen() {
                   </TouchableOpacity>
                 ))}
               </ScrollView>
-              <TouchableOpacity onPress={() => setShowDepartmentPicker(false)} className="mt-4">
+              <TouchableOpacity onPress={() => setShowDepartmentPicker(false)} className="mt-4 p-6">
                 <Text className="text-base text-text-secondary text-center">Cancel</Text>
               </TouchableOpacity>
-            </PremiumCard>
+            </View>
           </View>
         </Modal>
 
         <Modal visible={showRankPicker} transparent animationType="fade" onRequestClose={() => setShowRankPicker(false)}>
           <View className="flex-1 bg-black/50 justify-center items-center px-4">
-            <PremiumCard style={{ width: '100%', maxWidth: 300, maxHeight: 400 }}>
-              <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Select Rank</Text>
-              <ScrollView showsVerticalScrollIndicator={false}>
+            <View className="bg-white rounded-2xl w-full max-w-[300px] max-h-[400px] shadow-lg">
+              <Text className="text-lg font-semibold text-text-primary my-4 text-center">Select Rank</Text>
+              <ScrollView showsVerticalScrollIndicator={false} className="px-6">
                 {RANK_OPTIONS.map((rank) => (
                   <TouchableOpacity 
                     key={rank} 
@@ -331,10 +331,10 @@ export default function NewUserScreen() {
                   </TouchableOpacity>
                 ))}
               </ScrollView>
-              <TouchableOpacity onPress={() => setShowRankPicker(false)} className="mt-4">
+              <TouchableOpacity onPress={() => setShowRankPicker(false)} className="mt-4 p-6">
                 <Text className="text-base text-text-secondary text-center">Cancel</Text>
               </TouchableOpacity>
-            </PremiumCard>
+            </View>
           </View>
         </Modal>
       </KeyboardAvoidingView>

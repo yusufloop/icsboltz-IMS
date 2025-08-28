@@ -1,7 +1,3 @@
-import { PremiumButton } from '@/components/ui/PremiumButton';
-import { PremiumCard } from '@/components/ui/PremiumCard';
-import { PremiumStatusBadge } from '@/components/ui/PremiumStatusBadge';
-import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { ICSBOLTZ_CURRENT_USER_ROLE, hasPermission } from '@/constants/UserRoles';
 import { MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -156,20 +152,24 @@ export default function ViewLoanScreen() {
   const handleApprove = () => setShowApproveModal(true);
 
   const handleReject = () => {
-    if (!loanData.rejectionReason.trim()) {
-      Alert.alert('Error', 'Please provide a reason for rejection');
-      return;
+    if (!loanData.rejectionReason.trim() && canReject) {
+        // This check is a placeholder, you might want a dedicated rejection reason field
+        Alert.alert('Reason Required', 'Please provide a reason for rejection in the comments.');
+        return;
     }
     setShowRejectModal(true);
   };
+  
 
   const confirmApproveLoan = () => {
     console.log('Loan approved:', loanData.loanId);
+    setShowApproveModal(false); // Close modal on confirm
     router.push('/loan');
   };
 
   const confirmRejectLoan = () => {
-    console.log('Loan rejected:', loanData.loanId, 'Reason:', loanData.rejectionReason);
+    console.log('Loan rejected:', loanData.loanId, 'Reason:', loanData.hodComments);
+    setShowRejectModal(false); // Close modal on confirm
     router.push('/loan');
   };
 
@@ -188,9 +188,30 @@ export default function ViewLoanScreen() {
 
   const isFieldEditable = (field: string) => {
     if (isBorrower) return false;
-    const editableFields = ['estimatedValue', 'assetCode', 'approvalLevel', 'rejectionReason', 'hodComments', 'managerComments'];
+    const editableFields = ['estimatedValue', 'assetCode', 'approvalLevel', 'rejectionReason', 'hodComments', 'managerComments', 'itemLoaned', 'quantity', 'phoneNo', 'reasonForLoan'];
     return editableFields.includes(field);
   };
+  
+  const getStatusStyle = (status: LoanViewData['status']) => {
+    switch (status) {
+      case 'Returned': return 'bg-green-100';
+      case 'Overdue': return 'bg-red-100';
+      case 'Active': return 'bg-yellow-100';
+      case 'Pending Approval': return 'bg-blue-100';
+      default: return 'bg-gray-100';
+    }
+  };
+
+  const getStatusTextStyle = (status: LoanViewData['status']) => {
+    switch (status) {
+      case 'Returned': return 'text-green-800';
+      case 'Overdue': return 'text-red-800';
+      case 'Active': return 'text-yellow-800';
+      case 'Pending Approval': return 'text-blue-800';
+      default: return 'text-gray-800';
+    }
+  };
+
 
   // --- RENDER ---
   return (
@@ -211,14 +232,9 @@ export default function ViewLoanScreen() {
             <Text className="text-xl font-bold text-text-primary">View Loan</Text>
             <Text className="text-sm text-text-secondary mt-1">Loan ID: {loanData.loanId}</Text>
           </View>
-          <PremiumStatusBadge 
-            status={
-              loanData.status === 'Returned' ? 'success' :
-              loanData.status === 'Overdue' ? 'error' :
-              loanData.status === 'Active' ? 'warning' : 'info'
-            }
-            text={loanData.status}
-          />
+          <View className={`px-3 py-1 rounded-full ${getStatusStyle(loanData.status)}`}>
+            <Text className={`text-sm font-semibold ${getStatusTextStyle(loanData.status)}`}>{loanData.status}</Text>
+          </View>
         </Animated.View>
 
         {/* Form Content */}
@@ -234,7 +250,7 @@ export default function ViewLoanScreen() {
             {/* Technical Information Section */}
             <View>
               <Text className="text-lg font-semibold text-text-primary mb-4">Loan Information</Text>
-              <PremiumCard>
+              <View className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
                 <View className="space-y-4">
                   <View className="flex-row space-x-4">
                     <View className="flex-1"><Text className="text-sm font-medium text-text-secondary mb-1">Loan ID</Text><Text className="text-base font-mono text-text-primary">{loanData.loanId}</Text></View>
@@ -246,7 +262,7 @@ export default function ViewLoanScreen() {
                   </View>
                   <View><Text className="text-sm font-medium text-text-secondary mb-1">Last Modified</Text><Text className="text-base text-text-primary">{formatDateTime(loanData.lastModified)}</Text></View>
                 </View>
-              </PremiumCard>
+              </View>
             </View>
 
             {/* Loan Details Section */}
@@ -259,15 +275,14 @@ export default function ViewLoanScreen() {
               </View>
               <View className="mb-4"><Text className="text-sm font-medium text-text-secondary mb-2">Reason for Loan</Text><TextInput value={loanData.reasonForLoan} editable={isFieldEditable('reasonForLoan')} multiline textAlignVertical="top" className={`bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 min-h-[100px] px-4 py-3 ${!isFieldEditable('reasonForLoan') ? 'opacity-60' : ''}`} /></View>
               
-              {/* Updated Date and Priority Row for Loans */}
               <View className="flex-row space-x-4 mb-4">
-                <View className="flex-1"><Text className="text-sm font-medium text-text-secondary mb-2">Loan Start Date</Text><TouchableOpacity onPress={() => !isBorrower && setShowStartDatePicker(true)} disabled={isBorrower}><PremiumCard padding="" style={{ opacity: isBorrower ? 0.6 : 1 }}><View className="flex-row items-center justify-between px-4 py-3"><Text className="text-base font-system text-text-primary">{loanData.loanStartDate ? formatDate(loanData.loanStartDate) : 'Not set'}</Text>{!isBorrower && <MaterialIcons name="chevron-right" size={24} color="#8A8A8E" />}</View></PremiumCard></TouchableOpacity></View>
-                <View className="flex-1"><Text className="text-sm font-medium text-text-secondary mb-2">Loan End Date</Text><TouchableOpacity onPress={() => !isBorrower && setShowEndDatePicker(true)} disabled={isBorrower}><PremiumCard padding="" style={{ opacity: isBorrower ? 0.6 : 1 }}><View className="flex-row items-center justify-between px-4 py-3"><Text className="text-base font-system text-text-primary">{loanData.loanEndDate ? formatDate(loanData.loanEndDate) : 'Not set'}</Text>{!isBorrower && <MaterialIcons name="chevron-right" size={24} color="#8A8A8E" />}</View></PremiumCard></TouchableOpacity></View>
+                <View className="flex-1"><Text className="text-sm font-medium text-text-secondary mb-2">Loan Start Date</Text><TouchableOpacity onPress={() => !isBorrower && setShowStartDatePicker(true)} disabled={isBorrower} style={{ opacity: isBorrower ? 0.6 : 1 }}><View className="bg-white rounded-lg shadow-sm border border-gray-100"><View className="flex-row items-center justify-between px-4 py-3"><Text className="text-base font-system text-text-primary">{loanData.loanStartDate ? formatDate(loanData.loanStartDate) : 'Not set'}</Text>{!isBorrower && <MaterialIcons name="chevron-right" size={24} color="#8A8A8E" />}</View></View></TouchableOpacity></View>
+                <View className="flex-1"><Text className="text-sm font-medium text-text-secondary mb-2">Loan End Date</Text><TouchableOpacity onPress={() => !isBorrower && setShowEndDatePicker(true)} disabled={isBorrower} style={{ opacity: isBorrower ? 0.6 : 1 }}><View className="bg-white rounded-lg shadow-sm border border-gray-100"><View className="flex-row items-center justify-between px-4 py-3"><Text className="text-base font-system text-text-primary">{loanData.loanEndDate ? formatDate(loanData.loanEndDate) : 'Not set'}</Text>{!isBorrower && <MaterialIcons name="chevron-right" size={24} color="#8A8A8E" />}</View></View></TouchableOpacity></View>
               </View>
               
               <View className="flex-row space-x-4 mb-4">
                 <View className="flex-1"><Text className="text-sm font-medium text-text-secondary mb-2">Priority</Text><TouchableOpacity onPress={() => !isBorrower && setShowPriorityPicker(true)} disabled={isBorrower}><View className="rounded-lg flex-row items-center justify-between px-4 py-3" style={{ backgroundColor: getPriorityInfo(loanData.priority).bgColor, opacity: isBorrower ? 0.6 : 1 }}><Text className="text-base font-medium font-system" style={{ color: getPriorityInfo(loanData.priority).color }}>{loanData.priority}</Text>{!isBorrower && <MaterialIcons name="chevron-right" size={24} color={getPriorityInfo(loanData.priority).color} />}</View></TouchableOpacity></View>
-                <View className="flex-1"><Text className="text-sm font-medium text-text-secondary mb-2">Charge To Department</Text><TouchableOpacity onPress={() => !isBorrower && setShowDepartmentPicker(true)} disabled={isBorrower}><PremiumCard padding="" style={{ opacity: isBorrower ? 0.6 : 1 }}><View className="flex-row items-center justify-between px-4 py-3"><Text className="text-base font-system text-text-primary">{loanData.chargeToDepartment || 'Not selected'}</Text>{!isBorrower && <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />}</View></PremiumCard></TouchableOpacity></View>
+                <View className="flex-1"><Text className="text-sm font-medium text-text-secondary mb-2">Charge To Department</Text><TouchableOpacity onPress={() => !isBorrower && setShowDepartmentPicker(true)} disabled={isBorrower} style={{ opacity: isBorrower ? 0.6 : 1 }}><View className="bg-white rounded-lg shadow-sm border border-gray-100"><View className="flex-row items-center justify-between px-4 py-3"><Text className="text-base font-system text-text-primary">{loanData.chargeToDepartment || 'Not selected'}</Text>{!isBorrower && <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />}</View></View></TouchableOpacity></View>
               </View>
             </View>
 
@@ -279,12 +294,9 @@ export default function ViewLoanScreen() {
                   <View className="flex-1"><Text className="text-sm font-medium text-text-secondary mb-2">Estimated Value</Text><TextInput value={loanData.estimatedValue} editable={isFieldEditable('estimatedValue')} className={`bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3 ${!isFieldEditable('estimatedValue') ? 'opacity-60' : ''}`} /></View>
                   <View className="flex-1"><Text className="text-sm font-medium text-text-secondary mb-2">Asset Code</Text><TextInput value={loanData.assetCode} editable={isFieldEditable('assetCode')} className={`bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3 ${!isFieldEditable('assetCode') ? 'opacity-60' : ''}`} /></View>
                 </View>
-                <View><Text className="text-sm font-medium text-text-secondary mb-2">Approval Level Required</Text><TouchableOpacity onPress={() => isFieldEditable('approvalLevel') && setShowApprovalLevelPicker(true)} disabled={!isFieldEditable('approvalLevel')}><PremiumCard padding="" style={{ opacity: !isFieldEditable('approvalLevel') ? 0.6 : 1 }}><View className="flex-row items-center justify-between px-4 py-3"><Text className="text-base font-system text-text-primary">{loanData.approvalLevel}</Text>{isFieldEditable('approvalLevel') && <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />}</View></PremiumCard></TouchableOpacity></View>
+                <View><Text className="text-sm font-medium text-text-secondary mb-2">Approval Level Required</Text><TouchableOpacity onPress={() => isFieldEditable('approvalLevel') && setShowApprovalLevelPicker(true)} disabled={!isFieldEditable('approvalLevel')} style={{ opacity: !isFieldEditable('approvalLevel') ? 0.6 : 1 }}><View className="bg-white rounded-lg shadow-sm border border-gray-100"><View className="flex-row items-center justify-between px-4 py-3"><Text className="text-base font-system text-text-primary">{loanData.approvalLevel}</Text>{isFieldEditable('approvalLevel') && <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />}</View></View></TouchableOpacity></View>
               </View>
             </View>
-
-            {/* Comments and Attachments etc. remain structurally similar */}
-            {/* ... */}
           </Animated.View>
         </ScrollView>
 
@@ -292,8 +304,8 @@ export default function ViewLoanScreen() {
         {(canApprove || canReject) && (
           <Animated.View entering={FadeInDown.delay(300).duration(300)} className="absolute bottom-0 left-0 right-0 bg-bg-primary pt-3 pb-6 px-6 border-t border-gray-200">
             <View className="flex-row space-x-3">
-              {canReject && <View className="flex-1"><PremiumButton title="Reject" onPress={handleReject} variant="destructive" size="lg" /></View>}
-              {canApprove && <View className="flex-1"><PremiumButton title="Approve" onPress={handleApprove} variant="gradient" size="lg" /></View>}
+              {canReject && <View className="flex-1"><TouchableOpacity onPress={handleReject} className="bg-red-600 rounded-xl py-4 active:opacity-80"><Text className="text-white text-lg font-semibold text-center">Reject</Text></TouchableOpacity></View>}
+              {canApprove && <View className="flex-1"><TouchableOpacity onPress={handleApprove} className="bg-blue-500 rounded-xl py-4 active:opacity-80"><Text className="text-white text-lg font-semibold text-center">Approve</Text></TouchableOpacity></View>}
             </View>
           </Animated.View>
         )}
@@ -302,12 +314,42 @@ export default function ViewLoanScreen() {
         {showStartDatePicker && <DateTimePicker value={loanData.loanStartDate || new Date()} mode="date" display="spinner" onChange={handleStartDateChange} minimumDate={new Date()} />}
         {showEndDatePicker && <DateTimePicker value={loanData.loanEndDate || loanData.loanStartDate || new Date()} mode="date" display="spinner" onChange={handleEndDateChange} minimumDate={loanData.loanStartDate || new Date()} />}
         
-        {/* Other Modals (Priority, Department, Approval Level) remain the same */}
-        {/* ... */}
+        {/* Confirmation Modals */}
+        <Modal visible={showApproveModal} transparent animationType="fade" onRequestClose={() => setShowApproveModal(false)}>
+            <View className="flex-1 bg-black/50 justify-center items-center px-4">
+                <View className="bg-white rounded-2xl p-6 w-full max-w-[350px] shadow-lg items-center">
+                    <View className="bg-green-100 rounded-full p-3 mb-4">
+                        <MaterialIcons name="check-circle-outline" size={48} color="#34D399" />
+                    </View>
+                    <Text className="text-lg font-semibold text-text-primary mb-2 text-center">Approve Loan</Text>
+                    <Text className="text-base text-text-secondary mb-6 text-center">Thank you for your approval! Your decision has been recorded.</Text>
+                    <TouchableOpacity onPress={confirmApproveLoan} className="bg-blue-500 rounded-lg py-3 w-full active:opacity-80">
+                        <Text className="text-base font-semibold text-white text-center">OK</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </Modal>
 
-        {/* Confirmation Modals - Updated for Loans */}
-        <ConfirmationModal isOpen={showApproveModal} onClose={() => setShowApproveModal(false)} onConfirm={confirmApproveLoan} title="Approve Loan" message="Thank you for your approval! Your decision has been recorded." confirmText="OK" type="success" showIcon={true} />
-        <ConfirmationModal isOpen={showRejectModal} onClose={() => setShowRejectModal(false)} onConfirm={confirmRejectLoan} title="Confirm Rejection" message={`Are you sure you want to reject loan ${loanData.loanId}?`} confirmText="Reject" cancelText="Cancel" type="error" showIcon={true} />
+        <Modal visible={showRejectModal} transparent animationType="fade" onRequestClose={() => setShowRejectModal(false)}>
+            <View className="flex-1 bg-black/50 justify-center items-center px-4">
+                <View className="bg-white rounded-2xl p-6 w-full max-w-[350px] shadow-lg items-center">
+                    <View className="bg-red-100 rounded-full p-3 mb-4">
+                       <MaterialIcons name="highlight-off" size={48} color="#F87171" />
+                    </View>
+                    <Text className="text-lg font-semibold text-text-primary mb-2 text-center">Confirm Rejection</Text>
+                    <Text className="text-base text-text-secondary mb-6 text-center">Are you sure you want to reject loan {loanData.loanId}?</Text>
+                    <View className="flex-row space-x-3 w-full">
+                        <TouchableOpacity onPress={() => setShowRejectModal(false)} className="flex-1 bg-gray-100 rounded-lg py-3 active:opacity-80">
+                            <Text className="text-base font-semibold text-gray-600 text-center">Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={confirmRejectLoan} className="flex-1 bg-red-600 rounded-lg py-3 active:opacity-80">
+                            <Text className="text-base font-semibold text-white text-center">Reject</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
