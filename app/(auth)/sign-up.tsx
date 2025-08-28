@@ -97,13 +97,6 @@ export default function SignUpScreen() {
           <View className="max-w-sm w-full mx-auto">
             {/* Header */}
             <View className="items-center mb-8">
-              <View className="w-16 h-16 mb-4">
-                <Image
-                  source={require('@/assets/images/logo-besar.png')}
-                  className="w-full h-full"
-                  resizeMode="contain"
-                />
-              </View>
               <Text className="text-3xl font-bold text-gray-900 mb-2">
                 Create Account
               </Text>

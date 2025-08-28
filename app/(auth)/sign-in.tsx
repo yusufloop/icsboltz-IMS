@@ -8,6 +8,7 @@ import {
   ScrollView,
   Alert,
   Image,
+  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
@@ -68,19 +69,18 @@ export default function SignInScreen() {
           <View className="max-w-sm w-full mx-auto">
             {/* Header */}
             <View className="items-center mb-8">
-              <View className="w-16 h-16 mb-4">
-                <Image
-                  source={require('@/assets/images/logo-besar.png')}
-                  className="w-full h-full"
-                  resizeMode="contain"
-                />
-              </View>
+               <Animated.Image
+                          source={require('@/assets/images/logo-besar.png')}
+                          style={{ width: 200, height: 50, marginBottom: 20   }}
+                          resizeMode="contain"
+                        />
               <Text className="text-3xl font-bold text-gray-900 mb-2">
                 Welcome Back
               </Text>
               <Text className="text-gray-600 text-center">
                 Sign in to your account to continue
               </Text>
+             
             </View>
 
             {/* Form */}
