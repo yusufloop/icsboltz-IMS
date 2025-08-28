@@ -62,7 +62,7 @@ export default function TabLayout() {
           icon: "notifications",
         };
         break;
-      case "ADMIN":
+      case "ADMINISTRATOR":
         roleSpecificTab = {
           name: "user",
           title: "Users",
@@ -126,7 +126,7 @@ export default function TabLayout() {
           }}
         />
       )}
-      {(currentRole === "REQUESTER" || currentRole === "ADMIN") && (
+      {(currentRole === "REQUESTER" || currentRole === "ADMINISTRATOR") && (
         <Tabs.Screen
           name="notifications"
           options={{
@@ -134,7 +134,7 @@ export default function TabLayout() {
           }}
         />
       )}
-      {currentRole !== "ADMIN" && (
+      {currentRole !== "ADMINISTRATOR" && (
         <Tabs.Screen
           name="user"
           options={{

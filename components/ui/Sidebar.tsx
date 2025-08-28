@@ -76,9 +76,10 @@ export function Sidebar({ className = '' }: SidebarProps) {
       case 'GENERAL_MANAGER':
         roleSpecificItems.push({ id: 'notifications', title: 'Notifications', icon: 'notifications', route: '/notifications' });
         break;
-      case 'ADMIN':
+      case 'ADMINISTRATOR':
         roleSpecificItems.push(
           { id: 'users', title: 'Users', icon: 'people', route: '/user' },
+          { id: 'user-management', title: 'User Management', icon: 'admin-panel-settings', route: '/admin-user-management' },
           { id: 'notifications', title: 'Notifications', icon: 'notifications', route: '/notifications' }
         );
         break;

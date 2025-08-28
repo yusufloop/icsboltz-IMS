@@ -9,7 +9,7 @@ export default function MoreScreen() {
   // Check if current user is a requester - hide View Request for requesters
   const isRequester = ICSBOLTZ_CURRENT_USER_ROLE === 'REQUESTER';
   const isGeneralManager = ICSBOLTZ_CURRENT_USER_ROLE === 'GENERAL_MANAGER';
-  const isAdmin = ICSBOLTZ_CURRENT_USER_ROLE === 'ADMIN';
+  const isAdmin = ICSBOLTZ_CURRENT_USER_ROLE === 'ADMINISTRATOR';
 
   const handleNewRequest = () => {
     router.push('/new-request');
@@ -49,6 +49,10 @@ export default function MoreScreen() {
 
   const handleUserProfile = () => {
     router.push('/user-profile');
+  };
+
+  const handleUserManagement = () => {
+    router.push('/admin-user-management');
   };
 
   const handleHelpSupport = () => {
@@ -166,9 +170,21 @@ export default function MoreScreen() {
             <Ionicons name="chevron-forward" size={20} color="#999" />
           </TouchableOpacity>
 
-          {/* Requester Dashboard - only show for Admin */}
+          {/* Admin Features - only show for Admin */}
           {isAdmin && (
             <>
+              {/* Separator Line */}
+              <View style={styles.separator} />
+
+              {/* User Management */}
+              <TouchableOpacity style={styles.menuItem} onPress={handleUserManagement}>
+                <View style={styles.menuItemLeft}>
+                  <Ionicons name="people-outline" size={20} color="#666" style={styles.menuIcon} />
+                  <Text style={styles.menuItemText}>User Management</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="#999" />
+              </TouchableOpacity>
+
               {/* Separator Line */}
               <View style={styles.separator} />
 

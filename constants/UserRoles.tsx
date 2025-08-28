@@ -8,7 +8,7 @@
  */
 
 // User Role Types
-export type UserRole = 'ADMIN' | 'GENERAL_MANAGER' | 'HEAD_OF_DEPARTMENT' | 'REQUESTER';
+export type UserRole = 'ADMINISTRATOR' | 'GENERAL_MANAGER' | 'HEAD_OF_DEPARTMENT' | 'REQUESTER';
 
 // Button Action Types
 export type ButtonAction = 'scan' | 'info' | 'resubmit' | 'view_log' | 'approve' | 'reject' | 'view' | 'warranty';
@@ -28,7 +28,7 @@ interface RoleConfig {
  * To modify role permissions, update the allowedActions array for the specific role.
  */
 export const ICSBOLTZ_ROLE_DEFINITIONS: Record<UserRole, RoleConfig> = {
-  ADMIN: {
+  ADMINISTRATOR: {
     name: 'Administrator',
     description: 'Full system access with administrative privileges',
     allowedActions: ['view', 'approve', 'warranty','reject'],
@@ -61,9 +61,9 @@ export const ICSBOLTZ_ROLE_DEFINITIONS: Record<UserRole, RoleConfig> = {
  * In the future, this should be replaced with dynamic role fetching from user authentication.
  * 
  * TO CHANGE USER ROLE: Modify the value below to test different role permissions
- * Available roles: 'ADMIN', 'GENERAL_MANAGER', 'HEAD_OF_DEPARTMENT', 'REQUESTER'
+ * Available roles: 'ADMINISTRATOR', 'GENERAL_MANAGER', 'HEAD_OF_DEPARTMENT', 'REQUESTER'
  */
-export const ICSBOLTZ_CURRENT_USER_ROLE: UserRole = 'HEAD_OF_DEPARTMENT';
+export const ICSBOLTZ_CURRENT_USER_ROLE: UserRole = 'ADMINISTRATOR';
 
 /**
  * Utility function to get role configuration
