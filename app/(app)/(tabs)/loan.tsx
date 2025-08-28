@@ -2,17 +2,37 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-// The new page will use a LoanCard component, assuming it has a similar structure to RequestCard
-//import { LoanCard } from '@/components/ui/LoanCard'; 
-import { PremiumCard } from '@/components/ui/PremiumCard';
 import { router } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
-// Renamed the component to LoansScreen
+// --- HELPER COMPONENT FOR STATUS ---
+const StatusBadge = ({ status }: { status: string }) => {
+  const getStatusStyles = () => {
+    switch (status) {
+      case 'Returned':
+        return { container: 'bg-green-100', text: 'text-green-800' };
+      case 'Active':
+        return { container: 'bg-blue-100', text: 'text-blue-800' };
+      case 'Overdue':
+        return { container: 'bg-red-100', text: 'text-red-800' };
+      default:
+        return { container: 'bg-gray-100', text: 'text-gray-800' };
+    }
+  };
+
+  const styles = getStatusStyles();
+
+  return (
+    <View className={`px-3 py-1 rounded-full ${styles.container}`}>
+      <Text className={`text-xs font-bold ${styles.text}`}>{status}</Text>
+    </View>
+  );
+};
+
+// --- MAIN SCREEN ---
 export default function LoansScreen() {
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
 
-  // Changed the data to reflect loans instead of requests
   const loans = [
     { 
       id: '#LOAN 1', 
@@ -73,9 +93,7 @@ export default function LoansScreen() {
     });
   };
 
-  // Renamed the handler to reflect creating a loan
   const handleCreateLoan = () => {
-    // Updated router push to the new loan page
     router.push('/new-loan');
   };
 
@@ -86,7 +104,7 @@ export default function LoansScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
       >
-        {/* Header - Updated icon and title */}
+        {/* Header */}
         <View className="flex-row items-center px-6 py-6 bg-bg-secondary shadow-lg">
           <MaterialIcons 
             name="card-giftcard" 
@@ -98,9 +116,9 @@ export default function LoansScreen() {
           </Text>
         </View>
 
-        {/* Search Bar - Updated placeholder text */}
+        {/* Search Bar */}
         <View className="px-6 pt-8">
-          <PremiumCard className="shadow-lg">
+          <View className="bg-white rounded-xl p-4 shadow-lg">
             <View className="flex-row items-center">
               <MaterialIcons 
                 name="search" 
@@ -115,10 +133,10 @@ export default function LoansScreen() {
                 style={{ fontFamily: 'System' }}
               />
             </View>
-          </PremiumCard>
+          </View>
         </View>
 
-        {/* Filter Controls - Functionality remains the same, button now calls handleCreateLoan */}
+        {/* Filter Controls */}
         <View className="flex-row items-center justify-between px-6 pt-2 mb-4">
           <View className="flex-row items-center space-x-8">
             <TouchableOpacity className="flex-row items-center py-3 px-2 active:opacity-80 active:scale-95">
@@ -169,27 +187,84 @@ export default function LoansScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Loans List - Mapped from the new 'loans' array and uses 'LoanCard' */}
-        {/* <View className="px-6">
-          {loans.map((loan, index) => (
-            <Animated.View
-              key={loan.id}
-              entering={FadeInDown.delay(index * 100).duration(300)}
-            >
-              <LoanCard
-                id={loan.id}
-                date={loan.date}
-                status={loan.status}
-                itemLoaned={loan.itemLoaned}
-                priority={loan.priority}
-                returnDueDate={loan.returnDueDate}
-                company={loan.company}
-                isExpanded={expandedCards.has(loan.id)}
-                onToggle={() => handleCardToggle(loan.id)}
-              />
-            </Animated.View>
-          ))}
-        </View> */}
+        {/* Loans List */}
+        <View className="px-6">
+          {loans.map((loan, index) => {
+            const isExpanded = expandedCards.has(loan.id);
+            return (
+              <Animated.View
+                key={loan.id}
+                entering={FadeInDown.delay(index * 100).duration(300)}
+                className="bg-white rounded-xl shadow-md mb-4 overflow-hidden"
+              >
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => handleCardToggle(loan.id)}
+                  className="p-4"
+                >
+                  <View className="flex-row justify-between items-center mb-2">
+                    <Text className="text-sm font-semibold text-text-primary">{loan.id}</Text>
+                    <StatusBadge status={loan.status} />
+                  </View>
+                  <Text className="text-lg font-bold text-text-primary mb-2">{loan.itemLoaned}</Text>
+                  <View className="flex-row justify-between items-center">
+                    <Text className="text-sm text-text-secondary">{loan.company}</Text>
+                    <MaterialIcons 
+                      name={isExpanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'} 
+                      size={24} 
+                      color="#8A8A8E" 
+                    />
+                  </View>
+                </TouchableOpacity>
+
+                {isExpanded && (
+                  <View className="px-4 pb-4">
+                    <View className="border-t border-gray-200 my-2" />
+                    <View className="flex-row flex-wrap mb-4">
+                      <View className="w-1/2 mb-2">
+                        <Text className="text-xs text-text-secondary mb-1">Date</Text>
+                        <Text className="text-sm font-medium text-text-primary">{loan.date}</Text>
+                      </View>
+                      <View className="w-1/2 mb-2">
+                        <Text className="text-xs text-text-secondary mb-1">Return Due Date</Text>
+                        <Text className="text-sm font-medium text-text-primary">{loan.returnDueDate}</Text>
+                      </View>
+                      <View className="w-1/2">
+                        <Text className="text-xs text-text-secondary mb-1">Priority</Text>
+                        <Text className="text-sm font-medium text-text-primary">{loan.priority}</Text>
+                      </View>
+                    </View>
+                    <View className="border-t border-gray-200 pt-2 flex-row justify-around">
+                        <TouchableOpacity 
+                          onPress={() => router.push('/tool-detail')}
+                          className="flex-row items-center py-2 px-4 rounded-lg active:bg-gray-100"
+                        >
+                          <MaterialIcons name="build" size={20} color="#0A84FF" />
+                          <Text className="text-sm font-semibold text-blue-500 ml-2">Tool Detail</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity 
+                          onPress={() => router.push('/view-loan')}
+                          className="flex-row items-center py-2 px-4 rounded-lg active:bg-gray-100"
+                        >
+                          <MaterialIcons name="visibility" size={20} color="#0A84FF" />
+                          <Text className="text-sm font-semibold text-blue-500 ml-2">View Details</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity 
+                          onPress={() => router.push('/status-history')}
+                          className="flex-row items-center py-2 px-4 rounded-lg active:bg-gray-100"
+                        >
+                          <MaterialIcons name="history" size={20} color="#f59e0b" />
+                          <Text className="text-sm font-semibold text-amber-500 ml-2">Status History</Text>
+                        </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+              </Animated.View>
+            );
+          })}
+        </View>
       </ScrollView>
 
     </SafeAreaView>

@@ -15,6 +15,14 @@ export default function MoreScreen() {
     router.push('/new-request');
   };
 
+  const handleviewLoan = () => {
+    router.push('/view-loan');
+  };
+
+  const handleviewUser = () => {
+    router.push('/view-user');
+  };
+
   const handleResubmitRequest = () => {
     router.push('/resubmit-request');
   };
@@ -52,7 +60,11 @@ export default function MoreScreen() {
   };
 
   const handleUserManagement = () => {
-    router.push('/admin-user-management');
+    //router.push('admin');
+  };
+
+    const handleToolDetail = () => {
+    router.push('/tool-detail');
   };
 
   const handleHelpSupport = () => {
@@ -75,6 +87,42 @@ export default function MoreScreen() {
             <View style={styles.menuItemLeft}>
               <Ionicons name="person-outline" size={20} color="#666" style={styles.menuIcon} />
               <Text style={styles.menuItemText}>User Profile</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#999" />
+          </TouchableOpacity>
+          
+          {/* Separator Line */}
+          <View style={styles.separator} />
+
+          {/* Tool Detail */}
+          <TouchableOpacity style={styles.menuItem} onPress={handleToolDetail}>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="build-outline" size={20} color="#666" style={styles.menuIcon} />
+              <Text style={styles.menuItemText}>Tool Detail</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#999" />
+          </TouchableOpacity>
+
+          {/* Separator Line */}
+          <View style={styles.separator} />
+
+          {/* View Loan */}
+          <TouchableOpacity style={styles.menuItem} onPress={handleviewLoan}>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="build-outline" size={20} color="#666" style={styles.menuIcon} />
+              <Text style={styles.menuItemText}>View Loan</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#999" />
+          </TouchableOpacity>
+
+          {/* Separator Line */}
+          <View style={styles.separator} />
+
+          {/* View User */}
+          <TouchableOpacity style={styles.menuItem} onPress={handleviewUser}>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="build-outline" size={20} color="#666" style={styles.menuIcon} />
+              <Text style={styles.menuItemText}>View User</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#999" />
           </TouchableOpacity>

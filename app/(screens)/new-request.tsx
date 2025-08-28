@@ -1,5 +1,3 @@
-import { PremiumButton } from '@/components/ui/PremiumButton';
-import { PremiumCard } from '@/components/ui/PremiumCard';
 import { MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -346,14 +344,14 @@ export default function NewRequestScreen() {
               <View className="flex-1 mr-10">
                 <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Date Needed By</Text>
                 <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                  <PremiumCard padding="">
+                  <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
                     <View className="flex-row items-center justify-between px-4 py-3">
                       <Text className={`text-base font-system ${formData.dateNeededBy ? 'text-text-primary' : 'text-text-secondary'}`}>
                         {formData.dateNeededBy ? formatDate(formData.dateNeededBy) : 'Select date'}
                       </Text>
                       <MaterialIcons name="chevron-right" size={24} color="#8A8A8E" />
                     </View>
-                  </PremiumCard>
+                  </View>
                 </TouchableOpacity>
               </View>
 
@@ -377,14 +375,14 @@ export default function NewRequestScreen() {
             <View>
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Charge To Department</Text>
               <TouchableOpacity onPress={() => setShowDepartmentPicker(true)}>
-                <PremiumCard padding="">
+                <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
                   <View className="flex-row items-center justify-between px-4 py-3">
                     <Text className={`text-base font-system ${formData.chargeToDepartment ? 'text-text-primary' : 'text-text-secondary'}`}>
                       {formData.chargeToDepartment || 'Select department'}
                     </Text>
                     <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />
                   </View>
-                </PremiumCard>
+                </View>
               </TouchableOpacity>
             </View>
 
@@ -392,14 +390,14 @@ export default function NewRequestScreen() {
             <View>
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Tool Lifecycle Rule</Text>
               <TouchableOpacity onPress={() => setShowLifecycleRulePicker(true)}>
-                <PremiumCard padding="">
+                <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
                   <View className="flex-row items-center justify-between px-4 py-3">
                     <Text className={`text-base font-system ${formData.toolLifecycleRule ? 'text-text-primary' : 'text-text-secondary'}`}>
                       {formData.toolLifecycleRule || 'Select lifecycle rule'}
                     </Text>
                     <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />
                   </View>
-                </PremiumCard>
+                </View>
               </TouchableOpacity>
             </View>
 
@@ -407,14 +405,14 @@ export default function NewRequestScreen() {
             <View>
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Tool Shelf Life Rule</Text>
               <TouchableOpacity onPress={() => setShowShelfLifeRulePicker(true)}>
-                <PremiumCard padding="">
+                <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
                   <View className="flex-row items-center justify-between px-4 py-3">
                     <Text className={`text-base font-system ${formData.toolShelfLifeRule ? 'text-text-primary' : 'text-text-secondary'}`}>
                       {formData.toolShelfLifeRule || 'Select shelf life rule'}
                     </Text>
                     <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />
                   </View>
-                </PremiumCard>
+                </View>
               </TouchableOpacity>
             </View>
 
@@ -422,14 +420,14 @@ export default function NewRequestScreen() {
             <View>
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Tool Warranties</Text>
               <TouchableOpacity onPress={() => setShowWarrantiesPicker(true)}>
-                <PremiumCard padding="">
+                <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
                   <View className="flex-row items-center justify-between px-4 py-3">
                     <Text className={`text-base font-system ${formData.toolWarranties ? 'text-text-primary' : 'text-text-secondary'}`}>
                       {formData.toolWarranties || 'Select warranty'}
                     </Text>
                     <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />
                   </View>
-                </PremiumCard>
+                </View>
               </TouchableOpacity>
             </View>
 
@@ -464,7 +462,12 @@ export default function NewRequestScreen() {
           entering={FadeInDown.delay(300).duration(300)}
           className="absolute bottom-0 left-0 right-0 bg-bg-primary pt-3 pb-6 px-6 border-t border-gray-200"
         >
-          <PremiumButton title="Confirm" onPress={showConfirmation} variant="gradient" size="lg" />
+          <TouchableOpacity 
+            onPress={showConfirmation} 
+            className="bg-blue-500 rounded-xl py-4 active:opacity-80"
+          >
+            <Text className="text-white text-lg font-semibold text-center">Confirm</Text>
+          </TouchableOpacity>
         </Animated.View>
 
         {/* PICKER MODALS */}
@@ -480,7 +483,7 @@ export default function NewRequestScreen() {
 
         <Modal visible={showPriorityPicker} transparent animationType="fade" onRequestClose={() => setShowPriorityPicker(false)}>
           <View className="flex-1 bg-black/50 justify-center items-center px-4">
-            <PremiumCard style={{ width: '100%', maxWidth: 300 }}>
+            <View className="bg-white rounded-2xl p-6 w-full max-w-[300px] shadow-lg">
               <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Select Priority</Text>
               {PRIORITY_OPTIONS.map((option) => (
                 <TouchableOpacity 
@@ -499,15 +502,15 @@ export default function NewRequestScreen() {
               <TouchableOpacity onPress={() => setShowPriorityPicker(false)} className="mt-4">
                 <Text className="text-base text-text-secondary text-center">Cancel</Text>
               </TouchableOpacity>
-            </PremiumCard>
+            </View>
           </View>
         </Modal>
 
         <Modal visible={showDepartmentPicker} transparent animationType="fade" onRequestClose={() => setShowDepartmentPicker(false)}>
           <View className="flex-1 bg-black/50 justify-center items-center px-4">
-            <PremiumCard style={{ width: '100%', maxWidth: 300, maxHeight: 400 }}>
-              <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Select Department</Text>
-              <ScrollView showsVerticalScrollIndicator={false}>
+            <View className="bg-white rounded-2xl w-full max-w-[300px] max-h-[400px] shadow-lg">
+              <Text className="text-lg font-semibold text-text-primary my-4 text-center">Select Department</Text>
+              <ScrollView showsVerticalScrollIndicator={false} className="px-6">
                 {DEPARTMENT_OPTIONS.map((department) => (
                   <TouchableOpacity 
                     key={department} 
@@ -521,19 +524,19 @@ export default function NewRequestScreen() {
                   </TouchableOpacity>
                 ))}
               </ScrollView>
-              <TouchableOpacity onPress={() => setShowDepartmentPicker(false)} className="mt-4">
+              <TouchableOpacity onPress={() => setShowDepartmentPicker(false)} className="mt-4 p-6">
                 <Text className="text-base text-text-secondary text-center">Cancel</Text>
               </TouchableOpacity>
-            </PremiumCard>
+            </View>
           </View>
         </Modal>
 
         {/* Tool Lifecycle Rule Picker Modal */}
         <Modal visible={showLifecycleRulePicker} transparent animationType="fade" onRequestClose={() => setShowLifecycleRulePicker(false)}>
           <View className="flex-1 bg-black/50 justify-center items-center px-4">
-            <PremiumCard style={{ width: '100%', maxWidth: 350, maxHeight: 400 }}>
-              <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Select Lifecycle Rule</Text>
-              <ScrollView showsVerticalScrollIndicator={false}>
+            <View className="bg-white rounded-2xl w-full max-w-[350px] max-h-[400px] shadow-lg">
+              <Text className="text-lg font-semibold text-text-primary my-4 text-center">Select Lifecycle Rule</Text>
+              <ScrollView showsVerticalScrollIndicator={false} className="px-6">
                 {lifecycleRules.map((rule) => (
                   <TouchableOpacity 
                     key={rule.rule_id} 
@@ -548,19 +551,19 @@ export default function NewRequestScreen() {
                   </TouchableOpacity>
                 ))}
               </ScrollView>
-              <TouchableOpacity onPress={() => setShowLifecycleRulePicker(false)} className="mt-4">
+              <TouchableOpacity onPress={() => setShowLifecycleRulePicker(false)} className="mt-4 p-6">
                 <Text className="text-base text-text-secondary text-center">Cancel</Text>
               </TouchableOpacity>
-            </PremiumCard>
+            </View>
           </View>
         </Modal>
 
         {/* Tool Shelf Life Rule Picker Modal */}
         <Modal visible={showShelfLifeRulePicker} transparent animationType="fade" onRequestClose={() => setShowShelfLifeRulePicker(false)}>
           <View className="flex-1 bg-black/50 justify-center items-center px-4">
-            <PremiumCard style={{ width: '100%', maxWidth: 350, maxHeight: 400 }}>
-              <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Select Shelf Life Rule</Text>
-              <ScrollView showsVerticalScrollIndicator={false}>
+            <View className="bg-white rounded-2xl w-full max-w-[350px] max-h-[400px] shadow-lg">
+              <Text className="text-lg font-semibold text-text-primary my-4 text-center">Select Shelf Life Rule</Text>
+              <ScrollView showsVerticalScrollIndicator={false} className="px-6">
                 {shelfLifeRules.map((rule) => (
                   <TouchableOpacity 
                     key={rule.rule_id} 
@@ -575,19 +578,19 @@ export default function NewRequestScreen() {
                   </TouchableOpacity>
                 ))}
               </ScrollView>
-              <TouchableOpacity onPress={() => setShowShelfLifeRulePicker(false)} className="mt-4">
+              <TouchableOpacity onPress={() => setShowShelfLifeRulePicker(false)} className="mt-4 p-6">
                 <Text className="text-base text-text-secondary text-center">Cancel</Text>
               </TouchableOpacity>
-            </PremiumCard>
+            </View>
           </View>
         </Modal>
 
         {/* Tool Warranties Picker Modal */}
         <Modal visible={showWarrantiesPicker} transparent animationType="fade" onRequestClose={() => setShowWarrantiesPicker(false)}>
           <View className="flex-1 bg-black/50 justify-center items-center px-4">
-            <PremiumCard style={{ width: '100%', maxWidth: 350, maxHeight: 400 }}>
-              <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Select Warranty</Text>
-              <ScrollView showsVerticalScrollIndicator={false}>
+            <View className="bg-white rounded-2xl w-full max-w-[350px] max-h-[400px] shadow-lg">
+              <Text className="text-lg font-semibold text-text-primary my-4 text-center">Select Warranty</Text>
+              <ScrollView showsVerticalScrollIndicator={false} className="px-6">
                 {warranties.map((warranty) => (
                   <TouchableOpacity 
                     key={warranty.warranty_id} 
@@ -602,17 +605,17 @@ export default function NewRequestScreen() {
                   </TouchableOpacity>
                 ))}
               </ScrollView>
-              <TouchableOpacity onPress={() => setShowWarrantiesPicker(false)} className="mt-4">
+              <TouchableOpacity onPress={() => setShowWarrantiesPicker(false)} className="mt-4 p-6">
                 <Text className="text-base text-text-secondary text-center">Cancel</Text>
               </TouchableOpacity>
-            </PremiumCard>
+            </View>
           </View>
         </Modal>
 
         {/* Confirmation Modal */}
         <Modal visible={showConfirmationModal} transparent animationType="fade" onRequestClose={() => !isSubmitting && setShowConfirmationModal(false)}>
           <View className="flex-1 bg-black/50 justify-center items-center px-4">
-            <PremiumCard style={{ width: '100%', maxWidth: 350 }}>
+            <View className="bg-white rounded-2xl p-6 w-full max-w-[350px] shadow-lg">
               <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Confirm Submission</Text>
               
               <Text className="text-base text-text-secondary mb-4 text-center">
@@ -649,7 +652,7 @@ export default function NewRequestScreen() {
                   </Text>
                 </TouchableOpacity>
               </View>
-            </PremiumCard>
+            </View>
           </View>
         </Modal>
       </KeyboardAvoidingView>

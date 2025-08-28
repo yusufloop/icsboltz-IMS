@@ -2,11 +2,46 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
-import { RequestCard } from '@/components/ui/RequestCard';
-import { PremiumCard } from '@/components/ui/PremiumCard';
 import { router } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
+// --- HELPER COMPONENT FOR STATUS ---
+const StatusBadge = ({ status }: { status: string }) => {
+  const getStatusStyles = () => {
+    switch (status) {
+      case 'Successfully':
+        return {
+          container: 'bg-green-100',
+          text: 'text-green-800',
+        };
+      case 'Unsuccessfully':
+        return {
+          container: 'bg-red-100',
+          text: 'text-red-800',
+        };
+      case 'Pending':
+        return {
+          container: 'bg-yellow-100',
+          text: 'text-yellow-800',
+        };
+      default:
+        return {
+          container: 'bg-gray-100',
+          text: 'text-gray-800',
+        };
+    }
+  };
+
+  const styles = getStatusStyles();
+
+  return (
+    <View className={`px-3 py-1 rounded-full ${styles.container}`}>
+      <Text className={`text-xs font-bold ${styles.text}`}>{status}</Text>
+    </View>
+  );
+};
+
+// --- MAIN SCREEN ---
 export default function RequestsScreen() {
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
 
@@ -95,7 +130,7 @@ export default function RequestsScreen() {
 
         {/* Search Bar */}
         <View className="px-6 pt-8">
-          <PremiumCard className="shadow-lg">
+          <View className="bg-white rounded-xl p-4 shadow-lg">
             <View className="flex-row items-center">
               <MaterialIcons 
                 name="search" 
@@ -110,7 +145,7 @@ export default function RequestsScreen() {
                 style={{ fontFamily: 'System' }}
               />
             </View>
-          </PremiumCard>
+          </View>
         </View>
 
         {/* Filter Controls */}
@@ -159,34 +194,90 @@ export default function RequestsScreen() {
             <MaterialIcons 
               name="add" 
               size={36} 
-              color="#0d19ffff"
+              color="#FFFFFF"
             />
           </TouchableOpacity>
         </View>
 
         {/* Requests List */}
         <View className="px-6">
-          {requests.map((request, index) => (
-            <Animated.View
-              key={request.id}
-              entering={FadeInDown.delay(index * 100).duration(300)}
-            >
-              <RequestCard
-                id={request.id}
-                date={request.date}
-                status={request.status}
-                itemRequested={request.itemRequested}
-                priority={request.priority}
-                amount={request.amount}
-                company={request.company}
-                isExpanded={expandedCards.has(request.id)}
-                onToggle={() => handleCardToggle(request.id)}
-              />
-            </Animated.View>
-          ))}
+          {requests.map((request, index) => {
+            const isExpanded = expandedCards.has(request.id);
+            return (
+              <Animated.View
+                key={request.id}
+                entering={FadeInDown.delay(index * 100).duration(300)}
+                className="bg-white rounded-xl shadow-md mb-4 overflow-hidden"
+              >
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => handleCardToggle(request.id)}
+                  className="p-4"
+                >
+                  <View className="flex-row justify-between items-center mb-2">
+                    <Text className="text-sm font-semibold text-text-primary">{request.id}</Text>
+                    <StatusBadge status={request.status} />
+                  </View>
+                  <Text className="text-lg font-bold text-text-primary mb-2">{request.itemRequested}</Text>
+                  <View className="flex-row justify-between items-center">
+                    <Text className="text-sm text-text-secondary">{request.company}</Text>
+                    <MaterialIcons 
+                      name={isExpanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'} 
+                      size={24} 
+                      color="#8A8A8E" 
+                    />
+                  </View>
+                </TouchableOpacity>
+
+                {isExpanded && (
+                  <View className="px-4 pb-4">
+                    <View className="border-t border-gray-200 my-2" />
+                    <View className="flex-row flex-wrap mb-4">
+                      <View className="w-1/2 mb-2">
+                        <Text className="text-xs text-text-secondary mb-1">Date</Text>
+                        <Text className="text-sm font-medium text-text-primary">{request.date}</Text>
+                      </View>
+                      <View className="w-1/2 mb-2">
+                        <Text className="text-xs text-text-secondary mb-1">Amount</Text>
+                        <Text className="text-sm font-medium text-text-primary">{request.amount}</Text>
+                      </View>
+                      <View className="w-1/2">
+                        <Text className="text-xs text-text-secondary mb-1">Priority</Text>
+                        <Text className="text-sm font-medium text-text-primary">{request.priority}</Text>
+                      </View>
+                    </View>
+                    <View className="border-t border-gray-200 pt-2 flex-row justify-around">
+                        <TouchableOpacity 
+                          onPress={() => router.push('/tool-detail')}
+                          className="flex-row items-center py-2 px-4 rounded-lg active:bg-gray-100"
+                        >
+                          <MaterialIcons name="build" size={20} color="#0A84FF" />
+                          <Text className="text-sm font-semibold text-blue-500 ml-2">Tool Detail</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity 
+                          onPress={() => router.push('/view-request')}
+                          className="flex-row items-center py-2 px-4 rounded-lg active:bg-gray-100"
+                        >
+                          <MaterialIcons name="visibility" size={20} color="#0A84FF" />
+                          <Text className="text-sm font-semibold text-blue-500 ml-2">View Details</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity 
+                          onPress={() => router.push('/status-history')}
+                          className="flex-row items-center py-2 px-4 rounded-lg active:bg-gray-100"
+                        >
+                          <MaterialIcons name="history" size={20} color="#0A84FF" />
+                          <Text className="text-sm font-semibold text-blue-500 ml-2">Status History</Text>
+                        </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+              </Animated.View>
+            )
+          })}
         </View>
       </ScrollView>
-
     </SafeAreaView>
   );
 }

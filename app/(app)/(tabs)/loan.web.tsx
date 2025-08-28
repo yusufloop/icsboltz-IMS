@@ -209,6 +209,12 @@ export default function LoansWebScreen() {
                       </View> */}
                       <View className="flex-row justify-center space-x-3 border-t border-gray-200 pt-4">
                         <TouchableOpacity 
+                          className="bg-green-600 rounded-lg px-4 py-2"
+                          onPress={() => router.push('/tool-detail')}
+                        >
+                          <Text className="text-white font-medium">Tool Detail</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity 
                           className="bg-blue-600 rounded-lg px-4 py-2"
                           onPress={() => handleViewLoanDetails(loan)}
                         >

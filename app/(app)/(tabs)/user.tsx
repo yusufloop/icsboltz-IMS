@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { UserRole } from '@/constants/UserRoles';
 import { UserCard } from '@/components/ui/UserCard';
+import { router } from 'expo-router';
 import { UserManagementService, UserWithRoles } from '@/services/userManagementService';
 
 // Dummy names for fallback
@@ -110,7 +111,10 @@ export default function UserScreen() {
       <View className="px-6 py-4 bg-white border-b border-gray-100">
         <View className="flex-row items-center justify-between mb-4">
           <Text className="text-2xl font-bold text-text-primary">Users</Text>
-          <TouchableOpacity className="bg-primary rounded-full p-2">
+          <TouchableOpacity 
+            onPress={() => router.push('/new-user')} 
+            className="bg-primary rounded-full p-2"
+          >
             <MaterialIcons name="person-add" size={24} color="white" />
           </TouchableOpacity>
         </View>

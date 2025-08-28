@@ -1,7 +1,3 @@
-import { PremiumButton } from '@/components/ui/PremiumButton';
-import { PremiumCard } from '@/components/ui/PremiumCard';
-import { PremiumStatusBadge } from '@/components/ui/PremiumStatusBadge';
-import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { ICSBOLTZ_CURRENT_USER_ROLE, hasPermission } from '@/constants/UserRoles';
 import { MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -78,9 +74,7 @@ const APPROVAL_LEVELS = [
 export default function ViewRequestScreen() {
   const params = useLocalSearchParams();
   
-  // Initialize with mock data - in real app, this would come from API
   const [requestData, setRequestData] = useState<RequestViewData>({
-    // Basic fields (some editable based on role)
     itemRequested: (params.itemRequested as string) || 'MacBook Pro 16-inch M3 Max',
     quantity: (params.quantity as string) || '2',
     reasonForRequest: (params.reasonForRequest as string) || 'Required for new developers joining the team. Current laptops are outdated and affecting productivity.',
@@ -90,7 +84,6 @@ export default function ViewRequestScreen() {
     chargeToDepartment: (params.chargeToDepartment as string) || 'Engineering Department',
     attachments: [],
     
-    // Technical/Administrative fields (mostly read-only)
     requestId: (params.requestId as string) || 'REQ-2025-001234',
     requestDate: new Date('2025-01-10'),
     requesterName: (params.requesterName as string) || 'Ahmad Rahman',
@@ -101,7 +94,6 @@ export default function ViewRequestScreen() {
     approvalLevel: (params.approvalLevel as string) || 'General Manager',
     lastModified: new Date(),
     
-    // Comments (editable for rejection reason)
     hodComments: (params.hodComments as string) || '',
     managerComments: (params.managerComments as string) || '',
     rejectionReason: '',
@@ -112,11 +104,9 @@ export default function ViewRequestScreen() {
   const [showDepartmentPicker, setShowDepartmentPicker] = useState(false);
   const [showApprovalLevelPicker, setShowApprovalLevelPicker] = useState(false);
   
-  // Confirmation modal states
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
 
-  // Check user permissions
   const canApprove = hasPermission(ICSBOLTZ_CURRENT_USER_ROLE, 'approve');
   const canReject = hasPermission(ICSBOLTZ_CURRENT_USER_ROLE, 'reject');
   const isRequester = ICSBOLTZ_CURRENT_USER_ROLE === 'REQUESTER';
@@ -134,7 +124,7 @@ export default function ViewRequestScreen() {
   };
 
   const handleFileUpload = async () => {
-    if (isRequester) return; // Requesters can't modify attachments in view mode
+    if (isRequester) return;
     
     try {
       const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
@@ -201,10 +191,8 @@ export default function ViewRequestScreen() {
   };
 
   const isFieldEditable = (field: string) => {
-    // Requesters can't edit anything in view mode
     if (isRequester) return false;
     
-    // Define which fields are editable based on role
     const editableFields = [
       'estimatedCost',
       'budgetCode',
@@ -215,6 +203,26 @@ export default function ViewRequestScreen() {
     ];
     
     return editableFields.includes(field);
+  };
+
+  const getStatusStyle = (status: RequestViewData['status']) => {
+    switch (status) {
+      case 'Approved': return 'bg-green-100';
+      case 'Rejected': return 'bg-red-100';
+      case 'Under Review': return 'bg-yellow-100';
+      case 'Pending': return 'bg-blue-100';
+      default: return 'bg-gray-100';
+    }
+  };
+
+  const getStatusTextStyle = (status: RequestViewData['status']) => {
+    switch (status) {
+      case 'Approved': return 'text-green-800';
+      case 'Rejected': return 'text-red-800';
+      case 'Under Review': return 'text-yellow-800';
+      case 'Pending': return 'text-blue-800';
+      default: return 'text-gray-800';
+    }
   };
 
   // --- RENDER ---
@@ -245,14 +253,9 @@ export default function ViewRequestScreen() {
             </Text>
           </View>
 
-          <PremiumStatusBadge 
-            status={
-              requestData.status === 'Approved' ? 'success' :
-              requestData.status === 'Rejected' ? 'error' :
-              requestData.status === 'Under Review' ? 'warning' : 'info'
-            }
-            text={requestData.status}
-          />
+          <View className={`px-3 py-1 rounded-full ${getStatusStyle(requestData.status)}`}>
+            <Text className={`text-sm font-semibold ${getStatusTextStyle(requestData.status)}`}>{requestData.status}</Text>
+          </View>
         </Animated.View>
 
         {/* Form Content */}
@@ -269,9 +272,8 @@ export default function ViewRequestScreen() {
             <View>
               <Text className="text-lg font-semibold text-text-primary mb-4">Request Information</Text>
               
-              <PremiumCard>
+              <View className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
                 <View className="space-y-4">
-                  {/* Request ID and Date Row */}
                   <View className="flex-row space-x-4">
                     <View className="flex-1">
                       <Text className="text-sm font-medium text-text-secondary mb-1">Request ID</Text>
@@ -282,8 +284,6 @@ export default function ViewRequestScreen() {
                       <Text className="text-base text-text-primary">{formatDate(requestData.requestDate)}</Text>
                     </View>
                   </View>
-
-                  {/* Requester Information */}
                   <View className="flex-row space-x-4">
                     <View className="flex-1">
                       <Text className="text-sm font-medium text-text-secondary mb-1">Requester</Text>
@@ -294,124 +294,63 @@ export default function ViewRequestScreen() {
                       <Text className="text-base text-text-primary">{requestData.requesterEmail}</Text>
                     </View>
                   </View>
-
-                  {/* Last Modified */}
                   <View>
                     <Text className="text-sm font-medium text-text-secondary mb-1">Last Modified</Text>
                     <Text className="text-base text-text-primary">{formatDateTime(requestData.lastModified)}</Text>
                   </View>
                 </View>
-              </PremiumCard>
+              </View>
             </View>
 
             {/* Request Details Section */}
             <View>
               <Text className="text-lg font-semibold text-text-primary mb-4">Request Details</Text>
-
-              {/* Item Requested */}
               <View className="mb-4">
                 <Text className="text-sm font-medium text-text-secondary mb-2">Item Requested</Text>
-                <TextInput
-                  value={requestData.itemRequested}
-                  onChangeText={(text) => isFieldEditable('itemRequested') && updateField('itemRequested', text)}
-                  editable={isFieldEditable('itemRequested')}
-                  className={`bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3 ${!isFieldEditable('itemRequested') ? 'opacity-60' : ''}`}
-                />
+                <TextInput value={requestData.itemRequested} editable={false} className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3 opacity-60" />
               </View>
-
-              {/* Quantity and Phone Row */}
               <View className="flex-row space-x-4 mb-4">
                 <View className="w-28">
                   <Text className="text-sm font-medium text-text-secondary mb-2">Quantity</Text>
-                  <TextInput
-                    value={requestData.quantity}
-                    onChangeText={(text) => isFieldEditable('quantity') && updateField('quantity', text)}
-                    editable={isFieldEditable('quantity')}
-                    keyboardType="numeric"
-                    className={`bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3 ${!isFieldEditable('quantity') ? 'opacity-60' : ''}`}
-                  />
+                  <TextInput value={requestData.quantity} editable={false} className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3 opacity-60" />
                 </View>
                 <View className="flex-1">
                   <Text className="text-sm font-medium text-text-secondary mb-2">Phone No</Text>
-                  <TextInput
-                    value={requestData.phoneNo}
-                    onChangeText={(text) => isFieldEditable('phoneNo') && updateField('phoneNo', text)}
-                    editable={isFieldEditable('phoneNo')}
-                    keyboardType="phone-pad"
-                    className={`bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3 ${!isFieldEditable('phoneNo') ? 'opacity-60' : ''}`}
-                  />
+                  <TextInput value={requestData.phoneNo} editable={false} className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3 opacity-60" />
                 </View>
               </View>
-
-              {/* Reason for Request */}
               <View className="mb-4">
                 <Text className="text-sm font-medium text-text-secondary mb-2">Reason for Request</Text>
-                <TextInput
-                  value={requestData.reasonForRequest}
-                  onChangeText={(text) => isFieldEditable('reasonForRequest') && updateField('reasonForRequest', text)}
-                  editable={isFieldEditable('reasonForRequest')}
-                  multiline
-                  textAlignVertical="top"
-                  className={`bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 min-h-[100px] px-4 py-3 ${!isFieldEditable('reasonForRequest') ? 'opacity-60' : ''}`}
-                />
+                <TextInput value={requestData.reasonForRequest} editable={false} multiline textAlignVertical="top" className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 min-h-[100px] px-4 py-3 opacity-60" />
               </View>
-
-              {/* Date and Priority Row */}
               <View className="flex-row space-x-4 mb-4">
                 <View className="flex-1">
                   <Text className="text-sm font-medium text-text-secondary mb-2">Date Needed By</Text>
-                  <TouchableOpacity 
-                    onPress={() => !isRequester && setShowDatePicker(true)}
-                    disabled={isRequester}
-                  >
-                    <PremiumCard padding="" style={{ opacity: isRequester ? 0.6 : 1 }}>
+                  <TouchableOpacity disabled={true}>
+                    <View className="bg-white rounded-lg shadow-sm border border-gray-100 opacity-60">
                       <View className="flex-row items-center justify-between px-4 py-3">
-                        <Text className="text-base font-system text-text-primary">
-                          {requestData.dateNeededBy ? formatDate(requestData.dateNeededBy) : 'Not set'}
-                        </Text>
-                        {!isRequester && <MaterialIcons name="chevron-right" size={24} color="#8A8A8E" />}
+                        <Text className="text-base font-system text-text-primary">{requestData.dateNeededBy ? formatDate(requestData.dateNeededBy) : 'Not set'}</Text>
                       </View>
-                    </PremiumCard>
+                    </View>
                   </TouchableOpacity>
                 </View>
-
                 <View className="flex-1">
                   <Text className="text-sm font-medium text-text-secondary mb-2">Priority</Text>
-                  <TouchableOpacity 
-                    onPress={() => !isRequester && setShowPriorityPicker(true)}
-                    disabled={isRequester}
-                  >
-                    <View 
-                      className="rounded-lg flex-row items-center justify-between px-4 py-3"
-                      style={{ 
-                        backgroundColor: getPriorityInfo(requestData.priority).bgColor,
-                        opacity: isRequester ? 0.6 : 1
-                      }}
-                    >
-                      <Text className="text-base font-medium font-system" style={{ color: getPriorityInfo(requestData.priority).color }}>
-                        {requestData.priority}
-                      </Text>
-                      {!isRequester && <MaterialIcons name="chevron-right" size={24} color={getPriorityInfo(requestData.priority).color} />}
+                  <TouchableOpacity disabled={true}>
+                    <View className="rounded-lg flex-row items-center justify-between px-4 py-3 opacity-60" style={{ backgroundColor: getPriorityInfo(requestData.priority).bgColor }}>
+                      <Text className="text-base font-medium font-system" style={{ color: getPriorityInfo(requestData.priority).color }}>{requestData.priority}</Text>
                     </View>
                   </TouchableOpacity>
                 </View>
               </View>
-
-              {/* Charge To Department */}
               <View className="mb-4">
                 <Text className="text-sm font-medium text-text-secondary mb-2">Charge To Department</Text>
-                <TouchableOpacity 
-                  onPress={() => !isRequester && setShowDepartmentPicker(true)}
-                  disabled={isRequester}
-                >
-                  <PremiumCard padding="" style={{ opacity: isRequester ? 0.6 : 1 }}>
+                <TouchableOpacity disabled={true}>
+                  <View className="bg-white rounded-lg shadow-sm border border-gray-100 opacity-60">
                     <View className="flex-row items-center justify-between px-4 py-3">
-                      <Text className="text-base font-system text-text-primary">
-                        {requestData.chargeToDepartment || 'Not selected'}
-                      </Text>
-                      {!isRequester && <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />}
+                      <Text className="text-base font-system text-text-primary">{requestData.chargeToDepartment || 'Not selected'}</Text>
                     </View>
-                  </PremiumCard>
+                  </View>
                 </TouchableOpacity>
               </View>
             </View>
@@ -419,45 +358,26 @@ export default function ViewRequestScreen() {
             {/* Financial Information Section */}
             <View>
               <Text className="text-lg font-semibold text-text-primary mb-4">Financial Information</Text>
-              
               <View className="space-y-4">
-                {/* Estimated Cost and Budget Code Row */}
                 <View className="flex-row space-x-4">
                   <View className="flex-1">
                     <Text className="text-sm font-medium text-text-secondary mb-2">Estimated Cost</Text>
-                    <TextInput
-                      value={requestData.estimatedCost}
-                      onChangeText={(text) => isFieldEditable('estimatedCost') && updateField('estimatedCost', text)}
-                      editable={isFieldEditable('estimatedCost')}
-                      className={`bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3 ${!isFieldEditable('estimatedCost') ? 'opacity-60' : ''}`}
-                    />
+                    <TextInput value={requestData.estimatedCost} onChangeText={(text) => isFieldEditable('estimatedCost') && updateField('estimatedCost', text)} editable={isFieldEditable('estimatedCost')} className={`bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3 ${!isFieldEditable('estimatedCost') ? 'opacity-60' : ''}`} />
                   </View>
                   <View className="flex-1">
                     <Text className="text-sm font-medium text-text-secondary mb-2">Budget Code</Text>
-                    <TextInput
-                      value={requestData.budgetCode}
-                      onChangeText={(text) => isFieldEditable('budgetCode') && updateField('budgetCode', text)}
-                      editable={isFieldEditable('budgetCode')}
-                      className={`bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3 ${!isFieldEditable('budgetCode') ? 'opacity-60' : ''}`}
-                    />
+                    <TextInput value={requestData.budgetCode} onChangeText={(text) => isFieldEditable('budgetCode') && updateField('budgetCode', text)} editable={isFieldEditable('budgetCode')} className={`bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 px-4 py-3 ${!isFieldEditable('budgetCode') ? 'opacity-60' : ''}`} />
                   </View>
                 </View>
-
-                {/* Approval Level */}
                 <View>
                   <Text className="text-sm font-medium text-text-secondary mb-2">Approval Level Required</Text>
-                  <TouchableOpacity 
-                    onPress={() => isFieldEditable('approvalLevel') && setShowApprovalLevelPicker(true)}
-                    disabled={!isFieldEditable('approvalLevel')}
-                  >
-                    <PremiumCard padding="" style={{ opacity: !isFieldEditable('approvalLevel') ? 0.6 : 1 }}>
+                  <TouchableOpacity onPress={() => isFieldEditable('approvalLevel') && setShowApprovalLevelPicker(true)} disabled={!isFieldEditable('approvalLevel')}>
+                    <View className={`bg-white rounded-lg shadow-sm border border-gray-100 ${!isFieldEditable('approvalLevel') ? 'opacity-60' : ''}`}>
                       <View className="flex-row items-center justify-between px-4 py-3">
-                        <Text className="text-base font-system text-text-primary">
-                          {requestData.approvalLevel}
-                        </Text>
+                        <Text className="text-base font-system text-text-primary">{requestData.approvalLevel}</Text>
                         {isFieldEditable('approvalLevel') && <MaterialIcons name="unfold-more" size={24} color="#8A8A8E" />}
                       </View>
-                    </PremiumCard>
+                    </View>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -467,51 +387,22 @@ export default function ViewRequestScreen() {
             {(requestData.hodComments || requestData.managerComments || canReject) && (
               <View>
                 <Text className="text-lg font-semibold text-text-primary mb-4">Comments & Feedback</Text>
-                
-                {/* HOD Comments */}
                 {requestData.hodComments && (
                   <View className="mb-4">
                     <Text className="text-sm font-medium text-text-secondary mb-2">Head of Department Comments</Text>
-                    <TextInput
-                      value={requestData.hodComments}
-                      onChangeText={(text) => isFieldEditable('hodComments') && updateField('hodComments', text)}
-                      editable={isFieldEditable('hodComments')}
-                      multiline
-                      textAlignVertical="top"
-                      className={`bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 min-h-[80px] px-4 py-3 ${!isFieldEditable('hodComments') ? 'opacity-60' : ''}`}
-                    />
+                    <TextInput value={requestData.hodComments} editable={false} multiline className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 min-h-[80px] px-4 py-3 opacity-60" />
                   </View>
                 )}
-
-                {/* Manager Comments */}
                 {requestData.managerComments && (
                   <View className="mb-4">
                     <Text className="text-sm font-medium text-text-secondary mb-2">Manager Comments</Text>
-                    <TextInput
-                      value={requestData.managerComments}
-                      onChangeText={(text) => isFieldEditable('managerComments') && updateField('managerComments', text)}
-                      editable={isFieldEditable('managerComments')}
-                      multiline
-                      textAlignVertical="top"
-                      className={`bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 min-h-[80px] px-4 py-3 ${!isFieldEditable('managerComments') ? 'opacity-60' : ''}`}
-                    />
+                    <TextInput value={requestData.managerComments} editable={false} multiline className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 min-h-[80px] px-4 py-3 opacity-60" />
                   </View>
                 )}
-
-                {/* Rejection Reason - Only show if user can reject */}
                 {canReject && (
                   <View className="mb-4">
-                    <Text className="text-sm font-medium text-text-secondary mb-2">
-                      Reason for Rejection <Text className="text-red-500">*</Text>
-                    </Text>
-                    <TextInput
-                      value={requestData.rejectionReason}
-                      onChangeText={(text) => updateField('rejectionReason', text)}
-                      placeholder="Please provide a detailed reason for rejection..."
-                      multiline
-                      textAlignVertical="top"
-                      className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 min-h-[100px] px-4 py-3"
-                    />
+                    <Text className="text-sm font-medium text-text-secondary mb-2">Reason for Rejection <Text className="text-red-500">*</Text></Text>
+                    <TextInput value={requestData.rejectionReason} onChangeText={(text) => updateField('rejectionReason', text)} placeholder="Please provide a detailed reason for rejection..." multiline textAlignVertical="top" className="bg-bg-secondary rounded-lg text-base text-text-primary font-system shadow-sm border border-gray-200 min-h-[100px] px-4 py-3" />
                   </View>
                 )}
               </View>
@@ -527,7 +418,6 @@ export default function ViewRequestScreen() {
                   </View>
                 </TouchableOpacity>
               )}
-              
               {requestData.attachments.length > 0 && (
                 <View className="mt-3 space-y-2">
                   {requestData.attachments.map((file, index) => (
@@ -547,31 +437,22 @@ export default function ViewRequestScreen() {
           </Animated.View>
         </ScrollView>
 
-        {/* Action Buttons - Only show if user has approve/reject permissions */}
+        {/* Action Buttons */}
         {(canApprove || canReject) && (
-          <Animated.View 
-            entering={FadeInDown.delay(300).duration(300)}
-            className="absolute bottom-0 left-0 right-0 bg-bg-primary pt-3 pb-6 px-6 border-t border-gray-200"
-          >
+          <Animated.View entering={FadeInDown.delay(300).duration(300)} className="absolute bottom-0 left-0 right-0 bg-bg-primary pt-3 pb-6 px-6 border-t border-gray-200">
             <View className="flex-row space-x-3">
               {canReject && (
                 <View className="flex-1">
-                  <PremiumButton 
-                    title="Reject" 
-                    onPress={handleReject} 
-                    variant="destructive" 
-                    size="lg"
-                  />
+                  <TouchableOpacity onPress={handleReject} className="bg-red-600 rounded-xl py-4 active:opacity-80">
+                    <Text className="text-white text-lg font-semibold text-center">Reject</Text>
+                  </TouchableOpacity>
                 </View>
               )}
               {canApprove && (
                 <View className="flex-1">
-                  <PremiumButton 
-                    title="Approve" 
-                    onPress={handleApprove} 
-                    variant="gradient" 
-                    size="lg" 
-                  />
+                  <TouchableOpacity onPress={handleApprove} className="bg-blue-500 rounded-xl py-4 active:opacity-80">
+                    <Text className="text-white text-lg font-semibold text-center">Approve</Text>
+                  </TouchableOpacity>
                 </View>
               )}
             </View>
@@ -579,114 +460,85 @@ export default function ViewRequestScreen() {
         )}
 
         {/* PICKER MODALS */}
-        {showDatePicker && (
-          <DateTimePicker 
-            value={requestData.dateNeededBy || new Date()} 
-            mode="date" 
-            display="spinner" 
-            onChange={handleDateChange} 
-            minimumDate={new Date()} 
-          />
-        )}
-
+        {showDatePicker && <DateTimePicker value={requestData.dateNeededBy || new Date()} mode="date" display="spinner" onChange={handleDateChange} minimumDate={new Date()} />}
+        
         <Modal visible={showPriorityPicker} transparent animationType="fade" onRequestClose={() => setShowPriorityPicker(false)}>
           <View className="flex-1 bg-black/50 justify-center items-center px-4">
-            <PremiumCard style={{ width: '100%', maxWidth: 300 }}>
+            <View className="bg-white rounded-2xl p-6 w-full max-w-[300px] shadow-lg">
               <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Select Priority</Text>
               {PRIORITY_OPTIONS.map((option) => (
-                <TouchableOpacity 
-                  key={option.value} 
-                  onPress={() => { 
-                    updateField('priority', option.value); 
-                    setShowPriorityPicker(false); 
-                  }} 
-                  className="py-3 border-b border-gray-200 last:border-b-0"
-                >
-                  <Text className="text-base font-medium text-center" style={{ color: option.color }}>
-                    {option.label}
-                  </Text>
+                <TouchableOpacity key={option.value} onPress={() => { updateField('priority', option.value); setShowPriorityPicker(false); }} className="py-3 border-b border-gray-200 last:border-b-0">
+                  <Text className="text-base font-medium text-center" style={{ color: option.color }}>{option.label}</Text>
                 </TouchableOpacity>
               ))}
-              <TouchableOpacity onPress={() => setShowPriorityPicker(false)} className="mt-4">
-                <Text className="text-base text-text-secondary text-center">Cancel</Text>
-              </TouchableOpacity>
-            </PremiumCard>
+              <TouchableOpacity onPress={() => setShowPriorityPicker(false)} className="mt-4"><Text className="text-base text-text-secondary text-center">Cancel</Text></TouchableOpacity>
+            </View>
           </View>
         </Modal>
 
         <Modal visible={showDepartmentPicker} transparent animationType="fade" onRequestClose={() => setShowDepartmentPicker(false)}>
           <View className="flex-1 bg-black/50 justify-center items-center px-4">
-            <PremiumCard style={{ width: '100%', maxWidth: 300, maxHeight: 400 }}>
-              <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Select Department</Text>
-              <ScrollView showsVerticalScrollIndicator={false}>
+            <View className="bg-white rounded-2xl w-full max-w-[300px] max-h-[400px] shadow-lg">
+              <Text className="text-lg font-semibold text-text-primary my-4 text-center">Select Department</Text>
+              <ScrollView showsVerticalScrollIndicator={false} className="px-6">
                 {DEPARTMENT_OPTIONS.map((department) => (
-                  <TouchableOpacity 
-                    key={department} 
-                    onPress={() => { 
-                      updateField('chargeToDepartment', department); 
-                      setShowDepartmentPicker(false); 
-                    }} 
-                    className="py-3 border-b border-gray-200 last:border-b-0"
-                  >
+                  <TouchableOpacity key={department} onPress={() => { updateField('chargeToDepartment', department); setShowDepartmentPicker(false); }} className="py-3 border-b border-gray-200 last:border-b-0">
                     <Text className="text-base text-text-primary text-center">{department}</Text>
                   </TouchableOpacity>
                 ))}
               </ScrollView>
-              <TouchableOpacity onPress={() => setShowDepartmentPicker(false)} className="mt-4">
-                <Text className="text-base text-text-secondary text-center">Cancel</Text>
-              </TouchableOpacity>
-            </PremiumCard>
+              <TouchableOpacity onPress={() => setShowDepartmentPicker(false)} className="mt-4 p-6"><Text className="text-base text-text-secondary text-center">Cancel</Text></TouchableOpacity>
+            </View>
           </View>
         </Modal>
 
         <Modal visible={showApprovalLevelPicker} transparent animationType="fade" onRequestClose={() => setShowApprovalLevelPicker(false)}>
           <View className="flex-1 bg-black/50 justify-center items-center px-4">
-            <PremiumCard style={{ width: '100%', maxWidth: 300, maxHeight: 400 }}>
-              <Text className="text-lg font-semibold text-text-primary mb-4 text-center">Select Approval Level</Text>
-              <ScrollView showsVerticalScrollIndicator={false}>
+            <View className="bg-white rounded-2xl w-full max-w-[300px] max-h-[400px] shadow-lg">
+              <Text className="text-lg font-semibold text-text-primary my-4 text-center">Select Approval Level</Text>
+              <ScrollView showsVerticalScrollIndicator={false} className="px-6">
                 {APPROVAL_LEVELS.map((level) => (
-                  <TouchableOpacity 
-                    key={level} 
-                    onPress={() => { 
-                      updateField('approvalLevel', level); 
-                      setShowApprovalLevelPicker(false); 
-                    }} 
-                    className="py-3 border-b border-gray-200 last:border-b-0"
-                  >
+                  <TouchableOpacity key={level} onPress={() => { updateField('approvalLevel', level); setShowApprovalLevelPicker(false); }} className="py-3 border-b border-gray-200 last:border-b-0">
                     <Text className="text-base text-text-primary text-center">{level}</Text>
                   </TouchableOpacity>
                 ))}
               </ScrollView>
-              <TouchableOpacity onPress={() => setShowApprovalLevelPicker(false)} className="mt-4">
-                <Text className="text-base text-text-secondary text-center">Cancel</Text>
-              </TouchableOpacity>
-            </PremiumCard>
+              <TouchableOpacity onPress={() => setShowApprovalLevelPicker(false)} className="mt-4 p-6"><Text className="text-base text-text-secondary text-center">Cancel</Text></TouchableOpacity>
+            </View>
           </View>
         </Modal>
 
         {/* Confirmation Modals */}
-        <ConfirmationModal
-          isOpen={showApproveModal}
-          onClose={() => setShowApproveModal(false)}
-          onConfirm={confirmApprove}
-          title="Approve Request"
-          message="Thank you for your approval! Your decision has been recorded."
-          confirmText="OK"
-          type="success"
-          showIcon={true}
-        />
+        <Modal visible={showApproveModal} transparent animationType="fade" onRequestClose={() => setShowApproveModal(false)}>
+          <View className="flex-1 bg-black/50 justify-center items-center px-4">
+            <View className="bg-white rounded-2xl p-6 w-full max-w-[350px] shadow-lg items-center">
+              <View className="bg-green-100 rounded-full p-3 mb-4"><MaterialIcons name="check-circle-outline" size={48} color="#34D399" /></View>
+              <Text className="text-lg font-semibold text-text-primary mb-2 text-center">Approve Request</Text>
+              <Text className="text-base text-text-secondary mb-6 text-center">Thank you for your approval! Your decision has been recorded.</Text>
+              <TouchableOpacity onPress={confirmApprove} className="bg-blue-500 rounded-lg py-3 w-full active:opacity-80">
+                <Text className="text-base font-semibold text-white text-center">OK</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
 
-        <ConfirmationModal
-          isOpen={showRejectModal}
-          onClose={() => setShowRejectModal(false)}
-          onConfirm={confirmReject}
-          title="Confirm Rejection"
-          message={`Are you sure you want to reject request ${requestData.requestId}?`}
-          confirmText="Reject"
-          cancelText="Cancel"
-          type="error"
-          showIcon={true}
-        />
+        <Modal visible={showRejectModal} transparent animationType="fade" onRequestClose={() => setShowRejectModal(false)}>
+          <View className="flex-1 bg-black/50 justify-center items-center px-4">
+            <View className="bg-white rounded-2xl p-6 w-full max-w-[350px] shadow-lg items-center">
+              <View className="bg-red-100 rounded-full p-3 mb-4"><MaterialIcons name="highlight-off" size={48} color="#F87171" /></View>
+              <Text className="text-lg font-semibold text-text-primary mb-2 text-center">Confirm Rejection</Text>
+              <Text className="text-base text-text-secondary mb-6 text-center">Are you sure you want to reject request {requestData.requestId}?</Text>
+              <View className="flex-row space-x-3 w-full">
+                <TouchableOpacity onPress={() => setShowRejectModal(false)} className="flex-1 bg-gray-100 rounded-lg py-3 active:opacity-80">
+                  <Text className="text-base font-semibold text-gray-600 text-center">Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={confirmReject} className="flex-1 bg-red-600 rounded-lg py-3 active:opacity-80">
+                  <Text className="text-base font-semibold text-white text-center">Reject</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

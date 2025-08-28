@@ -39,8 +39,13 @@ export default function TabLayout() {
       },
       {
         name: "requests",
-        title: "My Requests",
+        title: "Tools",
         icon: "assignment",
+      },
+      {
+        name: "loan",
+        title: "Loans",
+        icon: "account-balance-wallet",
       },
     ];
 
@@ -82,8 +87,8 @@ export default function TabLayout() {
       roleSpecificTab,
       {
         name: "more",
-        title: "More",
-        icon: "more-horiz",
+        title: "Settings",
+        icon: "settings",
       },
     ];
   };
