@@ -1,7 +1,8 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Animated, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { UserManagementService, UserWithRoles } from '@/services/userManagementService';
 
 // --- DATA AND INTERFACES ---
 
@@ -26,28 +27,79 @@ const STATUS_COLORS: { [key in UserData['status']]: string } = {
 };
 
 
-// IMPROVEMENT: Added a 'status' field to each user object
-const staticUsersData: UserData[] = [
-  { id: '1', name: 'Ahmad bin Rahman', contactNumber: '0123456789', email: 'ahmad.rahman@icsboltz.com.my', role: 'Admin', department: 'Marketing', status: 'Active' },
-  { id: '2', name: 'Siti Nurhaliza binti Ishak', contactNumber: '0198765432', email: 'siti.nurhaliza@icsboltz.com.my', role: 'Admin', department: 'Finance', status: 'On Leave' },
-  { id: '3', name: 'Tan Chin Ho', contactNumber: '0161234567', email: 'tan.chinho@icsboltz.com.my', role: 'General Manager', department: 'HR', status: 'Active' },
-  { id: '4', name: 'Kumaravel a/l Muthu', contactNumber: '0178901234', email: 'kumaravel.m@icsboltz.com.my', role: 'General Manager', department: 'Finance', status: 'Suspended' },
-  { id: '5', name: 'Lee Wei Shen', contactNumber: '0145678901', email: 'lee.weishen@icsboltz.com.my', role: 'HoD', department: 'HR', status: 'Terminated' },
-  { id: '6', name: 'Zafri bin Idris', contactNumber: '0182345678', email: 'zafri.idris@icsboltz.com.my', role: 'Admin', department: 'Finance', status: 'Active' },
-  { id: '7', name: 'Nur Aina binti Khalid', contactNumber: '0139012345', email: 'nur.aina@icsboltz.com.my', role: 'HoD', department: 'Finance', status: 'Pending' },
-  { id: '8', name: 'Rajendran a/l Suresh', contactNumber: '0116789012', email: 'rajendran.s@icsboltz.com.my', role: 'HoD', department: 'Operations', status: 'Active' },
-  { id: '9', name: 'Wong Jia Yi', contactNumber: '0103456789', email: 'wong.jiayi@icsboltz.com.my', role: 'HoD', department: 'Operations', status: 'Active' },
-  { id: '10', name: 'Muhammad Faiz bin Salleh', contactNumber: '0128765432', email: 'm.faiz@icsboltz.com.my', role: 'HoD', department: 'Operations', status: 'On Leave' },
-  { id: '11', name: 'Priya d/o Subramaniam', contactNumber: '0195678901', email: 'priya.s@icsboltz.com.my', role: 'User', department: 'Finance', status: 'Suspended' },
-  { id: '12', name: 'Amirul bin Hafiz', contactNumber: '0162345678', email: 'amirul.hafiz@icsboltz.com.my', role: 'User', department: 'Operations', status: 'Active' },
-  { id: '13', name: 'Aisyah binti Hassan', contactNumber: '0179012345', email: 'aisyah.hassan@icsboltz.com.my', role: 'User', department: 'Operations', status: 'Terminated' }
+// Dummy names for fallback when user has no name
+const dummyNames = [
+  'Ahmad bin Rahman', 'Siti Nurhaliza binti Ishak', 'Tan Chin Ho',
+  'Kumaravel a/l Muthu', 'Lee Wei Shen', 'Zafri bin Idris',
+  'Nur Aina binti Khalid', 'Rajendran a/l Suresh', 'Wong Jia Yi',
+  'Muhammad Faiz bin Salleh', 'Priya d/o Subramaniam', 'Amirul bin Hafiz',
+  'Aisyah binti Hassan', 'Ali bin Hassan', 'Abu Bakar'
 ];
 
+// Map Supabase roles to web interface roles
+const mapRole = (roleName: string): UserData['role'] => {
+  switch (roleName.toUpperCase()) {
+    case 'ADMINISTRATOR':
+      return 'Admin';
+    case 'GENERAL_MANAGER':
+      return 'General Manager';
+    case 'HEAD_OF_DEPARTMENT':
+      return 'HoD';
+    default:
+      return 'User';
+  }
+};
+
+// Generate random status for users
+const getRandomStatus = (): UserData['status'] => {
+  const statuses: UserData['status'][] = ['Active', 'Suspended', 'Terminated', 'On Leave', 'Pending'];
+  return statuses[Math.floor(Math.random() * statuses.length)];
+};
+
 export default function UsersWebScreen() {
-  const [users] = useState<UserData[]>(staticUsersData);
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const { data: usersData, error } = await UserManagementService.getAllUsers();
+      
+      if (error) {
+        console.error('Error fetching users:', error);
+        setUsers([]);
+        return;
+      }
+
+      if (usersData) {
+        // Transform Supabase users to match the expected format
+        const transformedUsers: UserData[] = usersData.map((user: UserWithRoles, index: number) => ({
+          id: user.id,
+          name: user.user_metadata?.full_name || dummyNames[index % dummyNames.length],
+          contactNumber: '0123456789', // Default contact number as it's not in Supabase user data
+          email: user.email,
+          role: user.roles.length > 0 ? mapRole(user.roles[0].role_name) : 'User',
+          department: 'General', // Default department
+          status: getRandomStatus(),
+        }));
+        setUsers(transformedUsers);
+      } else {
+        setUsers([]);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Handle row selection
   const handleRowSelect = (id: string) => {
@@ -194,7 +246,21 @@ export default function UsersWebScreen() {
             </View>
 
             {/* Table Rows */}
-            {users.map((user, index) => {
+            {loading ? (
+              <View className="py-20 items-center justify-center">
+                <MaterialIcons name="person" size={64} color="#D1D5DB" />
+                <Text className="text-lg font-semibold text-gray-600 mt-4">
+                  Loading users...
+                </Text>
+              </View>
+            ) : users.length === 0 ? (
+              <View className="py-20 items-center justify-center">
+                <MaterialIcons name="people-outline" size={64} color="#D1D5DB" />
+                <Text className="text-lg font-semibold text-gray-600 mt-4">
+                  No users found
+                </Text>
+              </View>
+            ) : users.map((user, index) => {
               const isExpanded = expandedRow === user.id;
               const isSelected = selectedRows.has(user.id);
 

@@ -1,90 +1,82 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { UserRole } from '@/constants/UserRoles';
 import { UserCard } from '@/components/ui/UserCard';
+import { UserManagementService, UserWithRoles } from '@/services/userManagementService';
 
-
-// Sample user data
-const sampleUsers = [
-  {
-    id: 'USR001',
-    name: 'Ahmad Rahman',
-    phoneNumber: '+60 12-345 6789',
-    profilePicture: undefined,
-    status: 'online' as const,
-    role: 'ADMIN' as UserRole,
-    department: 'Information Technology',
-  },
-  {
-    id: 'USR002',
-    name: 'Sarah Lim',
-    phoneNumber: '+60 11-234 5678',
-    profilePicture: undefined,
-    status: 'active' as const,
-    role: 'GENERAL_MANAGER' as UserRole,
-    department: 'Operations',
-  },
-  {
-    id: 'USR003',
-    name: 'Muhammad Faiz',
-    phoneNumber: '+60 13-456 7890',
-    profilePicture: undefined,
-    status: 'suspended' as const,
-    role: 'HEAD_OF_DEPARTMENT' as UserRole,
-    department: 'Finance',
-  },
-  {
-    id: 'USR004',
-    name: 'Priya Sharma',
-    phoneNumber: '+60 14-567 8901',
-    profilePicture: undefined,
-    status: 'online' as const,
-    role: 'REQUESTER' as UserRole,
-    department: 'Human Resources',
-  },
-  {
-    id: 'USR005',
-    name: 'David Tan',
-    phoneNumber: '+60 15-678 9012',
-    profilePicture: undefined,
-    status: 'terminated' as const,
-    role: 'REQUESTER' as UserRole,
-    department: 'Marketing',
-  },
-  {
-    id: 'USR006',
-    name: 'Lisa Wong',
-    phoneNumber: '+60 16-789 0123',
-    profilePicture: undefined,
-    status: 'active' as const,
-    role: 'HEAD_OF_DEPARTMENT' as UserRole,
-    department: 'Sales',
-  },
-  {
-    id: 'USR007',
-    name: 'Raj Kumar',
-    phoneNumber: '+60 17-890 1234',
-    profilePicture: undefined,
-    status: 'online' as const,
-    role: 'REQUESTER' as UserRole,
-    department: 'Engineering',
-  },
-  {
-    id: 'USR008',
-    name: 'Emily Chen',
-    phoneNumber: '+60 18-901 2345',
-    profilePicture: undefined,
-    status: 'suspended' as const,
-    role: 'GENERAL_MANAGER' as UserRole,
-    department: 'Quality Assurance',
-  },
+// Dummy names for fallback
+const dummyNames = [
+  'Ahmad Rahman', 'Ali bin Hassan', 'Abu Bakar', 'Muhammad Faiz',
+  'Sarah Lim', 'Priya Sharma', 'David Tan', 'Lisa Wong',
+  'Raj Kumar', 'Emily Chen', 'Siti Nurhaliza', 'Zafri bin Idris',
+  'Nur Aina binti Khalid', 'Wong Jia Yi', 'Kumaravel a/l Muthu'
 ];
+
+// Map Supabase roles to UserRole enum
+const mapRole = (roleName: string): UserRole => {
+  switch (roleName.toUpperCase()) {
+    case 'ADMINISTRATOR':
+      return 'ADMIN';
+    case 'GENERAL_MANAGER':
+      return 'GENERAL_MANAGER';
+    case 'HEAD_OF_DEPARTMENT':
+      return 'HEAD_OF_DEPARTMENT';
+    default:
+      return 'REQUESTER';
+  }
+};
+
+// Generate random status for users
+const getRandomStatus = (): 'online' | 'active' | 'suspended' | 'terminated' => {
+  const statuses = ['online', 'active', 'suspended', 'terminated'] as const;
+  return statuses[Math.floor(Math.random() * statuses.length)];
+};
 
 export default function UserScreen() {
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [filterStatus, setFilterStatus] = useState<'all' | 'online' | 'active' | 'suspended' | 'terminated'>('all');
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const { data: usersData, error } = await UserManagementService.getAllUsers();
+      
+      if (error) {
+        console.error('Error fetching users:', error);
+        setUsers([]);
+        return;
+      }
+
+      if (usersData) {
+        // Transform Supabase users to match the expected format
+        const transformedUsers = usersData.map((user: UserWithRoles, index: number) => ({
+          id: user.id,
+          name: user.user_metadata?.full_name || dummyNames[index % dummyNames.length],
+          phoneNumber: '+60 12-345 6789', // Default phone number as it's not in Supabase user data
+          profilePicture: undefined,
+          status: getRandomStatus(),
+          role: user.roles.length > 0 ? mapRole(user.roles[0].role_name) : 'REQUESTER',
+          department: user.roles.length > 0 ? 'General' : 'Operations', // Default department
+        }));
+        setUsers(transformedUsers);
+      } else {
+        setUsers([]);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCardToggle = (userId: string) => {
     const newExpandedCards = new Set(expandedCards);
@@ -98,16 +90,16 @@ export default function UserScreen() {
 
   const getFilteredUsers = () => {
     if (filterStatus === 'all') {
-      return sampleUsers;
+      return users;
     }
-    return sampleUsers.filter(user => user.status === filterStatus);
+    return users.filter(user => user.status === filterStatus);
   };
 
   const getStatusCount = (status: string) => {
     if (status === 'all') {
-      return sampleUsers.length;
+      return users.length;
     }
-    return sampleUsers.filter(user => user.status === status).length;
+    return users.filter(user => user.status === status).length;
   };
 
   const filteredUsers = getFilteredUsers();
@@ -166,7 +158,14 @@ export default function UserScreen() {
         className="flex-1 px-6 pt-4"
         showsVerticalScrollIndicator={false}
       >
-        {filteredUsers.length > 0 ? (
+        {loading ? (
+          <View className="flex-1 items-center justify-center py-20">
+            <MaterialIcons name="person" size={64} color="#D1D5DB" />
+            <Text className="text-lg font-semibold text-text-secondary mt-4">
+              Loading users...
+            </Text>
+          </View>
+        ) : filteredUsers.length > 0 ? (
           filteredUsers.map((user) => (
             <UserCard
               key={user.id}

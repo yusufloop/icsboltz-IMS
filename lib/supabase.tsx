@@ -3,8 +3,9 @@ import { Platform } from 'react-native';
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseServiceRoleKey = process.env.EXPO_PUBLIC_SUPABASE_SERVICE_ROLE_KEY!;
 
-if (!supabaseUrl || !supabaseAnonKey) {
+if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceRoleKey) {
   throw new Error('Missing Supabase environment variables');
 }
 
@@ -48,6 +49,17 @@ const options = {
 };
 
 export const supabase = createClient(cleanUrl, supabaseAnonKey, options);
+
+// Service role client for admin operations (bypasses RLS)
+export const supabaseAdmin = createClient(cleanUrl, supabaseServiceRoleKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  },
+  global: {
+    headers,
+  },
+});
 
 // Helper function to handle Supabase errors
 export const handleSupabaseError = (error: any): string => {

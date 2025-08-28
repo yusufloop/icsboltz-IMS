@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 import type { User } from '@supabase/supabase-js';
 
 export interface UserWithRoles {
@@ -34,21 +34,24 @@ export class UserManagementService {
   // Get all users with their roles (Admin only)
   static async getAllUsers(): Promise<{ data: UserWithRoles[] | null; error: string | null }> {
     try {
-      // First get all users from auth.users
-      console.log('Fetching users from auth.admin.listUsers()...');
-      const { data: { users }, error: usersError } = await supabase.auth.admin.listUsers();
+      // Check if current user is admin first
+      const isAdmin = await this.isCurrentUserAdmin();
+      if (!isAdmin) {
+        return { data: null, error: 'Access denied: Admin privileges required' };
+      }
+
+      console.log('Fetching all users with service role...');
       
-      console.log('Users from auth:', users?.length || 0, 'users');
-      console.log('Users error:', usersError);
+      // Use service role client to get all users from auth.users
+      const { data: { users }, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
       
       if (usersError) {
         console.error('Error fetching users:', usersError);
         return { data: null, error: usersError.message };
       }
 
-      // Get all user roles
-      console.log('Fetching user roles...');
-      const { data: userRoles, error: rolesError } = await supabase
+      // Get all user roles using service role client
+      const { data: userRolesData, error: rolesError } = await supabaseAdmin
         .from('user_roles')
         .select(`
           user_id,
@@ -58,19 +61,15 @@ export class UserManagementService {
           )
         `);
 
-      console.log('User roles:', userRoles?.length || 0, 'role assignments');
-      console.log('Roles error:', rolesError);
-
       if (rolesError) {
         console.error('Error fetching user roles:', rolesError);
         return { data: null, error: rolesError.message };
       }
 
-      // Combine user data with roles
-      console.log('Combining user data with roles...');
+      // Map users with their roles
       const usersWithRoles: UserWithRoles[] = users.map(user => {
-        const userRoleData = userRoles?.filter(ur => ur.user_id === user.id) || [];
-        console.log(`User ${user.email}: ${userRoleData.length} roles`);
+        const userRoles = userRolesData?.filter(ur => ur.user_id === user.id) || [];
+        
         return {
           id: user.id,
           email: user.email || '',
@@ -79,16 +78,17 @@ export class UserManagementService {
           created_at: user.created_at,
           updated_at: user.updated_at,
           last_sign_in_at: user.last_sign_in_at,
-          roles: userRoleData.map(ur => ({
+          roles: userRoles.map(ur => ({
             role_id: ur.role.role_id,
             role_name: ur.role.role_name
           }))
         };
       });
 
-      console.log('Final result: ', usersWithRoles.length, 'users with roles');
+      console.log('Final result:', usersWithRoles.length, 'users with roles');
       return { data: usersWithRoles, error: null };
     } catch (error: any) {
+      console.error('Error in getAllUsers:', error);
       return { data: null, error: error.message };
     }
   }
@@ -110,42 +110,45 @@ export class UserManagementService {
   // Create a new user (Admin only)
   static async createUser(userData: CreateUserData): Promise<{ data: User | null; error: string | null }> {
     try {
-      // Create user with Supabase Auth Admin API
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      // Check if current user is admin first
+      const isAdmin = await this.isCurrentUserAdmin();
+      if (!isAdmin) {
+        return { data: null, error: 'Access denied: Admin privileges required' };
+      }
+
+      // Create user using service role
+      const { data, error: createError } = await supabaseAdmin.auth.admin.createUser({
         email: userData.email,
         password: userData.password,
-        user_metadata: {
-          full_name: userData.full_name
-        },
-        email_confirm: true // Auto-confirm email for admin-created users
+        user_metadata: { full_name: userData.full_name },
+        email_confirm: true
       });
 
-      if (authError) {
-        return { data: null, error: authError.message };
+      if (createError) {
+        return { data: null, error: createError.message };
       }
 
-      if (!authData.user) {
-        return { data: null, error: 'Failed to create user' };
-      }
+      const newUser = data.user;
 
-      // Assign roles to the new user
+      // Add roles to the new user
       if (userData.role_ids.length > 0) {
         const roleInserts = userData.role_ids.map(role_id => ({
-          user_id: authData.user.id,
+          user_id: newUser.id,
           role_id
         }));
 
-        const { error: roleError } = await supabase
+        const { error: roleError } = await supabaseAdmin
           .from('user_roles')
           .insert(roleInserts);
 
         if (roleError) {
-          // If role assignment fails, we should consider deleting the user or at least log it
-          console.error('Error assigning roles to new user:', roleError);
+          // If role assignment fails, we should consider whether to delete the user
+          console.error('Failed to assign roles to new user:', roleError);
+          return { data: null, error: `User created but role assignment failed: ${roleError.message}` };
         }
       }
 
-      return { data: authData.user, error: null };
+      return { data: newUser, error: null };
     } catch (error: any) {
       return { data: null, error: error.message };
     }
@@ -154,32 +157,42 @@ export class UserManagementService {
   // Update user (Admin only)
   static async updateUser(userId: string, updateData: UpdateUserData): Promise<{ data: User | null; error: string | null }> {
     try {
-      const updates: any = {};
-
-      if (updateData.email) {
-        updates.email = updateData.email;
+      // Check if current user is admin first
+      const isAdmin = await this.isCurrentUserAdmin();
+      if (!isAdmin) {
+        return { data: null, error: 'Access denied: Admin privileges required' };
       }
 
-      if (updateData.full_name) {
-        updates.user_metadata = { full_name: updateData.full_name };
-      }
+      let updatedUser: User | null = null;
 
-      // Update user basic info if needed
-      if (Object.keys(updates).length > 0) {
-        const { data: authData, error: authError } = await supabase.auth.admin.updateUserById(
+      // Handle user profile updates using service role
+      if (updateData.email || updateData.full_name) {
+        const updatePayload: any = {};
+        
+        if (updateData.email) {
+          updatePayload.email = updateData.email;
+        }
+        
+        if (updateData.full_name) {
+          updatePayload.user_metadata = { full_name: updateData.full_name };
+        }
+
+        const { data, error: userUpdateError } = await supabaseAdmin.auth.admin.updateUserById(
           userId,
-          updates
+          updatePayload
         );
 
-        if (authError) {
-          return { data: null, error: authError.message };
+        if (userUpdateError) {
+          return { data: null, error: userUpdateError.message };
         }
+
+        updatedUser = data.user;
       }
 
-      // Update user roles if provided
+      // Handle role updates using service role
       if (updateData.role_ids !== undefined) {
         // First, remove all existing roles
-        const { error: deleteError } = await supabase
+        const { error: deleteError } = await supabaseAdmin
           .from('user_roles')
           .delete()
           .eq('user_id', userId);
@@ -195,7 +208,7 @@ export class UserManagementService {
             role_id
           }));
 
-          const { error: insertError } = await supabase
+          const { error: insertError } = await supabaseAdmin
             .from('user_roles')
             .insert(roleInserts);
 
@@ -205,14 +218,16 @@ export class UserManagementService {
         }
       }
 
-      // Get updated user data
-      const { data: { user }, error: getUserError } = await supabase.auth.admin.getUserById(userId);
-      
-      if (getUserError) {
-        return { data: null, error: getUserError.message };
+      // If we didn't get an updated user from profile changes, fetch the user
+      if (!updatedUser) {
+        const { data: { user }, error: fetchError } = await supabaseAdmin.auth.admin.getUserById(userId);
+        if (fetchError) {
+          return { data: null, error: fetchError.message };
+        }
+        updatedUser = user;
       }
 
-      return { data: user, error: null };
+      return { data: updatedUser, error: null };
     } catch (error: any) {
       return { data: null, error: error.message };
     }
@@ -221,21 +236,27 @@ export class UserManagementService {
   // Delete user (Admin only)
   static async deleteUser(userId: string): Promise<{ error: string | null }> {
     try {
-      // First remove user roles
-      const { error: roleError } = await supabase
+      // Check if current user is admin first
+      const isAdmin = await this.isCurrentUserAdmin();
+      if (!isAdmin) {
+        return { error: 'Access denied: Admin privileges required' };
+      }
+
+      // First, remove user roles
+      const { error: roleDeleteError } = await supabaseAdmin
         .from('user_roles')
         .delete()
         .eq('user_id', userId);
 
-      if (roleError) {
-        return { error: roleError.message };
+      if (roleDeleteError) {
+        console.error('Failed to delete user roles:', roleDeleteError);
       }
 
-      // Then delete the user from auth
-      const { error: authError } = await supabase.auth.admin.deleteUser(userId);
+      // Then delete the user using service role
+      const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
 
-      if (authError) {
-        return { error: authError.message };
+      if (deleteError) {
+        return { error: deleteError.message };
       }
 
       return { error: null };
