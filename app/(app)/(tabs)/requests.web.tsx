@@ -20,7 +20,7 @@ const staticRequestsData: RequestData[] = [
   {
     id: '1',
     name: 'Torque Wrench',
-    reasonsForRequests: 'For the two new designers starting next month',
+    reasonsForRequests: 'Required for precision fastening in mechanical assemblies',
     quantity: 2,
     chargeToDepartment: 'Design Department',
     status: 'Successful',
@@ -29,7 +29,7 @@ const staticRequestsData: RequestData[] = [
   {
     id: '2',
     name: 'Specialized Boxed Set Wrench Sets For Aviation',
-    reasonsForRequests: 'Ergonomic chairs for the development team',
+    reasonsForRequests: 'Comprehensive toolset needed for aircraft maintenance and repair operations',
     quantity: 5,
     chargeToDepartment: 'IT Department',
     status: 'Pending',
@@ -38,7 +38,7 @@ const staticRequestsData: RequestData[] = [
   {
     id: '3',
     name: 'Portable Power Genset',
-    reasonsForRequests: 'Health and productivity improvement for staff',
+    reasonsForRequests: 'Backup power supply for critical operations during outages',
     quantity: 3,
     chargeToDepartment: 'HR Department',
     status: 'Unsuccessful',
