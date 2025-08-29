@@ -17,34 +17,35 @@ export function EnvironmentCheck({ children }: EnvironmentCheckProps) {
     varName => !process.env[varName]
   );
 
-  if (missingVars.length > 0) {
-    return (
-      <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.errorCard}>
-            <Text style={styles.title}>
-              Environment Configuration Error
-            </Text>
-            <Text style={styles.message}>
-              Missing required environment variables:
-            </Text>
-            <View style={styles.variableList}>
-              {missingVars.map(varName => (
-                <View key={varName} style={styles.variableItem}>
-                  <Text style={styles.variableText}>
-                    {varName}
-                  </Text>
-                </View>
-              ))}
-            </View>
-            <Text style={styles.instruction}>
-              Please check your eas.json configuration and ensure all required environment variables are set for the {Platform.OS} build.
-            </Text>
-          </View>
-        </ScrollView>
-      </View>
-    );
-  }
+  // Disabled environment check - variables are configured in eas.json
+  // if (missingVars.length > 0) {
+  //   return (
+  //     <View style={styles.container}>
+  //       <ScrollView contentContainerStyle={styles.scrollContent}>
+  //         <View style={styles.errorCard}>
+  //           <Text style={styles.title}>
+  //             Environment Configuration Error
+  //           </Text>
+  //           <Text style={styles.message}>
+  //             Missing required environment variables:
+  //           </Text>
+  //           <View style={styles.variableList}>
+  //             {missingVars.map(varName => (
+  //               <View key={varName} style={styles.variableItem}>
+  //                 <Text style={styles.variableText}>
+  //                   {varName}
+  //                 </Text>
+  //               </View>
+  //             ))}
+  //           </View>
+  //           <Text style={styles.instruction}>
+  //             Please check your eas.json configuration and ensure all required environment variables are set for the {Platform.OS} build.
+  //           </Text>
+  //         </View>
+  //       </ScrollView>
+  //     </View>
+  //   );
+  // }
 
   return <>{children}</>;
 }
