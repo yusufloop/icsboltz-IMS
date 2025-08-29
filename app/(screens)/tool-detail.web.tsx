@@ -13,6 +13,15 @@ const getToolType = (name: string) => {
   return 'General Tool';
 };
 
+// Function to get tool image based on name
+const getToolImage = (name: string) => {
+  const lowerName = name.toLowerCase();
+  if (lowerName.includes('torque')) return require('@/assets/images/torque-wrench.jpg');
+  if (lowerName.includes('box') || lowerName.includes('specialized')) return require('@/assets/images/special-box-tool.jpg');
+  if (lowerName.includes('genset') || lowerName.includes('power')) return require('@/assets/images/genset.jpeg');
+  return null;
+};
+
 // Function to generate tool ID based on name with randomization
 const generateToolId = (name: string, id: string) => {
   const randomNum = Math.floor(Math.random() * 999) + 1;
@@ -97,7 +106,7 @@ export default function ToolDetailWebScreen() {
     toolLifeCycleRule: generateRandomMaintenance(),
     toolShelfLifeRule: generateRandomShelfLife(),
     warrantyInfo: generateRandomWarranty(),
-    toolImage: undefined, // Using an icon for now
+    toolImage: getToolImage(toolName),
   };
   const handleBack = () => {
     router.back();
@@ -152,9 +161,9 @@ export default function ToolDetailWebScreen() {
               <View className="flex-row items-center">
                 {/* Tool Image/Icon */}
                 <View className="relative">
-                  <View className="w-24 h-24 bg-white/20 rounded-full items-center justify-center border-2 border-white/30">
+                  <View className="w-24 h-24 bg-white/20 rounded-full items-center justify-center border-2 border-white/30 overflow-hidden">
                     {currentTool.toolImage ? (
-                      <Image source={{ uri: currentTool.toolImage }} className="w-full h-full rounded-full" />
+                      <Image source={currentTool.toolImage} className="w-20 h-20 rounded-full" resizeMode="contain" />
                     ) : (
                       <MaterialIcons name="build" size={48} color="white" />
                     )}
