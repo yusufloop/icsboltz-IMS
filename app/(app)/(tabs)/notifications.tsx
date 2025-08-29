@@ -21,7 +21,7 @@ const sampleNotifications: Notification[] = [
   {
     id: 'NOT001',
     title: 'New Request Pending Approval',
-    message: 'Request REQ-2024-001 for Office Supplies requires your approval.',
+    message: 'Request REQ-2024-001 for Torque Wrench requires your approval.',
     type: 'request',
     timestamp: '2 minutes ago',
     isRead: false,
@@ -30,7 +30,7 @@ const sampleNotifications: Notification[] = [
   {
     id: 'NOT002',
     title: 'Request Approved',
-    message: 'Your approval for REQ-2024-002 has been processed successfully.',
+    message: 'Your approval for REQ-2024-002 Specialized Boxed Set Wrench Sets For Aviation has been processed successfully.',
     type: 'approval',
     timestamp: '1 hour ago',
     isRead: false,
@@ -38,7 +38,7 @@ const sampleNotifications: Notification[] = [
   {
     id: 'NOT003',
     title: 'Urgent: High Priority Request',
-    message: 'High priority request REQ-2024-003 needs immediate attention.',
+    message: 'High priority request REQ-2024-003 for Portable Power Genset needs immediate attention.',
     type: 'urgent',
     timestamp: '3 hours ago',
     isRead: true,

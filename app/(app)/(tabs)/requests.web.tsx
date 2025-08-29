@@ -19,7 +19,7 @@ interface RequestData {
 const staticRequestsData: RequestData[] = [
   {
     id: '1',
-    name: 'Macbook Pro',
+    name: 'Torque Wrench',
     reasonsForRequests: 'For the two new designers starting next month',
     quantity: 2,
     chargeToDepartment: 'Design Department',
@@ -28,7 +28,7 @@ const staticRequestsData: RequestData[] = [
   },
   {
     id: '2',
-    name: 'Office Chairs',
+    name: 'Specialized Boxed Set Wrench Sets For Aviation',
     reasonsForRequests: 'Ergonomic chairs for the development team',
     quantity: 5,
     chargeToDepartment: 'IT Department',
@@ -37,7 +37,7 @@ const staticRequestsData: RequestData[] = [
   },
   {
     id: '3',
-    name: 'Standing Desks',
+    name: 'Portable Power Genset',
     reasonsForRequests: 'Health and productivity improvement for staff',
     quantity: 3,
     chargeToDepartment: 'HR Department',
@@ -317,7 +317,18 @@ export default function RequestsWebScreen() {
                       <View className="flex-row justify-center space-x-3">
                         <TouchableOpacity 
                           className="bg-green-600 rounded-lg px-4 py-2"
-                          onPress={() => router.push('/tool-detail')}
+                          onPress={() => router.push({
+                            pathname: '/tool-detail',
+                            params: {
+                              id: request.id,
+                              name: request.name,
+                              reasonsForRequests: request.reasonsForRequests,
+                              quantity: request.quantity.toString(),
+                              chargeToDepartment: request.chargeToDepartment,
+                              status: request.status,
+                              image: request.image
+                            }
+                          })}
                         >
                           <Text className="text-white font-medium">Tool Detail</Text>
                         </TouchableOpacity>

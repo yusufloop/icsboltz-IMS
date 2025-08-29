@@ -29,9 +29,9 @@ interface Notification {
 
 // Mock data arrays
 const mockRequests: Request[] = [
-  { id: '1', itemName: 'Laptop Dell XPS 13', date: '2024-01-15', status: 'Approved' },
-  { id: '2', itemName: 'Wireless Mouse', date: '2024-01-14', status: 'In Progress' },
-  { id: '3', itemName: 'Monitor 24 inch', date: '2024-01-13', status: 'Disapproved' },
+  { id: '1', itemName: 'Torque Wrench', date: '2024-01-15', status: 'Approved' },
+  { id: '2', itemName: 'Specialized Boxed Set Wrench Sets For Aviation', date: '2024-01-14', status: 'In Progress' },
+  { id: '3', itemName: 'Portable Power Genset', date: '2024-01-13', status: 'Disapproved' },
   { id: '4', itemName: 'USB-C Hub', date: '2024-01-12', status: 'Approved' },
   { id: '5', itemName: 'Webcam HD', date: '2024-01-11', status: 'In Progress' }
 ];

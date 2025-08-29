@@ -214,7 +214,7 @@ export default function NewLoanScreen() {
             className="pt-4 space-y-6"
           >
             {/* Item Loaned */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Item to Loan</Text>
               <TextInput
                 value={formData.itemLoaned}
@@ -224,8 +224,8 @@ export default function NewLoanScreen() {
             </View>
 
             {/* Brand and Manufacturer Row */}
-            <View className="flex-row space-x-4">
-              <View className="flex-1">
+            <View className="flex-row space-x-4 mb-3">
+              <View className="flex-1 mr-2">
                 <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Brand</Text>
                 <TextInput
                   value={formData.brand}
@@ -244,8 +244,8 @@ export default function NewLoanScreen() {
             </View>
 
             {/* Serial Numbers Row */}
-            <View className="flex-row space-x-4">
-              <View className="flex-1">
+            <View className="flex-row space-x-4 mb-3">
+              <View className="flex-1 mr-2">
                 <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Internal Serial Number</Text>
                 <TextInput
                   value={formData.internalSerialNumber}
@@ -264,8 +264,8 @@ export default function NewLoanScreen() {
             </View>
 
             {/* Model Number and Quantity Row */}
-            <View className="flex-row space-x-4">
-              <View className="flex-1">
+            <View className="flex-row space-x-4 mb-3">
+              <View className="flex-1 mr-2">
                 <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Model Number</Text>
                 <TextInput
                   value={formData.modelNumber}
@@ -285,7 +285,7 @@ export default function NewLoanScreen() {
             </View>
 
             {/* Specifications */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Specifications</Text>
               <TextInput
                 value={formData.specifications}
@@ -298,7 +298,7 @@ export default function NewLoanScreen() {
             </View>
 
             {/* Reason for Loan */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Reason for Loan</Text>
               <TextInput
                 value={formData.reasonForLoan}
@@ -310,7 +310,7 @@ export default function NewLoanScreen() {
             </View>
 
             {/* Phone No */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Phone No</Text>
               <TextInput
                 value={formData.phoneNo}
@@ -321,8 +321,8 @@ export default function NewLoanScreen() {
             </View>
 
             {/* Date Row - Updated for Start and End Date */}
-            <View className="flex-row space-x-4">
-              <View className="flex-1">
+            <View className="flex-row space-x-4 mb-3">
+              <View className="flex-1 mr-2">
                 <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Loan Start Date</Text>
                 <TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
                   <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
@@ -351,7 +351,7 @@ export default function NewLoanScreen() {
             </View>
             
             {/* Priority */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Priority</Text>
               <TouchableOpacity onPress={() => setShowPriorityPicker(true)}>
                 <View 
@@ -367,7 +367,7 @@ export default function NewLoanScreen() {
             </View>
 
             {/* Charge To Department */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Charge To Department</Text>
               <TouchableOpacity onPress={() => setShowDepartmentPicker(true)}>
                 <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
@@ -382,7 +382,7 @@ export default function NewLoanScreen() {
             </View>
 
             {/* Attachments / Link */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Attachments / Link</Text>
               <TouchableOpacity onPress={handleFileUpload}>
                 <View className="border border-gray-300 border-dashed rounded-lg p-4 items-center justify-center min-h-[80px]">

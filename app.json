@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon-kecik.png",
     "scheme": "icsboltzapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true
     },

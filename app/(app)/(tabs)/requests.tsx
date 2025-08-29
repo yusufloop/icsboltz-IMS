@@ -50,7 +50,7 @@ export default function RequestsScreen() {
       id: '#ITEM 1', 
       date: '30/10/2019',
       status: 'Unsuccessfully', 
-      itemRequested: 'Laptop Repair',
+      itemRequested: 'Torque Wrench',
       priority: 'High',
       amount: 'RM 200',
       company: 'Capi Telecom'
@@ -59,7 +59,7 @@ export default function RequestsScreen() {
       id: '#ITEM 2', 
       date: '30/10/2019',
       status: 'Successfully', 
-      itemRequested: 'Office Supplies',
+      itemRequested: 'Specialized Boxed Set Wrench Sets For Aviation',
       priority: 'Medium',
       amount: '$50',
       company: 'Capi Telecom'
@@ -68,7 +68,7 @@ export default function RequestsScreen() {
       id: '#ITEM 3', 
       date: '29/10/2019',
       status: 'Successfully', 
-      itemRequested: 'Software License',
+      itemRequested: 'Portable Power Genset',
       priority: 'Low',
       amount: '$150',
       company: 'Tech Solutions'
@@ -248,7 +248,18 @@ export default function RequestsScreen() {
                     </View>
                     <View className="border-t border-gray-200 pt-2 flex-row justify-around">
                         <TouchableOpacity 
-                          onPress={() => router.push('/tool-detail')}
+                          onPress={() => router.push({
+                            pathname: '/tool-detail',
+                            params: {
+                              id: request.id,
+                              itemRequested: request.itemRequested,
+                              priority: request.priority,
+                              amount: request.amount,
+                              company: request.company,
+                              status: request.status,
+                              date: request.date
+                            }
+                          })}
                           className="flex-row items-center py-2 px-4 rounded-lg active:bg-gray-100"
                         >
                           <MaterialIcons name="build" size={20} color="#0A84FF" />

@@ -6,13 +6,40 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+       "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://wweahbxvkijkrbhtlgxh.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3ZWFoYnh2a2lqa3JiaHRsZ3hoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0MDk5NzAsImV4cCI6MjA2ODk4NTk3MH0.rbxmXk0bOungfXFqxJ7e-PaJ4QbvmYeJIGDNkmqNP5U",
+        "EXPO_PUBLIC_SUPABASE_SERVICE_ROLE_KEY":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3ZWFoYnh2a2lqa3JiaHRsZ3hoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQwOTk3MCwiZXhwIjoyMDY4OTg1OTcwfQ.LDOZeOusN5ZyCwm9rw5z5sCYisyKJuT2gRmxQ7CnFCg",
+        "EXPO_PUBLIC_NGROK_SKIP_WARNING": "true",
+        "EXPO_PUBLIC_APP_NAME": "INVENTREX",
+        "EXPO_PUBLIC_APP_VERSION": "1.0.0"
+      }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://wweahbxvkijkrbhtlgxh.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3ZWFoYnh2a2lqa3JiaHRsZ3hoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0MDk5NzAsImV4cCI6MjA2ODk4NTk3MH0.rbxmXk0bOungfXFqxJ7e-PaJ4QbvmYeJIGDNkmqNP5U",
+         "EXPO_PUBLIC_SUPABASE_SERVICE_ROLE_KEY":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3ZWFoYnh2a2lqa3JiaHRsZ3hoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQwOTk3MCwiZXhwIjoyMDY4OTg1OTcwfQ.LDOZeOusN5ZyCwm9rw5z5sCYisyKJuT2gRmxQ7CnFCg",
+        "EXPO_PUBLIC_NGROK_SKIP_WARNING": "true",
+        "EXPO_PUBLIC_APP_NAME": "INVENTREX",
+        "EXPO_PUBLIC_APP_VERSION": "1.0.0"
+      }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://wweahbxvkijkrbhtlgxh.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3ZWFoYnh2a2lqa3JiaHRsZ3hoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0MDk5NzAsImV4cCI6MjA2ODk4NTk3MH0.rbxmXk0bOungfXFqxJ7e-PaJ4QbvmYeJIGDNkmqNP5U",
+        "EXPO_PUBLIC_SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3ZWFoYnh2a2lqa3JiaHRsZ3hoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MzQwOTk3MCwiZXhwIjoyMDY4OTg1OTcwfQ.LDOZeOusN5ZyCwm9rw5z5sCYisyKJuT2gRmxQ7CnFCg",
+        "EXPO_PUBLIC_NGROK_SKIP_WARNING": "true",
+        "EXPO_PUBLIC_APP_NAME": "INVENTREX",
+        "EXPO_PUBLIC_APP_VERSION": "1.0.0"
+      }
     }
   },
   "submit": {

@@ -117,7 +117,7 @@ export default function StatusHistoryWeb() {
   
   const requestData = {
     requestId: (params.requestId as string) || 'REQ-2025-001234',
-    itemRequested: (params.itemRequested as string) || 'MacBook Pro 16-inch M3 Max',
+    itemRequested: (params.itemRequested as string) || 'Torque Wrench',
     quantity: (params.quantity as string) || '2',
   };
 

@@ -1,12 +1,25 @@
 import { createClient } from '@supabase/supabase-js';
 import { Platform } from 'react-native';
 
+console.log('Platform:', Platform.OS);
+console.log('Environment check - Available EXPO_PUBLIC vars:', 
+  Object.keys(process.env).filter(key => key.startsWith('EXPO_PUBLIC_'))
+);
+
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
 const supabaseServiceRoleKey = process.env.EXPO_PUBLIC_SUPABASE_SERVICE_ROLE_KEY!;
 
 if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceRoleKey) {
-  throw new Error('Missing Supabase environment variables');
+  const missingVars = [];
+  if (!supabaseUrl) missingVars.push('EXPO_PUBLIC_SUPABASE_URL');
+  if (!supabaseAnonKey) missingVars.push('EXPO_PUBLIC_SUPABASE_ANON_KEY');
+  if (!supabaseServiceRoleKey) missingVars.push('EXPO_PUBLIC_SUPABASE_SERVICE_ROLE_KEY');
+  
+  console.error('Missing environment variables:', missingVars);
+  console.error('Available env vars:', Object.keys(process.env).filter(key => key.startsWith('EXPO_PUBLIC_')));
+  
+  throw new Error(`Missing Supabase environment variables: ${missingVars.join(', ')}`);
 }
 
 // Clean the URL - remove trailing slash if present

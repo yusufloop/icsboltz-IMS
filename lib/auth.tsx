@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useRouter, useSegments } from "expo-router";
+import { Platform } from "react-native";
 import { supabase } from "./supabase";
 import type { User, Session } from "@supabase/supabase-js";
 
@@ -65,8 +66,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Function to fetch user with roles
   const fetchUserWithRoles = async (userId: string): Promise<ExtendedUser | null> => {
     try {
+      // Reduce timeout to 5 seconds and add better error handling
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Database query timeout after 5 seconds')), 5000)
+      );
+      
+      // Get current session to get user data first
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.user) {
+        console.warn("No session found in fetchUserWithRoles");
+        return null;
+      }
+
       // Get user roles with role details
-      const { data: userRoles, error: rolesError } = await supabase
+      const queryPromise = supabase
         .from("user_roles")
         .select(`
           role_id,
@@ -77,17 +91,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         `)
         .eq("user_id", userId);
 
-      if (rolesError) {
-        console.error("Error fetching user roles:", rolesError);
-        return null;
+      let userRoles = [];
+      try {
+        const result = await Promise.race([queryPromise, timeoutPromise]) as any;
+        if (result.error) {
+          console.error("Error fetching user roles:", result.error);
+          // Continue with empty roles instead of failing completely
+          userRoles = [];
+        } else {
+          userRoles = result.data || [];
+        }
+      } catch (timeoutError) {
+        console.error("Database timeout, continuing with empty roles:", timeoutError);
+        userRoles = [];
       }
 
-      // Get current session to get user data
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session?.user) return null;
-
-      // Extend user object with roles
+      // Extend user object with roles (even if empty)
       const extendedUser: ExtendedUser = {
         ...session.user,
         roles: userRoles?.map(ur => ur.role?.role_name).filter(Boolean) || [],
@@ -98,24 +117,60 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return extendedUser;
     } catch (error) {
       console.error("Error in fetchUserWithRoles:", error);
+      // Return basic user data without roles instead of null
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        return {
+          ...session.user,
+          roles: [],
+          roleIds: [],
+          user_roles: []
+        };
+      }
       return null;
     }
   };
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      
-      if (session?.user) {
-        const userWithRoles = await fetchUserWithRoles(session.user.id);
-        setUser(userWithRoles);
-      } else {
+    // Get initial session with timeout
+    const initializeAuth = async () => {
+      try {
+        console.log("Platform:", Platform.OS, "- Initializing auth...");
+        
+        // Add a timeout for the entire auth initialization
+        const authTimeout = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Auth initialization timeout')), 15000)
+        );
+        
+        const authProcess = async () => {
+          const { data: { session } } = await supabase.auth.getSession();
+          console.log("Session retrieved:", !!session);
+          setSession(session);
+          
+          if (session?.user) {
+            console.log("Fetching user with roles for:", session.user.id);
+            const userWithRoles = await fetchUserWithRoles(session.user.id);
+            console.log("User with roles fetched:", !!userWithRoles);
+            setUser(userWithRoles);
+          } else {
+            console.log("No session user found");
+            setUser(null);
+          }
+        };
+
+        await Promise.race([authProcess(), authTimeout]);
+      } catch (error) {
+        console.error("Error initializing auth:", error);
+        // On Android, don't fail completely - set to not authenticated state
         setUser(null);
+        setSession(null);
+      } finally {
+        console.log("Auth initialization complete, setting loading to false");
+        setLoading(false);
       }
-      
-      setLoading(false);
-    });
+    };
+
+    initializeAuth();
 
     // Listen for auth changes
     const {
@@ -358,6 +413,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { error: errorMsg, success: false };
     }
   }, []);
+
+  // Show loading screen while auth is initializing - React Native compatible
+  if (loading) {
+    const { View, Text } = require('react-native');
+    return (
+      <View style={{ 
+        flex: 1,
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        backgroundColor: '#ffffff'
+      }}>
+        <Text style={{ marginBottom: 16, fontSize: 16 }}>Initializing...</Text>
+        <Text style={{ fontSize: 14, color: '#666666' }}>Loading authentication</Text>
+      </View>
+    );
+  }
 
   return (
     <AuthContext.Provider

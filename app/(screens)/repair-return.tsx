@@ -145,7 +145,10 @@ export default function RepairReturnScreen() {
               Tool Repair / Return
             </Text>
             <Text className="text-sm text-text-secondary mt-1">
-              Log a repair or return transaction for a tool
+              Log a repair or 
+            </Text>
+            <Text className="text-sm text-text-secondary mt-1">
+              return transaction for a tool
             </Text>
           </View>
         </Animated.View>
@@ -161,7 +164,7 @@ export default function RepairReturnScreen() {
             className="pt-4 space-y-6"
           >
             {/* Tool Identifier */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Tool ID / Name</Text>
               <TextInput
                 value={formData.toolIdentifier}
@@ -172,7 +175,7 @@ export default function RepairReturnScreen() {
             </View>
 
             {/* Transaction Type */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Transaction Type</Text>
               <TouchableOpacity onPress={() => setShowTransactionTypePicker(true)}>
                 <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
@@ -190,7 +193,7 @@ export default function RepairReturnScreen() {
             {formData.transactionType === 'Sending for Repair' && (
               <>
                 {/* Repair Vendor */}
-                <View>
+                <View className="mb-3">
                   <Text className="text-sm font-medium text-text-secondary mb-2">Repair Vendor / Shop</Text>
                   <TextInput
                     value={formData.repairVendor}
@@ -201,7 +204,7 @@ export default function RepairReturnScreen() {
                 </View>
 
                 {/* Date Sent and Expected Return Date Row */}
-                <View className="flex-row space-x-4">
+                <View className="flex-row space-x-4 mb-3">
                   <View className="flex-1">
                     <Text className="text-sm font-medium text-text-secondary mb-2">Date Sent</Text>
                     <TouchableOpacity onPress={() => setShowTransactionDatePicker(true)}>
@@ -230,7 +233,7 @@ export default function RepairReturnScreen() {
 
             {/* Date Returned (for other transaction types) */}
             {formData.transactionType && formData.transactionType !== 'Sending for Repair' && (
-               <View>
+               <View className="mb-3">
                 <Text className="text-sm font-medium text-text-secondary mb-2">Date of Return</Text>
                 <TouchableOpacity onPress={() => setShowTransactionDatePicker(true)}>
                   <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
@@ -244,7 +247,7 @@ export default function RepairReturnScreen() {
             )}
 
             {/* Condition Notes */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Notes on Condition / Repair</Text>
               <TextInput
                 value={formData.conditionNotes}
@@ -257,7 +260,7 @@ export default function RepairReturnScreen() {
             </View>
 
             {/* Attachments */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Attach Receipts / Photos</Text>
               <TouchableOpacity onPress={handleFileUpload}>
                 <View className="border border-gray-300 border-dashed rounded-lg p-4 items-center justify-center min-h-[80px]">

@@ -233,7 +233,7 @@ export default function NewRequestScreen() {
             className="pt-4 space-y-6"
           >
             {/* Item Requested */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Item Requested</Text>
               <TextInput
                 value={formData.itemRequested}
@@ -243,8 +243,8 @@ export default function NewRequestScreen() {
             </View>
 
             {/* Brand and Manufacturer Row */}
-            <View className="flex-row space-x-4">
-              <View className="flex-1">
+            <View className="flex-row space-x-4 mb-3">
+              <View className="flex-1 mr-2">
                 <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Brand</Text>
                 <TextInput
                   value={formData.brand}
@@ -263,8 +263,8 @@ export default function NewRequestScreen() {
             </View>
 
             {/* Serial Numbers Row */}
-            <View className="flex-row space-x-4">
-              <View className="flex-1">
+            <View className="flex-row space-x-4 mb-3">
+              <View className="flex-1 mr-2">
                 <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Internal Serial Number</Text>
                 <TextInput
                   value={formData.internalSerialNumber}
@@ -283,8 +283,8 @@ export default function NewRequestScreen() {
             </View>
 
             {/* Model Number and Quantity Row */}
-            <View className="flex-row space-x-4">
-              <View className="flex-1">
+            <View className="flex-row space-x-4 mb-3">
+              <View className="flex-1 mr-2">
                 <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Model Number</Text>
                 <TextInput
                   value={formData.modelNumber}
@@ -304,7 +304,7 @@ export default function NewRequestScreen() {
             </View>
 
             {/* Specifications */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Specifications</Text>
               <TextInput
                 value={formData.specifications}
@@ -317,7 +317,7 @@ export default function NewRequestScreen() {
             </View>
 
             {/* Reason for Request */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Reason for Request</Text>
               <TextInput
                 value={formData.reasonForRequest}
@@ -329,7 +329,7 @@ export default function NewRequestScreen() {
             </View>
 
             {/* Phone No */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Phone No</Text>
               <TextInput
                 value={formData.phoneNo}
@@ -340,8 +340,8 @@ export default function NewRequestScreen() {
             </View>
 
             {/* Date and Priority Row */}
-            <View className="flex-row space-x-4">
-              <View className="flex-1 mr-10">
+            <View className="flex-row space-x-4 mb-3">
+              <View className="flex-1 mr-2">
                 <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Date Needed By</Text>
                 <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                   <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
@@ -372,7 +372,7 @@ export default function NewRequestScreen() {
             </View>
 
             {/* Charge To Department */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Charge To Department</Text>
               <TouchableOpacity onPress={() => setShowDepartmentPicker(true)}>
                 <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
@@ -387,7 +387,7 @@ export default function NewRequestScreen() {
             </View>
 
             {/* Tool Lifecycle Rule */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Tool Lifecycle Rule</Text>
               <TouchableOpacity onPress={() => setShowLifecycleRulePicker(true)}>
                 <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
@@ -402,7 +402,7 @@ export default function NewRequestScreen() {
             </View>
 
             {/* Tool Shelf Life Rule */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Tool Shelf Life Rule</Text>
               <TouchableOpacity onPress={() => setShowShelfLifeRulePicker(true)}>
                 <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
@@ -417,7 +417,7 @@ export default function NewRequestScreen() {
             </View>
 
             {/* Tool Warranties */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Tool Warranties</Text>
               <TouchableOpacity onPress={() => setShowWarrantiesPicker(true)}>
                 <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
@@ -432,7 +432,7 @@ export default function NewRequestScreen() {
             </View>
 
             {/* Attachments / Link */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2 pt-4">Attachments / Link</Text>
               <TouchableOpacity onPress={handleFileUpload}>
                 <View className="border border-gray-300 border-dashed rounded-lg p-4 items-center justify-center min-h-[80px]">

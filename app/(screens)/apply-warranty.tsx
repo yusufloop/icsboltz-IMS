@@ -145,7 +145,10 @@ export default function WarrantyClaimScreen() {
               Tool Warranty Claim
             </Text>
             <Text className="text-sm text-text-secondary mt-1">
-              Fill in the details below to submit a warranty claim
+              Fill in the details below to 
+            </Text>
+            <Text className="text-sm text-text-secondary mt-1">
+              to submit a warranty claim
             </Text>
           </View>
         </Animated.View>
@@ -161,7 +164,7 @@ export default function WarrantyClaimScreen() {
             className="pt-4 space-y-6"
           >
             {/* Tool Identifier */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Tool ID / Serial Number</Text>
               <TextInput
                 value={formData.toolIdentifier}
@@ -172,7 +175,7 @@ export default function WarrantyClaimScreen() {
             </View>
 
             {/* Claim Type */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Claim Type</Text>
               <TouchableOpacity onPress={() => setShowClaimTypePicker(true)}>
                 <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
@@ -187,8 +190,8 @@ export default function WarrantyClaimScreen() {
             </View>
 
             {/* Purchase Date and Date of Failure Row */}
-            <View className="flex-row space-x-4">
-              <View className="flex-1">
+            <View className="flex-row space-x-4 mb-3">
+              <View className="flex-1 mr-2">
                 <Text className="text-sm font-medium text-text-secondary mb-2">Purchase Date</Text>
                 <TouchableOpacity onPress={() => setShowPurchaseDatePicker(true)}>
                   <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
@@ -214,7 +217,7 @@ export default function WarrantyClaimScreen() {
             </View>
 
             {/* Warranty Provider */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Warranty Provider</Text>
               <TextInput
                 value={formData.warrantyProvider}
@@ -225,7 +228,7 @@ export default function WarrantyClaimScreen() {
             </View>
 
             {/* Description of Issue */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Detailed Description of Issue</Text>
               <TextInput
                 value={formData.issueDescription}
@@ -238,8 +241,8 @@ export default function WarrantyClaimScreen() {
             </View>
             
             {/* Contact Person and Phone Row */}
-            <View className="flex-row space-x-4">
-              <View className="flex-1">
+            <View className="flex-row space-x-4 mb-3">
+              <View className="flex-1 mr-2">
                 <Text className="text-sm font-medium text-text-secondary mb-2">Contact Person</Text>
                 <TextInput
                   value={formData.contactPerson}
@@ -259,7 +262,7 @@ export default function WarrantyClaimScreen() {
             </View>
 
             {/* Attachments */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Attach Proof of Purchase / Photos of Defect</Text>
               <TouchableOpacity onPress={handleFileUpload}>
                 <View className="border border-gray-300 border-dashed rounded-lg p-4 items-center justify-center min-h-[80px]">

@@ -12,6 +12,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import 'react-native-reanimated';
 import '../global.css';
 import { AuthProvider } from '@/lib/auth';
+import { EnvironmentCheck } from '@/components/EnvironmentCheck';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -32,13 +33,26 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
-    return null;
+    // Show a basic loading fallback instead of null - React Native compatible
+    const { View, Text } = require('react-native');
+    return (
+      <View style={{ 
+        flex: 1,
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        backgroundColor: '#ffffff'
+      }}>
+        <Text>Loading fonts...</Text>
+      </View>
+    );
   }
 
   return (
-    <AuthProvider>
-      <Slot />
-      <StatusBar style="auto" />
-    </AuthProvider>
+    <EnvironmentCheck>
+      <AuthProvider>
+        <Slot />
+        <StatusBar style="auto" />
+      </AuthProvider>
+    </EnvironmentCheck>
   );
 }

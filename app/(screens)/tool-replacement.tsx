@@ -144,11 +144,14 @@ export default function ToolReplacementScreen() {
           </TouchableOpacity>
           
           <View>
-            <Text className="text-xl font-bold text-text-primary">
+            <Text className="text-lg font-bold text-text-primary">
               Tool Replacement / Damage
             </Text>
             <Text className="text-sm text-text-secondary mt-1">
-              Report a damaged or request a replacement tool
+              Report a damaged or
+            </Text>
+            <Text className="text-sm text-text-secondary mt-1">
+              request a replacement tool
             </Text>
           </View>
         </Animated.View>
@@ -164,7 +167,7 @@ export default function ToolReplacementScreen() {
             className="pt-4 space-y-6"
           >
             {/* Tool Identifier */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Tool ID / Name</Text>
               <TextInput
                 value={formData.toolIdentifier}
@@ -175,7 +178,7 @@ export default function ToolReplacementScreen() {
             </View>
 
             {/* Report Type */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Report Type</Text>
               <TouchableOpacity onPress={() => setShowReportTypePicker(true)}>
                 <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
@@ -190,8 +193,8 @@ export default function ToolReplacementScreen() {
             </View>
 
             {/* Date of Incident and Priority Row */}
-            <View className="flex-row space-x-4">
-              <View className="flex-1">
+            <View className="flex-row space-x-4 mb-3">
+              <View className="flex-1 mr-2">
                 <Text className="text-sm font-medium text-text-secondary mb-2">Date of Incident</Text>
                 <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                   <View className="bg-bg-secondary rounded-lg shadow-sm border border-gray-200">
@@ -222,7 +225,7 @@ export default function ToolReplacementScreen() {
             </View>
 
             {/* Description of Damage/Reason for Replacement */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Description of Damage / Reason for Replacement</Text>
               <TextInput
                 value={formData.description}
@@ -235,7 +238,7 @@ export default function ToolReplacementScreen() {
             </View>
 
             {/* Attachments */}
-            <View>
+            <View className="mb-3">
               <Text className="text-sm font-medium text-text-secondary mb-2">Attach Photos of Damage</Text>
               <TouchableOpacity onPress={handleFileUpload}>
                 <View className="border border-gray-300 border-dashed rounded-lg p-4 items-center justify-center min-h-[80px]">
